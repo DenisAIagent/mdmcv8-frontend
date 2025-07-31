@@ -185,23 +185,17 @@ const SmartLinkWizard = () => {
           customPerPlatform: data.utmCustomPerPlatform || false
         },
         
-        // Outils de tracking
-        tracking: {
-          gaId: data.gaId || null,
+        // Outils de tracking (format backend)
+        trackingIds: {
+          ga4Id: data.gaId || null,
           gtmId: data.gtmId || null,
-          adsId: data.adsId || null,
+          googleAdsId: data.adsId || null,
           metaPixelId: data.metaPixelId || null,
           tiktokPixelId: data.tiktokPixelId || null
         },
         
-        // Personnalisation
-        customization: {
-          template: data.template,
-          primaryColor: data.primaryColor,
-          secondaryColor: data.secondaryColor || '#333333',
-          backgroundColor: data.backgroundColor || '#FFFFFF',
-          customCss: data.customCss || null
-        },
+        // Description (pour le backend)
+        description: data.description || `SmartLink pour ${data.trackTitle}`,
         
         // Statut de publication
         isPublished: true
