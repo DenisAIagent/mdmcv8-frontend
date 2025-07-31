@@ -90,6 +90,26 @@
       };
     }, []);
 
+    // 🎨 Chargement de l'image de background depuis coverImageUrl
+    useEffect(() => {
+      if (smartLinkData?.smartLink?.coverImageUrl) {
+        const imageUrl = smartLinkData.smartLink.coverImageUrl;
+        console.log("🎨 Chargement image background:", imageUrl);
+        
+        const img = new Image();
+        img.onload = () => {
+          console.log("✅ Image background chargée");
+          setBackgroundImage(imageUrl);
+          setBackgroundLoaded(true);
+        };
+        img.onerror = (error) => {
+          console.warn("❌ Erreur chargement image background:", error);
+          setBackgroundLoaded(false);
+        };
+        img.src = imageUrl;
+      }
+    }, [smartLinkData?.smartLink?.coverImageUrl]);
+
     useEffect(() => {
       console.log("🎯 SmartLinkPageClean mounted with params:", { artistSlug, trackSlug });
 
@@ -425,16 +445,16 @@
     }
 
     const { smartLink, artist } = smartLinkData;
-    const title = `${smartLink.title} - ${artist.name}`;
-    const coverImage = smartLink.artwork || null;
+    const title = `${smartLink.trackTitle} - ${artist.name}`;
+    const coverImage = smartLink.coverImageUrl || null;
 
     return (
       <HelmetProvider>
         <Helmet>
           <title>{title}</title>
-          <meta name="description" content={`Listen to ${smartLink.title} by ${artist.name} on your favorite platform.`} />
+          <meta name="description" content={`Listen to ${smartLink.trackTitle} by ${artist.name} on your favorite platform.`} />
           <meta property="og:title" content={title} />
-          <meta property="og:description" content={`Listen to ${smartLink.title} by ${artist.name} on your favorite platform.`} />
+          <meta property="og:description" content={`Listen to ${smartLink.trackTitle} by ${artist.name} on your favorite platform.`} />
           <meta property="og:image" content={coverImage} />
           <meta property="og:type" content="music.song" />
         </Helmet>
@@ -466,7 +486,7 @@
               {coverImage ? (
                 <img
                   src={coverImage}
-                  alt={`${smartLink.title} - ${artist.name}`}
+                  alt={`${smartLink.trackTitle} - ${artist.name}`}
                   className="album-cover"
                 />
               ) : (
