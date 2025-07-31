@@ -155,19 +155,16 @@ const SmartLinkWizard = () => {
         return;
       }
       
-      // Préparation des données pour l'API
+      // Préparation des données pour l'API - CORRIGÉ selon modèle SmartLink.js
       const smartLinkData = {
         // Champs obligatoires pour le backend
         artistName: data.artistName,
         trackTitle: data.trackTitle,
         
-        // Métadonnées supplémentaires
-        isrc: data.isrc,
-        label: data.label || metadata.label,
-        distributor: data.distributor || metadata.distributor,
-        releaseDate: data.releaseDate || metadata.releaseDate,
-        coverImageUrl: metadata.artwork,
-        previewAudioUrl: data.previewAudioUrl,
+        // Métadonnées supportées par le modèle SmartLink
+        releaseDate: data.releaseDate || metadata.releaseDate || null,
+        coverImageUrl: metadata.artwork || null,
+        previewAudioUrl: data.previewAudioUrl || null,
         
         // Liens des plateformes (uniquement ceux activés)
         platformLinks: platformLinks
@@ -176,14 +173,6 @@ const SmartLinkWizard = () => {
             platform: link.platform,
             url: link.url
           })),
-        
-        // Paramètres UTM
-        utmParams: {
-          source: data.utmSource,
-          medium: data.utmMedium,
-          campaign: data.utmCampaign,
-          customPerPlatform: data.utmCustomPerPlatform || false
-        },
         
         // Outils de tracking (format backend)
         trackingIds: {
@@ -202,6 +191,7 @@ const SmartLinkWizard = () => {
       };
       
       console.log("Payload envoyé au backend:", smartLinkData);
+      console.log("🔍 DEBUG - Payload complet JSON:", JSON.stringify(smartLinkData, null, 2));
       
       // Appel à l'API pour créer le SmartLink
       toast.info("Création du SmartLink en cours...");

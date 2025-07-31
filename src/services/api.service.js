@@ -63,9 +63,11 @@ class ApiService {
         // Essayer de récupérer le message d'erreur du backend
         try {
           const errorData = await response.json();
+          console.error('🔍 DEBUG - Erreur backend complète:', errorData);
           const errorMessage = errorData.error || errorData.message || response.statusText;
           throw new Error(`${response.status}: ${errorMessage}`);
         } catch (parseError) {
+          console.error('🔍 DEBUG - Impossible de parser l\'erreur backend:', parseError);
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
       }

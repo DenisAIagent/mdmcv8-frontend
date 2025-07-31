@@ -9,7 +9,14 @@
       "Bash(rm:*)",
       "Bash(mkdir:*)",
       "Bash(cp:*)",
-      "Bash(rsync:*)"
+      "Bash(rsync:*)",
+      "Bash(git clone:*)",
+      "Bash(git -C ../mdmcv4-backend add src/app.js)",
+      "Bash(git -C ../mdmcv4-backend commit -m \"fix: Add Railway frontend domain to CORS configuration\n\n- Add https://mdmcv7-frontend-production.up.railway.app to allowed origins\n- Resolves CORS blocking error for SmartLink API calls\n- Enables frontend-backend communication in production\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\")",
+      "Bash(git -C ../mdmcv4-backend push origin main)",
+      "Bash(git -C ../mdmcv4-backend add controllers/smartLinkController.js)",
+      "Bash(git -C ../mdmcv4-backend commit -m \"fix: Update SmartLink controller with Odesli integration\n\n- Add support for automatic artist creation from artistName\n- Improve slug generation with unique constraints\n- Handle both artistId and artistName in payload\n- Support for Odesli metadata integration\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\")",
+      "Bash(git -C ../mdmcv4-backend status)"
     ],
     "deny": []
   }
