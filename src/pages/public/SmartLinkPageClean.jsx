@@ -41,7 +41,7 @@
     const audioRef = React.useRef(null);
 
     // 🌍 Filtrage territorial des plateformes
-    const platformLinks = smartLinkData?.smartLink?.platforms || [];
+    const platformLinks = smartLinkData?.smartLink?.platformLinks || [];
     const {
       filtered: territorialPlatforms,
       isLoading: geoLoading,
