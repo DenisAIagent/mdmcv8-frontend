@@ -1,0 +1,607 @@
+/* ===== MODAL PURE REACT - SANS REACT-MODAL ===== */
+
+/* Overlay de la modal pure React */
+.pure-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { 
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to { 
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Container de la modal */
+.pure-modal-container {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 20px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+@keyframes modalSlideIn {
+  from { 
+    transform: scale(0.95) translateY(20px);
+    opacity: 0;
+  }
+  to { 
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.modern-modal-wrapper {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header avec les couleurs MDMC */
+.modern-modal-header {
+  background: linear-gradient(135deg, #ff3a3a 0%, #e02424 100%);
+  color: white;
+  padding: 28px 24px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modern-modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="6" cy="6" r="6"/></g></g></svg>');
+  pointer-events: none;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-icon .icon-wrapper {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { 
+    transform: translateY(0px);
+  }
+  50% { 
+    transform: translateY(-4px);
+  }
+}
+
+.header-text {
+  flex: 1;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.3px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.modal-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 400;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.modern-close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+}
+
+.modern-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.close-icon {
+  font-size: 18px;
+  color: white;
+  font-weight: 300;
+}
+
+/* Body scrollable */
+.modern-modal-body {
+  padding: 28px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Form styles avec charte MDMC */
+.ultra-modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.error-toast {
+  background: linear-gradient(135deg, #ff3a3a, #e02424);
+  color: white;
+  padding: 14px 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(255, 58, 58, 0.3);
+  animation: errorSlideIn 0.3s ease-out;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@keyframes errorSlideIn {
+  from { 
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Rating section avec couleurs MDMC */
+.rating-section {
+  text-align: center;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.rating-label {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 18px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.rating-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.custom-rating-stars {
+  filter: drop-shadow(0 2px 6px rgba(255, 215, 0, 0.3));
+}
+
+.rating-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  transition: all 0.3s ease;
+  min-height: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Form layout responsive */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 520px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.form-group {
+  position: relative;
+}
+
+/* Input styles avec charte MDMC */
+.modern-input,
+.modern-textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  background: white;
+  transition: all 0.3s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.modern-input:focus,
+.modern-textarea:focus {
+  border-color: #ff3a3a;
+  box-shadow: 0 0 0 3px rgba(255, 58, 58, 0.1),
+              0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.modern-input::placeholder,
+.modern-textarea::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.modern-textarea {
+  resize: vertical;
+  min-height: 90px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: -18px;
+  right: 0;
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Submit button avec couleurs MDMC */
+.submit-btn {
+  background: linear-gradient(135deg, #ff3a3a 0%, #e02424 100%);
+  color: white;
+  border: none;
+  padding: 16px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 6px 20px rgba(255, 58, 58, 0.3);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin-top: 4px;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.submit-btn:hover::before {
+  left: 100%;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 58, 58, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-btn.submitting {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { 
+    transform: rotate(360deg);
+  }
+}
+
+.btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Success animation avec couleurs MDMC */
+.success-animation {
+  text-align: center;
+  padding: 36px 20px;
+}
+
+.success-checkmark {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% { 
+    transform: scale(0);
+  }
+  50% { 
+    transform: scale(1.1);
+  }
+  100% { 
+    transform: scale(1);
+  }
+}
+
+.check-icon {
+  font-size: 28px;
+  color: white;
+  font-weight: bold;
+}
+
+.success-message {
+  font-size: 15px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Trigger button styling avec couleurs MDMC */
+.modern-review-trigger {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff3a3a 0%, #e02424 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.modern-review-trigger:hover {
+  background: linear-gradient(135deg, #e02424 0%, #dc1f1f 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 58, 58, 0.4);
+}
+
+.modern-review-trigger .btn-icon {
+  display: inline-block;
+  margin-right: 8px;
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+  }
+  50% { 
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+/* Responsive design optimisé */
+@media (max-width: 640px) {
+  .pure-modal-overlay {
+    padding: 15px;
+  }
+  
+  .pure-modal-container {
+    max-width: calc(100vw - 30px);
+    border-radius: 16px;
+    max-height: 90vh;
+  }
+  
+  .modern-modal-header {
+    padding: 22px 20px 20px;
+  }
+  
+  .modern-modal-body {
+    padding: 22px 20px 20px;
+  }
+  
+  .modal-title {
+    font-size: 19px;
+  }
+  
+  .header-content {
+    gap: 12px;
+  }
+  
+  .modal-icon .icon-wrapper {
+    width: 46px;
+    height: 46px;
+    font-size: 19px;
+  }
+  
+  .ultra-modern-form {
+    gap: 18px;
+  }
+  
+  .rating-section {
+    padding: 20px 16px;
+  }
+  
+  .submit-btn {
+    padding: 15px 24px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pure-modal-overlay {
+    padding: 10px;
+  }
+  
+  .pure-modal-container {
+    max-width: calc(100vw - 20px);
+    border-radius: 14px;
+  }
+  
+  .modern-modal-header {
+    padding: 18px 16px 16px;
+  }
+  
+  .modern-modal-body {
+    padding: 18px 16px 16px;
+  }
+  
+  .modal-title {
+    font-size: 17px;
+  }
+  
+  .modal-icon .icon-wrapper {
+    width: 42px;
+    height: 42px;
+    font-size: 17px;
+  }
+  
+  .rating-section {
+    padding: 18px 14px;
+  }
+  
+  .rating-label {
+    font-size: 16px;
+  }
+}
+
+/* Hauteur minimum pour éviter le scroll sur desktop */
+@media (min-height: 700px) {
+  .pure-modal-container {
+    max-height: 600px;
+  }
+}
+
+/* Scrollbar personnalisée pour Webkit */
+.modern-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-modal-body::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.modern-modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.modern-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .pure-modal-container,
+  .pure-modal-overlay,
+  .submit-btn,
+  .modern-input,
+  .modern-textarea,
+  .icon-wrapper,
+  .btn-icon {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus states pour l'accessibilité */
+.modern-close-btn:focus,
+.submit-btn:focus {
+  outline: 2px solid #ff3a3a;
+  outline-offset: 2px;
+}
+
+.modern-input:focus,
+.modern-textarea:focus {
+  outline: none; /* On utilise box-shadow à la place */
+}
+
+/* Améliorations tactiles pour mobile */
+@media (hover: none) and (pointer: coarse) {
+  .submit-btn:hover {
+    transform: none;
+    box-shadow: 0 6px 20px rgba(255, 58, 58, 0.3);
+  }
+  
+  .modern-close-btn:hover {
+    transform: none;
+  }
+}

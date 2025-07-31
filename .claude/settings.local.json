@@ -1,11 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)",
-      "Bash(ls:*)",
-      "Bash(git push:*)",
-      "Bash(git commit:*)",
-      "Bash(git init:*)"
+      "Bash(git rebase:*)",
+      "Bash(git reset:*)",
+      "Bash(git remote remove:*)",
+      "Bash(git remote add:*)",
+      "Bash(git checkout:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(rsync:*)"
     ],
     "deny": []
   }

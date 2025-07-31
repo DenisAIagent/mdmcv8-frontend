@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Background Image Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🎨 Test Background Image Fix</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        function addResult(type, message) {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+        
+        // Test 1: Vérifier que le serveur frontend fonctionne
+        addResult('info', '🔍 Test 1: Vérification serveur frontend...');
+        
+        fetch('http://localhost:3001')
+            .then(response => {
+                if (response.ok) {
+                    addResult('success', '✅ Serveur frontend: OK (localhost:3001)');
+                    
+                    // Test 2: Vérifier un SmartLink existant
+                    addResult('info', '🔍 Test 2: Vérification SmartLink existant...');
+                    
+                    return fetch('http://localhost:5000/api/v1/smartlinks/public/slipknot/wait-and-bleed');
+                } else {
+                    throw new Error('Frontend server not responding');
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Backend API not responding');
+                }
+            })
+            .then(data => {
+                addResult('success', '✅ Backend API: OK');
+                addResult('success', `✅ SmartLink data: ${data.data?.smartLink?.trackTitle || 'Found'}`);
+                
+                // Test 3: Vérifier l'URL de l'artwork
+                const artworkUrl = data.data?.smartLink?.coverImageUrl;
+                if (artworkUrl) {
+                    addResult('success', `✅ Artwork URL trouvée: ${artworkUrl}`);
+                    
+                    // Test 4: Vérifier que l'image se charge
+                    const img = new Image();
+                    img.onload = () => {
+                        addResult('success', '✅ Image artwork: Se charge correctement');
+                        addResult('info', '🎯 <strong>CONCLUSION: Le fix du background image devrait fonctionner !</strong>');
+                        addResult('info', '🌐 <strong>Testez maintenant: http://localhost:3001/#/smartlinks/slipknot/wait-and-bleed</strong>');
+                    };
+                    img.onerror = () => {
+                        addResult('error', '❌ Image artwork: Échec du chargement');
+                    };
+                    img.src = artworkUrl;
+                } else {
+                    addResult('error', '❌ Aucune URL d\'artwork trouvée');
+                }
+            })
+            .catch(error => {
+                addResult('error', `❌ Erreur: ${error.message}`);
+                
+                // Si le backend ne fonctionne pas, testons quand même le frontend
+                addResult('info', '🔍 Test frontend seul...');
+                addResult('info', '🌐 <strong>Testez manuellement: http://localhost:3001</strong>');
+            });
+    </script>
+</body>
+</html>

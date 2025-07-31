@@ -1,0 +1,67 @@
+/* src/assets/styles/variables.css */
+/* VARIABLES MDMC - COULEURS CONFORMES AU CAHIER DES CHARGES */
+
+:root {
+  /* === COULEURS PRINCIPALES === */
+  --color-primary: #cc271a;        /* Rouge MDMC principal */
+  --color-primary-light: #e63946;  /* Rouge plus clair pour hover */
+  --color-primary-dark: #a91f15;   /* Rouge plus foncé */
+  
+  /* === COULEURS DE TEXTE === */
+  --color-text: #ffffff;           /* Blanc pour titres de sections */
+  --color-text-secondary: #cccccc; /* Gris clair */
+  --color-text-muted: #999999;     /* Gris discret */
+  
+  /* === COULEURS DE FOND === */
+  --color-bg: #0a0a0a;            /* Noir principal */
+  --color-bg-secondary: #1a1a1a;   /* Noir secondaire */
+  --color-bg-tertiary: #2a2a2a;    /* Gris foncé */
+  
+  /* === TYPOGRAPHIE === */
+  --font-title: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* === ESPACEMENTS === */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* === BORDURES === */
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 24px;
+  --border-radius-full: 50px;
+  
+  /* === OMBRES === */
+  --shadow: 0 10px 30px rgba(204, 39, 26, 0.3);  /* Ombre rouge MDMC */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* === TRANSITIONS === */
+  --transition: all 0.3s ease;
+  --transition-fast: all 0.2s ease-in-out;
+  --transition-slow: all 0.5s ease;
+  
+  /* === LARGEURS CONTAINERS === */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  /* === Z-INDEX === */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  --z-toast: 800;
+}
