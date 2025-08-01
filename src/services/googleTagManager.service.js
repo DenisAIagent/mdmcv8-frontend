@@ -1,6 +1,6 @@
 class GoogleTagManagerService {
   constructor() {
-    this.gtmIds = ['GTM-PFSK4LJZ', 'GTM-W485T7VB'];
+    this.gtmIds = ['GTM-PFSK4LJZ', 'GTM-572GXWPP'];
     this.isInitialized = false;
   }
 
