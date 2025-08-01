@@ -16,7 +16,8 @@
       "Bash(git -C ../mdmcv4-backend push origin main)",
       "Bash(git -C ../mdmcv4-backend add controllers/smartLinkController.js)",
       "Bash(git -C ../mdmcv4-backend commit -m \"fix: Update SmartLink controller with Odesli integration\n\n- Add support for automatic artist creation from artistName\n- Improve slug generation with unique constraints\n- Handle both artistId and artistName in payload\n- Support for Odesli metadata integration\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\")",
-      "Bash(git -C ../mdmcv4-backend status)"
+      "Bash(git -C ../mdmcv4-backend status)",
+      "Bash(git fetch:*)"
     ],
     "deny": []
   }
