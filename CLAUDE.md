@@ -56,5 +56,41 @@
 3. Demande médias
 4. RGPD
 
+## 🚫 RESTRICTIONS DE MODIFICATION CODE
+
+### ❌ SITE GLOBAL WWW - NON MODIFIABLE
+**INTERDICTION ABSOLUE de modifier :**
+- Pages publiques (`/src/pages/public/*`)
+- Composants layout (`/src/components/layout/*`)
+- Sections homepage (`/src/components/sections/*`)
+- Pages services (`/src/pages/services/*`)
+- Index.html (sauf admin)
+- Assets publics (`/public/*` sauf admin)
+
+### ✅ ZONE ADMIN - MODIFIABLE UNIQUEMENT
+**AUTORISATION limitée à :**
+- Panneau admin (`/src/components/admin/*`)
+- Pages admin (`/src/pages/admin/*`)
+- Fonctionnalités admin (`/src/features/admin/*`)
+- Gestion SmartLinks admin
+- Outils d'administration
+
+### ⚠️ EXCEPTIONS CRITIQUES - DOUBLE AUTORISATION OBLIGATOIRE
+Modifications globales autorisées UNIQUEMENT avec **DOUBLE CONFIRMATION** :
+
+**PROTOCOLE D'AUTORISATION :**
+1. **Première confirmation** : "CONFIRM MODIFICATION SITE WWW"
+2. **Seconde confirmation** : "DOUBLE AUTORISATION ACCORDÉE"  
+3. **Messages séparés obligatoires** (pas dans le même message)
+
+**CAS AUTORISÉS (avec double confirmation) :**
+- Correctifs sécurité critiques
+- Bugs bloquants système
+- Optimisations performance critiques
+
+**⛔ SANS DOUBLE AUTORISATION = REFUS AUTOMATIQUE**
+
+**RAISON : Site web production stable - Admin panel en développement**
+
 ---
-*Dernière mise à jour : 28 juillet 2025*
+*Dernière mise à jour : 1 août 2025*
