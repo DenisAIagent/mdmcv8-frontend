@@ -208,7 +208,7 @@ const SEOOptimization = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
-      <meta property="og:image" content="https://www.mdmcmusicads.com/og-image.jpg" />
+      <meta property="og:image" content="https://www.mdmcmusicads.com/assets/images/banniere site.jpg" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content="MDMC Music Ads - Agence Marketing Musical N°1" />
@@ -220,7 +220,7 @@ const SEOOptimization = ({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content="https://www.mdmcmusicads.com/og-image.jpg" />
+      <meta name="twitter:image" content="https://www.mdmcmusicads.com/assets/images/banniere site.jpg" />
       <meta name="twitter:site" content="@mdmcmusicads" />
       
       {/* Schema.org enrichi */}

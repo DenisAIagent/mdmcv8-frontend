@@ -13,6 +13,7 @@ import {
 
 // Import du hook de tracking SEO critique
 import usePageTracking from './hooks/usePageTracking';
+import useSocialMetaAdaptation from './hooks/useSocialMetaAdaptation';
 
 import './App.css';
 import './assets/styles/global.css';
@@ -20,6 +21,7 @@ import './assets/styles/animations.css';
 
 import apiService from './services/api.service';
 import { updateMetaTags } from './i18n';
+import { updateMetaTagsForLanguage } from './utils/multilingualMeta';
 import facebookPixel from './services/facebookPixel.service';
 import gtm from './services/googleTagManager.service';
 
@@ -252,7 +254,7 @@ const AdminLayout = () => {
 const HomePage = ({ openSimulator }) => {
   // 📊 TRACKING CRITIQUE : Virtual pageviews pour homepage
   const { trackFormSubmission, trackEngagement } = usePageTracking(
-    "Promotion Musicale Pro - +50M Vues Générées | MDMC Music Ads",
+    "Marketing Musical | YouTube Ads & Meta Ads pour Artistes | MDMC",
     "homepage"
   );
 
@@ -266,8 +268,8 @@ const HomePage = ({ openSimulator }) => {
   return (
     <>
       <SEOHead 
-        title="Promotion Musicale Pro - +50M Vues Générées | MDMC Music Ads"
-        description="Agence N°1 marketing musical : +6M€ investis, +50M vues générées. YouTube Ads, Meta Ads, TikTok Pro. Résultats garantis pour artistes et labels. Devis gratuit."
+        title="Marketing Musical | YouTube Ads & Meta Ads pour Artistes | MDMC"
+        description="Agence N°1 marketing musical : +500 artistes accompagnés, +50M vues générées. YouTube Ads, Meta Ads, TikTok Pro. Résultats garantis pour artistes et labels. Devis gratuit."
         keywords="promotion musicale professionnelle, marketing musical efficace, publicité YouTube artiste, augmenter streams Spotify, campagne Meta musique, TikTok musical viral, promotion artiste émergent, label marketing digital, boost streams garantis, agence musicale performante"
         url="https://www.mdmcmusicads.com"
         canonicalUrl="https://www.mdmcmusicads.com/"
@@ -290,15 +292,17 @@ const HomePage = ({ openSimulator }) => {
 function App() {
   const { t, i18n } = useTranslation();
   const simulatorRef = useRef(null);
+  
+  // Adaptation automatique des meta tags pour partage social
+  useSocialMetaAdaptation();
 
   useEffect(() => {
     try {
       updateMetaTags(t);
       const lang = i18n.language.split('-')[0];
-      document.documentElement.setAttribute('lang', lang);
-      const ogLocaleValue = i18n.language.replace('-', '_');
-      const ogLocaleElement = document.querySelector('meta[property="og:locale"]');
-      if (ogLocaleElement) ogLocaleElement.setAttribute('content', ogLocaleValue);
+      
+      // Mise à jour multilingue des meta tags selon la langue du navigateur
+      updateMetaTagsForLanguage(lang);
       
       // Initialiser Facebook Pixel
       facebookPixel.init();
