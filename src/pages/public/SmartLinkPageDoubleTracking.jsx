@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 
 import apiService from "../../services/api.service";
+import useSmartLinkTracking from "../../hooks/useSmartLinkTracking";
 
 // Configuration des plateformes (reprise de SmartLinkPageV2)
 const platformConfig = {
@@ -204,6 +205,22 @@ const SmartLinkPageDoubleTracking = () => {
   const [userGeoData, setUserGeoData] = useState(null);
   const visitLoggedRef = useRef(false);
 
+  // 📊 Tracking individuel SmartLink avec système double-moteur
+  const {
+    trackingInitialized,
+    activePixels,
+    trackPlatformClick: trackIndividualPlatformClick,
+    trackCustomEvent,
+    hasIndividualTracking,
+    hasGlobalTracking,
+    getActivePixelsList
+  } = useSmartLinkTracking(smartlinkData, {
+    enableFallback: true,
+    logEvents: true,
+    trackPageView: false, // Désactivé car géré manuellement dans ce composant
+    trackClicks: true
+  });
+
   // Effet principal de chargement et premier tracking
   useEffect(() => {
     const loadSmartLinkAndTrack = async () => {
@@ -336,7 +353,26 @@ const SmartLinkPageDoubleTracking = () => {
     console.log(`[CLIENT] Clic sur ${platform.displayName || platform.name} détecté`);
 
     try {
-      // 1. ÉVÉNEMENT GTM IMMÉDIAT - Service click
+      // 📊 NOUVEAU: Tracking individuel prioritaire (système SmartLink)
+      if (trackingInitialized) {
+        console.log("[CLIENT] Tracking individuel SmartLink actif:", {
+          platform: platform.platform || platform.name,
+          hasIndividualTracking: hasIndividualTracking(),
+          hasGlobalTracking: hasGlobalTracking(),
+          activePixels: getActivePixelsList()
+        });
+
+        // Tracking avec pixels individuels ou fallback global
+        trackIndividualPlatformClick(platform.platform || platform.name, platform.url, {
+          service_display_name: platform.displayName || platform.name,
+          track_title: smartlinkData.trackTitle,
+          artist_name: smartlinkData.artistName,
+          user_country: userGeoData?.country || 'Unknown',
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // 1. ÉVÉNEMENT GTM GLOBAL - Service click (maintenu pour compatibilité)
       const clickEvent = {
         event: 'service_click',
         smartlink_id: smartlinkData._id,
@@ -345,16 +381,19 @@ const SmartLinkPageDoubleTracking = () => {
         track_title: smartlinkData.trackTitle,
         artist_name: smartlinkData.artistName,
         user_country: userGeoData?.country || 'Unknown',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        tracking_mode: trackingInitialized ? 
+          (hasIndividualTracking() ? 'individual' : 'global_fallback') : 'legacy'
       };
 
-      if (typeof window !== 'undefined' && window.dataLayer) {
+      // GTM global (si pas de tracking individuel actif)
+      if (typeof window !== 'undefined' && window.dataLayer && !hasIndividualTracking()) {
         window.dataLayer.push(clickEvent);
-        console.log('[CLIENT] Service click event envoyé vers GTM SmartLinks:', clickEvent);
+        console.log('[CLIENT] Service click event envoyé vers GTM global:', clickEvent);
       }
 
-      // Événement GA4 SmartLinks direct pour les clics
-      if (typeof window !== 'undefined' && window.gtag) {
+      // GA4 global (si pas de tracking individuel actif)
+      if (typeof window !== 'undefined' && window.gtag && !hasIndividualTracking()) {
         window.gtag('event', 'service_click', {
           smartlink_id: smartlinkData._id,
           service_name: platform.platform || platform.name.toLowerCase(),
@@ -363,18 +402,18 @@ const SmartLinkPageDoubleTracking = () => {
           artist_name: smartlinkData.artistName,
           user_country: userGeoData?.country || 'Unknown'
         });
-        console.log('[CLIENT] GA4 SmartLinks service click event envoyé');
+        console.log('[CLIENT] GA4 global service click event envoyé');
       }
 
-      // 2. Meta Pixel - AddToCart (engagement)
-      if (typeof window !== 'undefined' && window.fbq) {
+      // 2. Meta Pixel global (si pas de tracking individuel actif)
+      if (typeof window !== 'undefined' && window.fbq && !hasIndividualTracking()) {
         window.fbq('track', 'AddToCart', {
           content_name: smartlinkData.trackTitle,
           content_category: 'Music',
           content_ids: [smartlinkData._id],
           service_name: platform.displayName || platform.name
         });
-        console.log('[CLIENT] Meta Pixel AddToCart tracked');
+        console.log('[CLIENT] Meta Pixel global AddToCart tracked');
       }
 
       // 3. TRACKING SERVEUR - API call sécurisé
@@ -593,6 +632,37 @@ const SmartLinkPageDoubleTracking = () => {
               </Alert>
             )}
           </Box>
+
+          {/* Indicateur de tracking (debug mode uniquement) */}
+          {process.env.NODE_ENV === 'development' && trackingInitialized && (
+            <Box sx={{
+              mt: 2,
+              p: 1,
+              bgcolor: 'rgba(0,0,0,0.05)',
+              borderRadius: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 1
+            }}>
+              <Typography variant="caption" color="textSecondary">
+                Tracking:
+              </Typography>
+              {hasIndividualTracking() && (
+                <Typography variant="caption" sx={{ color: '#28a745', fontWeight: 'bold' }}>
+                  Individual
+                </Typography>
+              )}
+              {hasGlobalTracking() && (
+                <Typography variant="caption" sx={{ color: '#17a2b8', fontWeight: 'bold' }}>
+                  Global
+                </Typography>
+              )}
+              <Typography variant="caption" color="textSecondary">
+                ({getActivePixelsList().length} pixels)
+              </Typography>
+            </Box>
+          )}
 
           {/* Footer */}
           <Typography 

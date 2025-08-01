@@ -11,6 +11,7 @@
   import { usePlatformOrder, usePlatformOrderAnalytics } from "../../hooks/usePlatformOrder";
   import { useURLGeneration, useClickTracking, useUTMParams, useSocialMetadata } from
   "../../hooks/useURLGeneration";
+  import useSmartLinkTracking from "../../hooks/useSmartLinkTracking";
   import "./SmartLinkPageClean.css";
 
   // Import des icônes des plateformes
@@ -81,6 +82,22 @@
 
     // 🌐 Métadonnées sociales
     const { updateMetaTags } = useSocialMetadata(smartLinkData);
+
+    // 📊 Tracking individuel SmartLink avec fallback global
+    const {
+      trackingInitialized,
+      activePixels,
+      trackPlatformClick: trackIndividualPlatformClick,
+      trackCustomEvent,
+      hasIndividualTracking,
+      hasGlobalTracking,
+      getActivePixelsList
+    } = useSmartLinkTracking(smartLinkData, {
+      enableFallback: true,
+      logEvents: true,
+      trackPageView: true,
+      trackClicks: true
+    });
 
     // 🎨 Gestion de la classe body pour retirer la couleur de fond
     useEffect(() => {
@@ -333,6 +350,29 @@
         source: utmSource || 'direct'
       });
 
+      // 📊 NOUVEAU: Tracking individuel SmartLink (prioritaire)
+      if (trackingInitialized) {
+        console.log("📊 Tracking individuel actif:", {
+          platform: platform.platform,
+          position: platformPosition,
+          hasIndividualTracking: hasIndividualTracking(),
+          hasGlobalTracking: hasGlobalTracking(),
+          activePixels: getActivePixelsList()
+        });
+
+        // Tracking avec pixels individuels ou fallback global
+        trackIndividualPlatformClick(platform.platform, url, {
+          position: platformPosition,
+          orderSource,
+          abTestVariant,
+          utmSource,
+          hasUTM,
+          currentUrl,
+          trackTitle: smartLinkData?.smartLink?.trackTitle || smartLinkData?.smartLink?.title,
+          artistName: smartLinkData?.artist?.name
+        });
+      }
+
       // 📊 Enregistrer le clic dans la base de données
       if (smartLinkData?.smartLink?._id) {
         console.log("📊 Tracking platform click:", {
@@ -522,6 +562,27 @@
                 : smartLink.customSubtitle || "Choose music service"
               }
             </div>
+
+            {/* Indicateur de tracking (debug mode uniquement) */}
+            {process.env.NODE_ENV === 'development' && trackingInitialized && (
+              <div style={{
+                fontSize: '10px',
+                color: '#666',
+                marginTop: '8px',
+                padding: '4px 8px',
+                background: '#f5f5f5',
+                borderRadius: '4px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span>Tracking:</span>
+                {hasIndividualTracking() && <span style={{color: '#28a745'}}>Individual</span>}
+                {hasGlobalTracking() && <span style={{color: '#17a2b8'}}>Global</span>}
+                <span>({getActivePixelsList().length} pixels)</span>
+              </div>
+            )}
 
             {/* Liste verticale des plateformes */}
             <div className="platform-list">
