@@ -73,15 +73,15 @@ const MetaAdsArtistes = () => {
                 <p>Créez une base de fans loyaux sur Facebook et Instagram grâce à nos campagnes ciblées.</p>
               </div>
               <div className="benefit-card">
-                <h3>🎨 Formats Créatifs</h3>
+                <h3>Formats Créatifs</h3>
                 <p>Stories, Reels, posts - exploitez tous les formats pour promouvoir votre musique.</p>
               </div>
               <div className="benefit-card">
-                <h3>🌍 Portée Internationale</h3>
+                <h3>Portée Internationale</h3>
                 <p>Touchez vos fans partout dans le monde avec un ciblage géographique précis.</p>
               </div>
               <div className="benefit-card">
-                <h3>💰 Budget Flexible</h3>
+                <h3>Budget Flexible</h3>
                 <p>Campagnes adaptées à tous les budgets, du musicien indépendant au label.</p>
               </div>
             </div>

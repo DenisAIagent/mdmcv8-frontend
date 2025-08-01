@@ -7,27 +7,43 @@ import { updateMetaTagsForLanguage } from '../utils/multilingualMeta';
  */
 export const useSocialMetaAdaptation = () => {
   useEffect(() => {
+    // Cache la détection pour éviter les recalculs
+    const cacheKey = 'mdmc_lang_detection';
+    const cachedLang = localStorage.getItem(cacheKey);
+    
     // Détecter si c'est un bot social qui accède à la page
     const userAgent = navigator.userAgent || '';
     const isSocialBot = /facebook|twitter|linkedinbot|whatsapp|telegram|discord|slack|bot|crawler|spider|facebookexternalhit|twitterbot/i.test(userAgent);
     
     if (isSocialBot) {
-      console.log('🤖 Bot social détecté:', userAgent);
+      console.log('Bot social détecté:', userAgent);
       
       // Détecter la langue depuis l'URL ou les headers
       const urlParams = new URLSearchParams(window.location.search);
       const langFromUrl = urlParams.get('lang');
       const browserLang = navigator.language?.substring(0, 2);
       
-      // Priorité: URL > navigateur > français par défaut
-      const targetLang = langFromUrl || browserLang || 'fr';
+      // Priorité: URL > cache > navigateur > français par défaut
+      const targetLang = langFromUrl || cachedLang || browserLang || 'fr';
       
-      console.log(`🌍 Adaptation meta tags pour bot social en langue: ${targetLang}`);
+      console.log(`Adaptation meta tags pour bot social en langue: ${targetLang}`);
       updateMetaTagsForLanguage(targetLang);
+      
+      // Sauvegarder en cache si pas déjà fait
+      if (!cachedLang && targetLang) {
+        localStorage.setItem(cacheKey, targetLang);
+      }
     } else {
-      // Pour les utilisateurs normaux, utiliser la langue du navigateur
+      // Pour les utilisateurs normaux, utiliser le cache ou détecter
       const browserLang = navigator.language?.substring(0, 2) || 'fr';
-      updateMetaTagsForLanguage(browserLang);
+      const targetLang = cachedLang || browserLang;
+      
+      updateMetaTagsForLanguage(targetLang);
+      
+      // Sauvegarder en cache
+      if (!cachedLang) {
+        localStorage.setItem(cacheKey, targetLang);
+      }
     }
   }, []);
   

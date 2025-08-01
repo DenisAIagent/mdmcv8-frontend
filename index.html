@@ -57,15 +57,15 @@
     <meta property="twitter:site" content="@mdmcmusicads" />
     <meta property="twitter:creator" content="@mdmcmusicads" />
     
-    <!-- CSP CORRIGÉE pour MDMC - Autorise toutes les ressources nécessaires -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://connect.facebook.net https://analytics.tiktok.com https://capi-automation.s3.us-east-2.amazonaws.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http: https://via.placeholder.com https://www.facebook.com https://analytics.tiktok.com; media-src 'self' blob: data: https: https://res.cloudinary.com; connect-src 'self' https: http: ws: wss: https://api.mdmcmusicads.com https://api.airtable.com https://api.allorigins.win https://blog.mdmcmusicads.com https://blog-wp-production.up.railway.app https://mdmcv4-backend-production-b615.up.railway.app https://region1.google-analytics.com https://www.google-analytics.com https://stats.g.doubleclick.net https://ipapi.co https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://analytics.tiktok.com https://featurable.com; frame-src 'self' https://calendly.com https://www.googletagmanager.com; object-src 'none'; base-uri 'self';">
+    <!-- CSP sécurisée pour MDMC - Minimise les risques XSS -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-gtm-script' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://connect.facebook.net https://analytics.tiktok.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https: http:; media-src 'self' blob: data: https: https://res.cloudinary.com; connect-src 'self' https: https://api.mdmcmusicads.com https://api.allorigins.win https://corsproxy.io https://blog.mdmcmusicads.com https://mdmcv4-backend-production-b615.up.railway.app https://region1.google-analytics.com https://www.google-analytics.com https://stats.g.doubleclick.net https://ipapi.co https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://analytics.tiktok.com https://featurable.com; frame-src 'self' https://calendly.com https://www.googletagmanager.com; object-src 'none'; base-uri 'self';">
     
     <!-- Fonts Google pré-chargées -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <!-- 🎨 Color Thief via CDN pour extraction couleurs SmartLinks -->
+    <!-- Color Thief via CDN pour extraction couleurs SmartLinks -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
   </head>
   <body>

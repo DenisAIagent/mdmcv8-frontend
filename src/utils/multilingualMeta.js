@@ -46,6 +46,11 @@ export const getMetaForLanguage = (language = null) => {
 export const updateMetaTagsForLanguage = (language = null) => {
   const meta = getMetaForLanguage(language);
   
+  // Déterminer la langue finale utilisée
+  const detectedLang = language || navigator.language?.substring(0, 2) || 'fr';
+  const supportedLangs = ['fr', 'en', 'es', 'pt'];
+  const finalLang = supportedLangs.includes(detectedLang) ? detectedLang : 'fr';
+  
   // Mettre à jour le titre
   document.title = meta.title;
   
@@ -83,9 +88,9 @@ export const updateMetaTagsForLanguage = (language = null) => {
   }
   
   // Mettre à jour l'attribut lang du HTML
-  document.documentElement.setAttribute('lang', language || 'fr');
+  document.documentElement.setAttribute('lang', finalLang);
   
-  console.log(`Meta tags mis à jour pour la langue: ${language || 'auto-détectée'} (${lang})`);
+  console.log(`Meta tags mis à jour pour la langue: ${language || 'auto-détectée'} (${finalLang})`);
   
   return meta;
 };

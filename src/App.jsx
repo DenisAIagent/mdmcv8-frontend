@@ -195,10 +195,10 @@ const AdminLayout = () => {
     { label: 'WordPress', path: '/admin/wordpress', icon: <LinkIcon /> },
     { label: 'Avis Clients', path: '/admin/reviews', icon: <PeopleIcon /> },
     { label: 'Statistiques', path: '/admin/stats', icon: <DashboardIcon /> },
-    { label: '🎛️ Ordre Plateformes', path: '/admin/platform-order', icon: <LinkIcon /> },
-    { label: '🔗 URLs & Tracking', path: '/admin/urls', icon: <LinkIcon /> },
-    { label: '🧪 Test SmartLink', path: '/admin/test-smartlink', icon: <LinkIcon /> },
-    { label: '🎧 Test Media Player', path: '/admin/test-media', icon: <LinkIcon /> },
+    { label: 'Ordre Plateformes', path: '/admin/platform-order', icon: <LinkIcon /> },
+    { label: 'URLs & Tracking', path: '/admin/urls', icon: <LinkIcon /> },
+    { label: 'Test SmartLink', path: '/admin/test-smartlink', icon: <LinkIcon /> },
+    { label: 'Test Media Player', path: '/admin/test-media', icon: <LinkIcon /> },
   ];
 
   const drawer = (
