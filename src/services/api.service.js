@@ -234,6 +234,27 @@ fetchPlatformLinks: async (sourceUrl, userCountry = 'FR') => {
 }
   };
 
+  // SERVICE SHORTLINKS - Gestion liens courts
+  shortlinks = {
+    create: async (smartLinkId) => {
+      console.log('🔗 ShortLinks: Création code court...', smartLinkId);
+      return await this.request('/shortlinks', {
+        method: 'POST',
+        body: JSON.stringify({ smartLinkId })
+      });
+    },
+
+    resolve: async (shortCode) => {
+      console.log('🔗 ShortLinks: Résolution code court...', shortCode);
+      return await this.request(`/shortlinks/${shortCode}`);
+    },
+
+    getStats: async (shortCode) => {
+      console.log('🔗 ShortLinks: Statistiques code court...', shortCode);
+      return await this.request(`/shortlinks/${shortCode}/stats`);
+    }
+  };
+
   // SERVICE MUSIC PLATFORM - Sans fallback
   musicPlatform = {
     fetchLinksFromSourceUrl: async (sourceUrl) => {
