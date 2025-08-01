@@ -11,6 +11,9 @@ import {
   NavLink
 } from 'react-router-dom';
 
+// Import du hook de tracking SEO critique
+import usePageTracking from './hooks/usePageTracking';
+
 import './App.css';
 import './assets/styles/global.css';
 import './assets/styles/animations.css';
@@ -247,13 +250,25 @@ const AdminLayout = () => {
 };
 
 const HomePage = ({ openSimulator }) => {
-  useEffect(() => { console.log("HomePage rendu"); }, []);
+  // 📊 TRACKING CRITIQUE : Virtual pageviews pour homepage
+  const { trackFormSubmission, trackEngagement } = usePageTracking(
+    "Promotion Musicale Pro - +50M Vues Générées | MDMC Music Ads",
+    "homepage"
+  );
+
+  useEffect(() => { 
+    console.log("HomePage rendu avec tracking SEO activé"); 
+    
+    // Track homepage loaded
+    trackEngagement('homepage_loaded');
+  }, [trackEngagement]);
+
   return (
     <>
       <SEOHead 
-        title="Marketing Musical Professionnel | MDMC Music Ads - Agence Promotion Artistes"
-        description="Agence marketing musical spécialisée YouTube, Meta, TikTok. Boostez vos streams, augmentez votre audience et découvrez de nouveaux fans avec nos experts en promotion d'artistes."
-        keywords="marketing musical, promotion artiste, publicité YouTube musique, campagne Meta musique, TikTok musical, augmenter streams Spotify, marketing digital label, promotion streaming, publicité artiste émergent"
+        title="Promotion Musicale Pro - +50M Vues Générées | MDMC Music Ads"
+        description="Agence N°1 marketing musical : +6M€ investis, +50M vues générées. YouTube Ads, Meta Ads, TikTok Pro. Résultats garantis pour artistes et labels. Devis gratuit."
+        keywords="promotion musicale professionnelle, marketing musical efficace, publicité YouTube artiste, augmenter streams Spotify, campagne Meta musique, TikTok musical viral, promotion artiste émergent, label marketing digital, boost streams garantis, agence musicale performante"
         url="https://www.mdmcmusicads.com"
         canonicalUrl="https://www.mdmcmusicads.com/"
       />
@@ -264,7 +279,7 @@ const HomePage = ({ openSimulator }) => {
         <About />
         <Articles />
         <Reviews />
-        <Contact />
+        <Contact trackFormSubmission={trackFormSubmission} />
       </main>
       <Footer openSimulator={openSimulator} />
       <CookieBanner />

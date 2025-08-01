@@ -5,14 +5,24 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import facebookPixel from '../../services/facebookPixel.service';
 import gtm from '../../services/googleTagManager.service';
+import usePageTracking from '../../hooks/usePageTracking';
 import '../../assets/styles/service-page.css';
 
 const YouTubeAdsMusique = () => {
+  // 📊 TRACKING CRITIQUE : Virtual pageviews pour page service
+  const { trackFormSubmission, trackEngagement } = usePageTracking(
+    "YouTube Ads Musique - Promotion Professionnelle Artistes | MDMC",
+    "service_page"
+  );
+
   useEffect(() => {
     const serviceName = 'YouTube Ads Musique';
     facebookPixel.trackServicePageView(serviceName);
     gtm.trackServicePageView(serviceName);
-  }, []);
+    
+    // Track service page loaded
+    trackEngagement('service_page_loaded', 1);
+  }, [trackEngagement]);
 
   const serviceSchema = {
     "@context": "https://schema.org",

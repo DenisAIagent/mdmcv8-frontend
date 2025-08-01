@@ -66,6 +66,16 @@ class GoogleTagManagerService {
       form_type: formType,
       value: 1
     });
+    
+    // Event form_submit amélioré pour GA4
+    this.sendEvent('form_submit', {
+      event_category: 'conversion',
+      event_label: 'form_completion',
+      form_type: formType,
+      form_destination: formType === 'contact' ? 'contact_sales' : formType,
+      conversion_value: 1,
+      timestamp: Date.now()
+    });
   }
 
   trackSmartLinkClick(artistName, trackName, platform) {
@@ -144,6 +154,30 @@ class GoogleTagManagerService {
       campaign_action: action,
       value: value
     });
+  }
+
+  // 📊 VIRTUAL PAGEVIEW - CRITIQUE POUR SPA
+  trackVirtualPageview(pageData) {
+    // Event personnalisé pour GTM/GA4
+    this.sendEvent('virtual_pageview', {
+      event_category: 'navigation',
+      event_label: 'spa_navigation',
+      page_path: pageData.page_path,
+      page_title: pageData.page_title,
+      page_location: pageData.page_location,
+      referrer: pageData.referrer,
+      timestamp: Date.now()
+    });
+
+    // Event GA4 standard page_view
+    this.sendEvent('page_view', {
+      page_title: pageData.page_title,
+      page_location: pageData.page_location,
+      page_path: pageData.page_path,
+      ...pageData
+    });
+
+    console.log('📊 Virtual pageview trackée:', pageData);
   }
 }
 
