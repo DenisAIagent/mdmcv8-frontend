@@ -1,7 +1,8 @@
 // src/components/admin/AdminLayout.jsx
 
-import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, Suspense } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import AdminRouter from './AdminRouter';
 import {
   AppBar,
   Box,
@@ -17,6 +18,7 @@ import {
   Typography,
   Button,
   useTheme,
+  CircularProgress,
 } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -154,7 +156,9 @@ export default function AdminLayout() {
           mt: 8,
         }}
       >
-        <Outlet />
+        <Suspense fallback={<Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box>}>
+          <AdminRouter />
+        </Suspense>
       </Box>
     </Box>
   );

@@ -252,6 +252,25 @@ fetchPlatformLinks: async (sourceUrl, userCountry = 'FR') => {
     getStats: async (shortCode) => {
       console.log('🔗 ShortLinks: Statistiques code court...', shortCode);
       return await this.request(`/shortlinks/${shortCode}/stats`);
+    },
+
+    getAll: async () => {
+      console.log('🔗 ShortLinks: Récupération liste complète...');
+      return await this.request('/shortlinks');
+    },
+
+    deactivate: async (shortCode) => {
+      console.log('🔗 ShortLinks: Désactivation...', shortCode);
+      return await this.request(`/shortlinks/${shortCode}`, {
+        method: 'DELETE'
+      });
+    },
+
+    activate: async (shortCode) => {
+      console.log('🔗 ShortLinks: Activation...', shortCode);
+      return await this.request(`/shortlinks/${shortCode}/activate`, {
+        method: 'PATCH'
+      });
     }
   };
 

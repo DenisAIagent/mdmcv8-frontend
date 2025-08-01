@@ -292,6 +292,13 @@ const AdminPanel = () => {
       onClick: () => safeNavigate('/admin/smartlinks/new'),
     },
     {
+      title: 'Gérer ShortLinks',
+      description: 'Administrer les liens courts',
+      icon: <Speed />,
+      color: theme.palette.warning.main,
+      onClick: () => safeNavigate('/admin/shortlinks'),
+    },
+    {
       title: 'Analytics',
       description: 'Consulter les statistiques détaillées',
       icon: <Analytics />,

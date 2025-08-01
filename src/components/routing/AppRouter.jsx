@@ -1,15 +1,14 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Lazy loading des composants avec extensions explicites
-const HomePage = React.lazy(() => import('../../pages/HomePage.jsx'));
-const AdminLayout = React.lazy(() => import('../../pages/admin/AdminLayout.jsx'));
-const AdminLogin = React.lazy(() => import('../../pages/admin/AdminLogin.jsx'));
-const AdminDashboard = React.lazy(() => import('../../pages/admin/AdminDashboard.jsx'));
-const ArtistPage = React.lazy(() => import('../../pages/ArtistPage.jsx'));
-const SmartLinkPage = React.lazy(() => import('../../pages/SmartLinkPage.jsx'));
+// Lazy loading des composants avec chemins corrects
+const HomePage = React.lazy(() => import('../../pages/HomePage.jsx')); // Chemin corrigé
+const AdminLayout = React.lazy(() => import('../admin/AdminLayout.jsx')); // Chemin corrigé
+const AdminLogin = React.lazy(() => import('../admin/AdminLogin.jsx')); // Chemin corrigé
+const ArtistPage = React.lazy(() => import('../../pages/public/ArtistPage.jsx')); // Chemin corrigé
+const SmartLinkPage = React.lazy(() => import('../../pages/public/SmartLinkPage.jsx')); // Chemin corrigé
 const ShortLinkPage = React.lazy(() => import('../../pages/public/ShortLinkPage.jsx'));
-const AllReviews = React.lazy(() => import('../../pages/AllReviews.jsx'));
+const AllReviews = React.lazy(() => import('../pages/AllReviews.jsx')); // Chemin corrigé
 
 const AppRouter = () => {
   return (

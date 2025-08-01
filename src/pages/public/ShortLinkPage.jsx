@@ -21,13 +21,13 @@ const ShortLinkPage = () => {
         if (response.success && response.data) {
           const { smartLink, artist } = response.data;
           
-          // Redirection vers la page SmartLink complète
-          const fullSmartLinkUrl = `/#/smartlinks/${artist.slug}/${smartLink.slug}`;
+          // Redirection vers la page SmartLink complète avec React Router
+          const fullSmartLinkPath = `/smartlinks/${artist.slug}/${smartLink.slug}`;
           
-          console.log('Redirection vers:', fullSmartLinkUrl);
+          console.log('Redirection vers:', fullSmartLinkPath);
           
-          // Redirection immédiate pour conserver le tracking
-          window.location.href = fullSmartLinkUrl;
+          // Utiliser navigate au lieu de window.location.href pour HashRouter
+          navigate(fullSmartLinkPath, { replace: true });
           
         } else {
           throw new Error('ShortLink non valide');
