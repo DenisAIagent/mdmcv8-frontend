@@ -152,11 +152,15 @@
 
   .hero-stats {
     justify-content: center; /* Stats centrées sur mobile */
-    gap: 1rem; /* Réduit l'espacement sur mobile */
+    gap: 1.5rem; /* Augmente l'espacement pour éviter chevauchement */
+    flex-direction: row; /* Force l'affichage en ligne */
+    flex-wrap: wrap; /* Permet le passage à la ligne si nécessaire */
   }
   
   .stat-item {
-    min-width: 140px; /* Largeur minimum réduite sur mobile */
+    min-width: 160px; /* Largeur minimum augmentée pour plus d'espace */
+    flex: 0 1 calc(50% - 0.75rem); /* 2 colonnes sur mobile */
+    margin-bottom: 1rem; /* Espace vertical entre lignes */
   }
   
   .stat-number {
@@ -165,23 +169,34 @@
   
   .stat-label {
     font-size: 0.75rem; /* Plus petit sur mobile */
+    white-space: normal; /* Permet le retour à la ligne sur mobile */
+    line-height: 1.3; /* Améliore l'espacement des lignes */
   }
 }
 
 @media (max-width: 480px) {
   .hero-stats {
-    gap: 0.5rem; /* Encore moins d'espace sur très petits écrans */
+    gap: 1rem; /* Espace suffisant même sur petits écrans */
+    flex-direction: column; /* Affichage vertical sur très petits écrans */
+    align-items: center; /* Centre les éléments */
   }
   
   .stat-item {
-    min-width: 100px; /* Très compact sur petit écran */
+    min-width: 120px; /* Largeur minimum pour éviter le chevauchement */
+    flex: none; /* Supprime la contrainte flex sur petits écrans */
+    width: 100%; /* Prend toute la largeur disponible */
+    max-width: 200px; /* Limite la largeur maximum */
+    margin-bottom: 1.5rem; /* Plus d'espace vertical */
   }
   
   .stat-number {
-    font-size: 1.5rem;
+    font-size: 1.8rem; /* Légèrement plus grand pour lisibilité */
   }
   
   .stat-label {
     font-size: 0.7rem;
+    white-space: normal; /* Permet le retour à la ligne */
+    line-height: 1.4; /* Meilleur espacement des lignes */
+    text-align: center; /* Centre le texte */
   }
 }
