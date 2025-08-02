@@ -24,7 +24,16 @@
       "Bash(grep:*)",
       "Bash(npm run dev:*)",
       "Bash(npm install)",
-      "Bash(timeout 10s npm run dev:*)"
+      "Bash(timeout 10s npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(chmod:*)",
+      "Bash(railway --version)",
+      "Bash(railway status:*)",
+      "Bash(railway login:*)",
+      "Bash(railway list:*)",
+      "Bash(railway connect:*)",
+      "Bash(railway link:*)",
+      "Bash(node test-shortlinks.js)"
     ],
     "deny": []
   }
