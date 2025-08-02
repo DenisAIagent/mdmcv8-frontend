@@ -27,7 +27,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import ReviewsIcon from '@mui/icons-material/Reviews';
+import SpeedIcon from '@mui/icons-material/Speed';
 
 import apiService from '../../services/api.service';
 
@@ -38,7 +38,7 @@ const menuItems = [
   { label: 'SmartLinks', path: '/admin/smartlinks', icon: <LinkIcon /> },
   { label: 'Artistes', path: '/admin/artists', icon: <PeopleIcon /> },
   { label: 'Analytics', path: '/admin/analytics', icon: <AssessmentIcon /> },
-  { label: 'Avis', path: '/admin/reviews', icon: <ReviewsIcon /> },
+  { label: 'ShortLinks', path: '/admin/shortlinks', icon: <SpeedIcon /> },
   { label: 'Paramètres', path: '/admin/settings', icon: <SettingsIcon /> },
 ];
 

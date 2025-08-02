@@ -75,7 +75,7 @@ import SmartlinkListPage from './pages/admin/smartlinks/SmartlinkListPage';
 import SmartlinkCreatePage from './pages/admin/smartlinks/SmartlinkCreatePage';
 import SmartlinkEditPage from './pages/admin/smartlinks/SmartlinkEditPage';
 import SmartlinkAnalyticsPage from './pages/admin/smartlinks/SmartlinkAnalyticsPage';
-import ReviewManager from './components/admin/ReviewManager';
+import ShortLinkManager from './components/admin/ShortLinkManager';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 
 const ProtectedRoute = ({ children }) => {
@@ -252,7 +252,7 @@ function App() {
             <Route path="analytics/:id" element={<SmartlinkAnalyticsPage />} />
           </Route>
           <Route path="analytics" element={<SmartlinkAnalyticsPage />} />
-          <Route path="reviews" element={<ReviewManager />} />
+          <Route path="shortlinks" element={<ShortLinkManager />} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
