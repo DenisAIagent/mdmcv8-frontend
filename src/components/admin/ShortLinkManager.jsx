@@ -92,11 +92,22 @@ const ShortLinkManager = () => {
         }
         
         const smartLinksWithShortCodes = smartLinksRes.data
-          .filter(smartlink => smartlink.shortId) // Seulement ceux avec shortId
+          .filter(smartlink => {
+            const hasValidShortId = smartlink.shortId && smartlink.shortId.trim() !== '';
+            if (!hasValidShortId && smartlink.shortId !== undefined) {
+              console.log('🔍 SmartLink filtré (shortId invalide):', {
+                id: smartlink._id,
+                title: smartlink.trackTitle,
+                shortId: smartlink.shortId,
+                shortIdType: typeof smartlink.shortId
+              });
+            }
+            return hasValidShortId;
+          });
           
         console.log('📊 SmartLinks disponibles:', smartLinksRes.data.length);
-        console.log('📊 SmartLinks avec shortId:', smartLinksWithShortCodes.length);
-        console.log('📊 SmartLinks sans shortId:', smartLinksRes.data.length - smartLinksWithShortCodes.length);
+        console.log('📊 SmartLinks avec shortId valide:', smartLinksWithShortCodes.length);
+        console.log('📊 SmartLinks sans shortId valide:', smartLinksRes.data.length - smartLinksWithShortCodes.length);
         
         const finalMappedLinks = smartLinksWithShortCodes
           .map(smartlink => {
@@ -356,9 +367,14 @@ const ShortLinkManager = () => {
         setError(`Erreur lors de la suppression de ${errorCount} ShortLink(s)`);
       }
       
-      // Nettoyer la sélection et recharger
+      // Nettoyer la sélection et recharger avec délai pour s'assurer que le backend est à jour
       clearSelection();
-      loadData();
+      
+      // Attendre un peu avant de recharger pour s'assurer que toutes les mises à jour backend sont propagées
+      setTimeout(() => {
+        console.log('🔄 Rechargement différé des données après suppression...');
+        loadData();
+      }, 1000);
       
     } catch (error) {
       console.error('Erreur suppression multiple:', error);
