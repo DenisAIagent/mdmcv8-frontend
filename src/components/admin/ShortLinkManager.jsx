@@ -300,8 +300,17 @@ const ShortLinkManager = () => {
     try {
       setDeleteDialog({ open: false, count: 0 });
       
-      // Trouver les SmartLinks correspondants aux ShortLinks sélectionnés
+      console.log('🚀 Début suppression multiple. Sélectionnés:', selectedShortLinks);
+      console.log('📊 ShortLinks disponibles:', shortLinks.length);
+      
+      // Trouver les ShortLinks correspondants aux IDs sélectionnés
       const selectedShortLinksList = shortLinks.filter(link => selectedShortLinks.has(link._id));
+      
+      console.log('🎯 ShortLinks à supprimer:', selectedShortLinksList.map(sl => ({
+        id: sl._id,
+        shortCode: sl.shortCode,
+        title: sl.trackTitle
+      })));
       
       let successCount = 0;
       let errorCount = 0;
@@ -313,17 +322,24 @@ const ShortLinkManager = () => {
           const correspondingSmartLink = smartLinks.find(sl => sl.shortId === shortLink.shortCode);
           
           if (correspondingSmartLink) {
-            // Supprimer le shortId du SmartLink (ou le SmartLink entier selon les besoins)
+            console.log('🗑️ Suppression shortId:', shortLink.shortCode, 'pour SmartLink:', correspondingSmartLink._id);
+            
+            // Supprimer le shortId du SmartLink
             const response = await apiService.smartlinks.update(correspondingSmartLink._id, {
               shortId: null // Supprimer le code court
             });
             
+            console.log('📥 Réponse suppression:', response);
+            
             if (response.success) {
               successCount++;
+              console.log('✅ ShortId supprimé avec succès:', shortLink.shortCode);
             } else {
               errorCount++;
+              console.error('❌ Échec suppression shortId:', shortLink.shortCode, response);
             }
           } else {
+            console.error('❌ SmartLink correspondant introuvable pour:', shortLink.shortCode);
             errorCount++;
           }
         } catch (error) {
