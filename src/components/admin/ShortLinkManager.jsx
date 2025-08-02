@@ -68,16 +68,25 @@ const ShortLinkManager = () => {
         console.warn('❌ SmartLinks indisponibles:', smartError);
       }
 
-      // Charger ShortLinks (peut échouer)
-      try {
-        shortLinksRes = await apiService.shortlinks.getAll();
-        console.log('✅ ShortLinks chargés:', shortLinksRes.data?.length || 0);
-        if (shortLinksRes.success) {
-          setShortLinks(shortLinksRes.data);
-        }
-      } catch (shortError) {
-        console.warn('❌ ShortLinks indisponibles (endpoint manquant):', shortError);
-        setShortLinks([]); // Liste vide mais pas d'erreur
+      // Utiliser SmartLinks comme ShortLinks (ils ont déjà des shortId)
+      if (smartLinksRes.success && smartLinksRes.data) {
+        const smartLinksWithShortCodes = smartLinksRes.data
+          .filter(smartlink => smartlink.shortId) // Seulement ceux avec shortId
+          .map(smartlink => ({
+            _id: smartlink._id,
+            shortCode: smartlink.shortId,
+            smartLinkId: {
+              trackTitle: smartlink.trackTitle,
+              artistId: { name: smartlink.artistId?.name }
+            },
+            clickCount: smartlink.totalClicks || smartlink.platformClickCount || 0,
+            isActive: smartlink.isPublished,
+            createdAt: smartlink.createdAt,
+            lastAccessedAt: smartlink.lastViewedAt || smartlink.updatedAt
+          }));
+        
+        console.log('✅ ShortLinks convertis depuis SmartLinks:', smartLinksWithShortCodes.length);
+        setShortLinks(smartLinksWithShortCodes);
       }
 
       // Erreur uniquement si AUCUN des deux ne fonctionne
@@ -99,18 +108,30 @@ const ShortLinkManager = () => {
       return;
     }
 
+    // Vérifier si le SmartLink sélectionné a déjà un shortId
+    const selectedSmart = smartLinks.find(sl => sl._id === selectedSmartLink);
+    if (selectedSmart?.shortId) {
+      setSuccess(`ShortLink existant trouvé: ${selectedSmart.shortId}`);
+      setSelectedSmartLink('');
+      loadData();
+      return;
+    }
+
     try {
       setCreating(true);
-      const response = await apiService.shortlinks.create(selectedSmartLink);
+      // Essayer de créer via l'endpoint SmartLinks
+      const response = await apiService.smartlinks.getById(selectedSmartLink);
       
-      if (response.success) {
-        setSuccess(`ShortLink créé: ${response.data.shortCode}`);
+      if (response.success && response.data?.shortId) {
+        setSuccess(`ShortLink récupéré: ${response.data.shortId}`);
         setSelectedSmartLink('');
-        loadData(); // Recharger la liste
+        loadData();
+      } else {
+        setError('Ce SmartLink n\'a pas de code court associé');
       }
     } catch (error) {
-      console.error('Erreur création ShortLink:', error);
-      setError('Endpoint ShortLinks manquant côté backend - Contactez le développeur');
+      console.error('Erreur récupération ShortLink:', error);
+      setError('Impossible de récupérer le code court - SmartLink peut-être incomplet');
     } finally {
       setCreating(false);
     }
@@ -124,29 +145,55 @@ const ShortLinkManager = () => {
 
   const toggleShortLink = async (shortCode, isActive) => {
     try {
-      if (isActive) {
-        await apiService.shortlinks.deactivate(shortCode);
-        setSuccess(`ShortLink ${shortCode} désactivé`);
-      } else {
-        await apiService.shortlinks.activate(shortCode);
-        setSuccess(`ShortLink ${shortCode} activé`);
+      // Trouver le SmartLink correspondant
+      const correspondingSmartLink = smartLinks.find(sl => sl.shortId === shortCode);
+      if (!correspondingSmartLink) {
+        setError('SmartLink correspondant introuvable');
+        return;
       }
-      loadData();
+
+      // Utiliser l'API SmartLinks pour toggle
+      const updatedData = { isPublished: !isActive };
+      const response = await apiService.smartlinks.update(correspondingSmartLink._id, updatedData);
+      
+      if (response.success) {
+        setSuccess(`SmartLink ${shortCode} ${!isActive ? 'activé' : 'désactivé'}`);
+        loadData();
+      }
     } catch (error) {
-      console.error('Erreur toggle ShortLink:', error);
-      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
+      console.error('Erreur toggle SmartLink:', error);
+      setError('Erreur lors de la modification du SmartLink');
     }
   };
 
   const viewStats = async (shortCode) => {
     try {
-      const response = await apiService.shortlinks.getStats(shortCode);
-      if (response.success) {
-        setStatsDialog({ open: true, data: response.data });
+      // Trouver le SmartLink correspondant
+      const correspondingSmartLink = smartLinks.find(sl => sl.shortId === shortCode);
+      if (!correspondingSmartLink) {
+        setError('SmartLink correspondant introuvable');
+        return;
       }
+
+      // Utiliser les stats du SmartLink directement
+      const statsData = {
+        shortCode: shortCode,
+        smartLink: {
+          artist: correspondingSmartLink.artistId?.name || 'Inconnu',
+          title: correspondingSmartLink.trackTitle || 'Titre inconnu'
+        },
+        totalClicks: correspondingSmartLink.totalClicks || correspondingSmartLink.platformClickCount || 0,
+        accessStats: {
+          uniqueVisitors: correspondingSmartLink.viewCount || 0,
+          topCountries: {} // À implémenter si nécessaire
+        },
+        lastAccessedAt: correspondingSmartLink.lastViewedAt || correspondingSmartLink.updatedAt
+      };
+
+      setStatsDialog({ open: true, data: statsData });
     } catch (error) {
       console.error('Erreur stats:', error);
-      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
+      setError('Erreur lors du chargement des statistiques');
     }
   };
 
@@ -193,6 +240,7 @@ const ShortLinkManager = () => {
               {smartLinks.map((smartLink) => (
                 <option key={smartLink._id} value={smartLink._id}>
                   {smartLink.artistId?.name} - {smartLink.trackTitle}
+                  {smartLink.shortId ? ` (${smartLink.shortId})` : ' (pas de code)'}
                 </option>
               ))}
             </TextField>
