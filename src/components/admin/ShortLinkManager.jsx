@@ -131,6 +131,16 @@ const ShortLinkManager = () => {
     }
   };
 
+  // Fonction pour générer un code court aléatoire
+  const generateShortCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
   const createShortLink = async () => {
     if (!selectedSmartLink) {
       setError('Veuillez sélectionner un SmartLink');
@@ -148,19 +158,30 @@ const ShortLinkManager = () => {
 
     try {
       setCreating(true);
-      // Essayer de créer via l'endpoint SmartLinks
-      const response = await apiService.smartlinks.getById(selectedSmartLink);
       
-      if (response.success && response.data?.shortId) {
-        setSuccess(`ShortLink récupéré: ${response.data.shortId}`);
+      // Auto-générer un code court si manquant
+      const newShortCode = generateShortCode();
+      console.log('🔧 Génération nouveau code court:', newShortCode);
+      
+      // Mettre à jour le SmartLink avec le nouveau shortId
+      const updateData = {
+        shortId: newShortCode,
+        // Préserver les autres données existantes
+        ...selectedSmart
+      };
+      
+      const response = await apiService.smartlinks.update(selectedSmartLink, updateData);
+      
+      if (response.success) {
+        setSuccess(`ShortLink créé avec succès: ${newShortCode}`);
         setSelectedSmartLink('');
-        loadData();
+        loadData(); // Recharger pour afficher le nouveau code
       } else {
-        setError('Ce SmartLink n\'a pas de code court associé');
+        setError('Erreur lors de la création du code court');
       }
     } catch (error) {
-      console.error('Erreur récupération ShortLink:', error);
-      setError('Impossible de récupérer le code court - SmartLink peut-être incomplet');
+      console.error('Erreur création ShortLink:', error);
+      setError('Erreur lors de la génération du code court - Réessayez');
     } finally {
       setCreating(false);
     }
@@ -253,7 +274,7 @@ const ShortLinkManager = () => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Créer un nouveau ShortLink
+            Créer/Récupérer un ShortLink
           </Typography>
           
           <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
@@ -280,7 +301,7 @@ const ShortLinkManager = () => {
               onClick={createShortLink}
               disabled={creating || !selectedSmartLink}
             >
-              {creating ? 'Création...' : 'Créer'}
+              {creating ? 'Génération...' : 'Créer/Récupérer ShortLink'}
             </Button>
           </Box>
         </CardContent>
