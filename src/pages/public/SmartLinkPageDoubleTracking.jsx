@@ -518,7 +518,7 @@ const SmartLinkPageDoubleTracking = () => {
         {/* Open Graph */}
         <meta property="og:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
         <meta property="og:description" content={`Écouter sur toutes les plateformes de streaming`} />
-        <meta property="og:image" content={smartlinkData.artworkUrl} />
+        <meta property="og:image" content={smartlinkData.coverImageUrl} />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1024" />
         <meta property="og:image:height" content="1024" />
@@ -529,7 +529,7 @@ const SmartLinkPageDoubleTracking = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
         <meta name="twitter:description" content="Écouter sur toutes les plateformes de streaming" />
-        <meta name="twitter:image" content={smartlinkData.artworkUrl} />
+        <meta name="twitter:image" content={smartlinkData.coverImageUrl} />
         
         {/* Structured Data */}
         <script type="application/ld+json">
@@ -541,7 +541,7 @@ const SmartLinkPageDoubleTracking = () => {
               "@type": "MusicGroup",
               "name": smartlinkData.artistName
             },
-            "image": smartlinkData.artworkUrl,
+            "image": smartlinkData.coverImageUrl,
             "url": window.location.href
           })}
         </script>
@@ -557,9 +557,9 @@ const SmartLinkPageDoubleTracking = () => {
         <SmartLinkCard>
           {/* Artwork */}
           <ArtworkContainer>
-            {smartlinkData.artworkUrl ? (
+            {smartlinkData.coverImageUrl ? (
               <img 
-                src={smartlinkData.artworkUrl} 
+                src={smartlinkData.coverImageUrl} 
                 alt={`${smartlinkData.trackTitle} artwork`}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => {

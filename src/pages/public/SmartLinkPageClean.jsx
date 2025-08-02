@@ -159,7 +159,7 @@
             }, 100);
 
             // 🎨 BACKGROUND ARTWORK selon vos spécifications exactes
-            const artworkUrl = response.data.smartLink?.artwork;
+            const artworkUrl = response.data.smartLink?.coverImageUrl;
             console.log("🎨 Artwork URL found:", artworkUrl);
 
             // 🧪 Test 1 : URL Validity

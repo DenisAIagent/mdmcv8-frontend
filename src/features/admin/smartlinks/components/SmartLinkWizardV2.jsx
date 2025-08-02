@@ -217,6 +217,7 @@ const SmartLinkWizardV2 = () => {
         
         // Gestion artwork
         setSelectedArtwork(result.data.artwork);
+        setValue('coverImageUrl', result.data.artwork);
         setAlternativeArtworks(result.data.alternativeArtworks || []);
         
         // Gestion plateformes
@@ -252,7 +253,7 @@ const SmartLinkWizardV2 = () => {
   // --- ÉTAPE 2: GESTION ARTWORK ---
   const handleArtworkSelection = (artwork) => {
     setSelectedArtwork(artwork);
-    setValue('artwork', artwork);
+    setValue('coverImageUrl', artwork);
   };
 
   // --- ÉTAPE 3: GESTION PLATEFORMES ---
