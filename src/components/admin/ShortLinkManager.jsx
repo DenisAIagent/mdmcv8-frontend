@@ -22,7 +22,9 @@ import {
   DialogActions,
   Alert,
   Tooltip,
-  CircularProgress
+  CircularProgress,
+  Checkbox,
+  Toolbar
 } from '@mui/material';
 import {
   ContentCopy,
@@ -30,7 +32,8 @@ import {
   VisibilityOff,
   Analytics,
   Delete,
-  Add
+  Add,
+  DeleteSweep
 } from '@mui/icons-material';
 import apiService from '../../services/api.service';
 
@@ -43,6 +46,10 @@ const ShortLinkManager = () => {
   const [statsDialog, setStatsDialog] = useState({ open: false, data: null });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  // États pour la sélection multiple
+  const [selectedShortLinks, setSelectedShortLinks] = useState(new Set());
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, count: 0 });
 
   // Charger les données
   useEffect(() => {
@@ -256,6 +263,105 @@ const ShortLinkManager = () => {
     }
   };
 
+  // Fonctions de gestion de la sélection multiple
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedShortLinks(new Set());
+      setIsAllSelected(false);
+    } else {
+      const allIds = new Set(shortLinks.map(link => link._id));
+      setSelectedShortLinks(allIds);
+      setIsAllSelected(true);
+    }
+  };
+
+  const handleSelectOne = (shortLinkId) => {
+    const newSelection = new Set(selectedShortLinks);
+    if (newSelection.has(shortLinkId)) {
+      newSelection.delete(shortLinkId);
+    } else {
+      newSelection.add(shortLinkId);
+    }
+    
+    setSelectedShortLinks(newSelection);
+    setIsAllSelected(newSelection.size === shortLinks.length && shortLinks.length > 0);
+  };
+
+  const clearSelection = () => {
+    setSelectedShortLinks(new Set());
+    setIsAllSelected(false);
+  };
+
+  const handleDeleteSelected = () => {
+    setDeleteDialog({ open: true, count: selectedShortLinks.size });
+  };
+
+  const confirmDeleteSelected = async () => {
+    try {
+      setDeleteDialog({ open: false, count: 0 });
+      
+      // Trouver les SmartLinks correspondants aux ShortLinks sélectionnés
+      const selectedShortLinksList = shortLinks.filter(link => selectedShortLinks.has(link._id));
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      // Supprimer en série pour éviter la surcharge
+      for (const shortLink of selectedShortLinksList) {
+        try {
+          // Trouver le SmartLink correspondant
+          const correspondingSmartLink = smartLinks.find(sl => sl.shortId === shortLink.shortCode);
+          
+          if (correspondingSmartLink) {
+            // Supprimer le shortId du SmartLink (ou le SmartLink entier selon les besoins)
+            const response = await apiService.smartlinks.update(correspondingSmartLink._id, {
+              shortId: null // Supprimer le code court
+            });
+            
+            if (response.success) {
+              successCount++;
+            } else {
+              errorCount++;
+            }
+          } else {
+            errorCount++;
+          }
+        } catch (error) {
+          console.error('Erreur suppression ShortLink:', shortLink.shortCode, error);
+          errorCount++;
+        }
+      }
+      
+      // Afficher le résultat
+      if (successCount > 0) {
+        setSuccess(`${successCount} ShortLink(s) supprimé(s) avec succès`);
+      }
+      if (errorCount > 0) {
+        setError(`Erreur lors de la suppression de ${errorCount} ShortLink(s)`);
+      }
+      
+      // Nettoyer la sélection et recharger
+      clearSelection();
+      loadData();
+      
+    } catch (error) {
+      console.error('Erreur suppression multiple:', error);
+      setError('Erreur lors de la suppression multiple');
+    }
+  };
+
+  // Mettre à jour la sélection quand les données changent
+  useEffect(() => {
+    // Nettoyer les sélections qui n'existent plus
+    const existingIds = new Set(shortLinks.map(link => link._id));
+    const filteredSelection = new Set([...selectedShortLinks].filter(id => existingIds.has(id)));
+    
+    if (filteredSelection.size !== selectedShortLinks.size) {
+      setSelectedShortLinks(filteredSelection);
+      setIsAllSelected(filteredSelection.size === shortLinks.length && shortLinks.length > 0);
+    }
+  }, [shortLinks]);
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" p={4}>
@@ -319,14 +425,61 @@ const ShortLinkManager = () => {
       {/* Liste des ShortLinks */}
       <Card>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            ShortLinks existants ({shortLinks.length})
-          </Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h6">
+              ShortLinks existants ({shortLinks.length})
+            </Typography>
+            
+            {/* Barre d'actions pour sélection multiple */}
+            {selectedShortLinks.size > 0 && (
+              <Toolbar
+                sx={{
+                  bgcolor: 'action.selected',
+                  borderRadius: 1,
+                  minHeight: '48px !important',
+                  px: 2
+                }}
+              >
+                <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                  {selectedShortLinks.size} élément(s) sélectionné(s)
+                </Typography>
+                
+                <Button
+                  startIcon={<DeleteSweep />}
+                  color="error"
+                  onClick={handleDeleteSelected}
+                  size="small"
+                  sx={{ mr: 1 }}
+                >
+                  Supprimer sélectionnés
+                </Button>
+                
+                <Button
+                  onClick={clearSelection}
+                  size="small"
+                  variant="outlined"
+                >
+                  Annuler sélection
+                </Button>
+              </Toolbar>
+            )}
+          </Box>
           
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={selectedShortLinks.size > 0 && selectedShortLinks.size < shortLinks.length}
+                      checked={isAllSelected && shortLinks.length > 0}
+                      onChange={handleSelectAll}
+                      disabled={shortLinks.length === 0}
+                      inputProps={{
+                        'aria-label': 'Sélectionner tous les ShortLinks'
+                      }}
+                    />
+                  </TableCell>
                   <TableCell>Code Court</TableCell>
                   <TableCell>SmartLink</TableCell>
                   <TableCell>Artiste</TableCell>
@@ -337,8 +490,28 @@ const ShortLinkManager = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {shortLinks.map((shortLink) => (
-                  <TableRow key={shortLink._id}>
+                {shortLinks.map((shortLink) => {
+                  const isSelected = selectedShortLinks.has(shortLink._id);
+                  
+                  return (
+                  <TableRow 
+                    key={shortLink._id}
+                    selected={isSelected}
+                    sx={{
+                      '&.Mui-selected': {
+                        backgroundColor: 'action.selected'
+                      }
+                    }}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isSelected}
+                        onChange={() => handleSelectOne(shortLink._id)}
+                        inputProps={{
+                          'aria-label': `Sélectionner ShortLink ${shortLink.shortCode}`
+                        }}
+                      />
+                    </TableCell>
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1}>
                         <Typography variant="monospace" fontWeight="bold">
@@ -407,7 +580,8 @@ const ShortLinkManager = () => {
                       </Box>
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -493,6 +667,37 @@ const ShortLinkManager = () => {
         <DialogActions>
           <Button onClick={() => setStatsDialog({ open: false, data: null })}>
             Fermer
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Dialog de confirmation suppression multiple */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, count: 0 })}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Confirmer la suppression</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Êtes-vous sûr de vouloir supprimer {deleteDialog.count} ShortLink(s) sélectionné(s) ?
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            Cette action supprimera uniquement les codes courts. Les SmartLinks associés resteront intacts.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog({ open: false, count: 0 })}>
+            Annuler
+          </Button>
+          <Button 
+            onClick={confirmDeleteSelected}
+            color="error"
+            variant="contained"
+            startIcon={<Delete />}
+          >
+            Supprimer {deleteDialog.count} ShortLink(s)
           </Button>
         </DialogActions>
       </Dialog>
