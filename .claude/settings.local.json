@@ -33,7 +33,9 @@
       "Bash(railway list:*)",
       "Bash(railway connect:*)",
       "Bash(railway link:*)",
-      "Bash(node test-shortlinks.js)"
+      "Bash(node test-shortlinks.js)",
+      "Bash(timeout 5s npm run dev)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

@@ -22,6 +22,13 @@ Disallow: /*?*utm_*
 Disallow: /*?*fbclid*
 Disallow: /*?*gclid*
 
+# Bloquer les routes inutiles pour SEO
+Disallow: /tag/
+Disallow: /author/
+Disallow: /category/
+Disallow: /search?*
+Disallow: /preview/
+
 # Optimisation crawl budget
 Crawl-delay: 1
 
