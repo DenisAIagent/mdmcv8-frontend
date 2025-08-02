@@ -29,25 +29,8 @@ import {
   CircularProgress,
   Box,
   Typography,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Button,
-  Drawer,
-  Divider,
-  useTheme,
 } from '@mui/material';
 
-import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PeopleIcon from '@mui/icons-material/People';
-import LinkIcon from '@mui/icons-material/Link';
-import LogoutIcon from '@mui/icons-material/Logout';
 
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -84,8 +67,7 @@ import TikTokPromotionMusicale from './pages/services/TikTokPromotionMusicale';
 
 import AdminLogin from './components/admin/AdminLogin';
 import AdminPanel from './components/admin/AdminPanel';
-import DashboardLayout from './dashboard/layouts/DashboardLayout';
-import DashboardTestPage from './pages/admin/DashboardTestPage';
+import AdminLayout from './components/admin/AdminLayout';
 import ArtistListPage from './pages/admin/artists/ArtistListPage';
 import ArtistCreatePage from './pages/admin/artists/ArtistCreatePage';
 import ArtistEditPage from './pages/admin/artists/ArtistEditPage';
@@ -93,18 +75,8 @@ import SmartlinkListPage from './pages/admin/smartlinks/SmartlinkListPage';
 import SmartlinkCreatePage from './pages/admin/smartlinks/SmartlinkCreatePage';
 import SmartlinkEditPage from './pages/admin/smartlinks/SmartlinkEditPage';
 import SmartlinkAnalyticsPage from './pages/admin/smartlinks/SmartlinkAnalyticsPage';
-import LandingPageGenerator from './components/admin/LandingPageGenerator';
-import WordPressConnector from './components/admin/WordPressConnector';
-import WordPressSync from './components/admin/WordPressSync';
 import ReviewManager from './components/admin/ReviewManager';
-import CampaignStatsShowcase from './components/landing/common/CampaignStatsShowcase';
-import TestSmartLinkIntegration from './test-smartlink-integration';
-import PlatformOrderManager from './components/admin/PlatformOrderManager';
-import URLManager from './components/admin/URLManager';
-import MediaPlayerTest from './components/admin/MediaPlayerTest';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
-
-const drawerWidth = 240;
 
 const ProtectedRoute = ({ children }) => {
   const [authStatus, setAuthStatus] = useState({ isLoading: true, isAuthenticated: false, isAdmin: false });
@@ -170,88 +142,6 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const AdminLayout = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const theme = useTheme();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = async () => {
-    try {
-      await apiService.auth.logout?.();
-    } catch (error) {
-      console.warn('Logout API failed, proceeding with local cleanup:', error);
-    }
-    // Cleanup local même si API échoue
-    localStorage.clear();
-    navigate('/admin/login', { replace: true });
-  };
-
-  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-
-  const menuItems = [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
-    { label: 'Artistes', path: '/admin/artists', icon: <PeopleIcon /> },
-    { label: 'SmartLinks', path: '/admin/smartlinks', icon: <LinkIcon /> },
-    { label: 'Landing Pages', path: '/admin/landing-pages', icon: <DashboardIcon /> },
-    { label: 'WordPress', path: '/admin/wordpress', icon: <LinkIcon /> },
-    { label: 'Avis Clients', path: '/admin/reviews', icon: <PeopleIcon /> },
-    { label: 'Statistiques', path: '/admin/stats', icon: <DashboardIcon /> },
-    { label: 'Ordre Plateformes', path: '/admin/platform-order', icon: <LinkIcon /> },
-    { label: 'URLs & Tracking', path: '/admin/urls', icon: <LinkIcon /> },
-    { label: 'Test SmartLink', path: '/admin/test-smartlink', icon: <LinkIcon /> },
-    { label: 'Test Media Player', path: '/admin/test-media', icon: <LinkIcon /> },
-  ];
-
-  const drawer = (
-    <div>
-      <Toolbar><Typography variant="h6">Menu Admin</Typography></Toolbar>
-      <Divider />
-      <List>
-        {menuItems.map(({ label, path, icon }) => (
-          <ListItemButton
-            key={path}
-            component={NavLink}
-            to={path}
-            onClick={() => setMobileOpen(false)}
-            sx={{
-              '&.active': {
-                backgroundColor: theme.palette.primary.main,
-                color: '#fff',
-                '& .MuiListItemIcon-root': { color: '#fff' },
-              },
-            }}
-          >
-            <ListItemIcon>{icon}</ListItemIcon>
-            <ListItemText primary={label} />
-          </ListItemButton>
-        ))}
-      </List>
-    </div>
-  );
-
-  return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` }, ml: { sm: `${drawerWidth}px` } }}>
-        <Toolbar>
-          <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: 'none' } }}>
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>Panneau d'administration</Typography>
-          <Button color="inherit" startIcon={<LogoutIcon />} onClick={handleLogout}>Déconnexion</Button>
-        </Toolbar>
-      </AppBar>
-
-      <Drawer variant="temporary" open={mobileOpen} onClose={handleDrawerToggle} sx={{ display: { xs: 'block', sm: 'none' }, '& .MuiDrawer-paper': { width: drawerWidth } }}>{drawer}</Drawer>
-      <Drawer variant="permanent" sx={{ display: { xs: 'none', sm: 'block' }, '& .MuiDrawer-paper': { width: drawerWidth } }} open>{drawer}</Drawer>
-
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: 8 }}>
-        <Outlet />
-      </Box>
-    </Box>
-  );
-};
 
 const HomePage = ({ openSimulator }) => {
   // 📊 TRACKING CRITIQUE : Virtual pageviews pour homepage
@@ -349,9 +239,7 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardLayout />} />
-          <Route path="dashboard-test" element={<DashboardTestPage />} />
-          <Route path="dashboard-legacy" element={<AdminPanel />} />
+          <Route path="dashboard" element={<AdminPanel />} />
           <Route path="artists" element={<Outlet />}>
             <Route index element={<ArtistListPage />} />
             <Route path="new" element={<ArtistCreatePage />} />
@@ -363,15 +251,9 @@ function App() {
             <Route path="edit/:smartlinkId" element={<SmartlinkEditPage />} />
             <Route path="analytics/:id" element={<SmartlinkAnalyticsPage />} />
           </Route>
-          <Route path="landing-pages" element={<LandingPageGenerator />} />
-          <Route path="wordpress" element={<Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}><WordPressConnector /><WordPressSync /></Box>} />
+          <Route path="analytics" element={<SmartlinkAnalyticsPage />} />
           <Route path="reviews" element={<ReviewManager />} />
-          <Route path="stats" element={<CampaignStatsShowcase />} />
-          <Route path="platform-order" element={<PlatformOrderManager />} />
-          <Route path="urls" element={<URLManager />} />
           <Route path="settings" element={<AdminSettingsPage />} />
-          <Route path="test-smartlink" element={<TestSmartLinkIntegration />} />
-          <Route path="test-media" element={<MediaPlayerTest />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

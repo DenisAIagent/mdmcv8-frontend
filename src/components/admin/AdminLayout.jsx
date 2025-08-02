@@ -1,8 +1,7 @@
 // src/components/admin/AdminLayout.jsx
 
 import React, { useState, Suspense } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import AdminRouter from './AdminRouter';
+import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import {
   AppBar,
   Box,
@@ -27,6 +26,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import LinkIcon from '@mui/icons-material/Link';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import ReviewsIcon from '@mui/icons-material/Reviews';
 
 import apiService from '../../services/api.service';
 
@@ -34,8 +35,10 @@ const drawerWidth = 240;
 
 const menuItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
-  { label: 'Artistes', path: '/admin/artists', icon: <PeopleIcon /> },
   { label: 'SmartLinks', path: '/admin/smartlinks', icon: <LinkIcon /> },
+  { label: 'Artistes', path: '/admin/artists', icon: <PeopleIcon /> },
+  { label: 'Analytics', path: '/admin/analytics', icon: <AssessmentIcon /> },
+  { label: 'Avis', path: '/admin/reviews', icon: <ReviewsIcon /> },
   { label: 'Paramètres', path: '/admin/settings', icon: <SettingsIcon /> },
 ];
 
@@ -157,7 +160,7 @@ export default function AdminLayout() {
         }}
       >
         <Suspense fallback={<Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box>}>
-          <AdminRouter />
+          <Outlet />
         </Suspense>
       </Box>
     </Box>
