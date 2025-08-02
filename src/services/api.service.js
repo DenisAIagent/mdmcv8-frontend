@@ -60,6 +60,8 @@ class ApiService {
       });
 
       if (!response.ok) {
+        console.warn(`❌ Backend indisponible (${response.status}) pour ${endpoint}`);
+        
         // Essayer de récupérer le message d'erreur du backend
         try {
           const errorData = await response.json();
@@ -80,10 +82,12 @@ class ApiService {
         throw new Error('Délai d\'attente dépassé');
       }
       
+      
       console.error('❌ API Error:', error);
       throw error;
     }
   }
+
 
   // SERVICE REVIEWS - Avec fallback car données marketing importantes
   reviews = {

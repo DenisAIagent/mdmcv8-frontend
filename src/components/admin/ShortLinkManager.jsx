@@ -66,7 +66,7 @@ const ShortLinkManager = () => {
       }
     } catch (error) {
       console.error('Erreur chargement données:', error);
-      setError('Erreur lors du chargement des données');
+      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ const ShortLinkManager = () => {
       }
     } catch (error) {
       console.error('Erreur création ShortLink:', error);
-      setError('Erreur lors de la création du ShortLink');
+      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
     } finally {
       setCreating(false);
     }
@@ -113,7 +113,7 @@ const ShortLinkManager = () => {
       loadData();
     } catch (error) {
       console.error('Erreur toggle ShortLink:', error);
-      setError('Erreur lors de la modification du ShortLink');
+      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
     }
   };
 
@@ -125,7 +125,7 @@ const ShortLinkManager = () => {
       }
     } catch (error) {
       console.error('Erreur stats:', error);
-      setError('Erreur lors du chargement des statistiques');
+      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
     }
   };
 

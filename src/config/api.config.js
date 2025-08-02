@@ -2,7 +2,7 @@
 
   const API_CONFIG = {
     // URL du backend - Production avec custom domain  
-    BASE_URL: 'https://api.mdmcmusicads.com/api/v1',
+    BASE_URL: import.meta.env.VITE_API_URL || 'https://api.mdmcmusicads.com/api/v1',
 
     // Timeout pour les requêtes (30 secondes)
     TIMEOUT: 30000,
@@ -16,13 +16,13 @@
     WITH_CREDENTIALS: true,
   };
 
-  // Configuration pour différents environnements
+  // Configuration pour différents environnements avec fallbacks Railway
   const ENV_CONFIG = {
     development: {
-      BASE_URL: 'http://localhost:5001/api/v1',
+      BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1',
     },
     production: {
-      BASE_URL: 'https://api.mdmcmusicads.com/api/v1',
+      BASE_URL: import.meta.env.VITE_API_URL || 'https://mdmcv4-backend-production-b615.up.railway.app/api/v1',
     }
   };
 
