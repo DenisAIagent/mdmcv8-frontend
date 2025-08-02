@@ -22,9 +22,30 @@
   import { usePerformanceOptimization, useResourcePreloading } from
   './hooks/usePerformanceOptimization';
 
+  // TanStack Query pour la gestion des données
+  import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+  import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
   // Forcer la langue française
   import i18n from 'i18next';
   i18n.changeLanguage('fr');
+
+  // Configuration TanStack Query
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 10 * 60 * 1000, // 10 minutes (anciennement cacheTime)
+        retry: 2,
+        refetchOnWindowFocus: false,
+        refetchOnMount: true,
+        refetchOnReconnect: true,
+      },
+      mutations: {
+        retry: 1,
+      },
+    },
+  });
 
   // Préchargement des ressources critiques
   const preloadCriticalResources = () => {
@@ -141,29 +162,34 @@
 
     return (
       <React.StrictMode>
-        <HelmetProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <SkipLink />
-            <main id="main-content">
-              <App />
-            </main>
-            <ToastContainer
-              position="bottom-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="colored"
-              toastClassName="custom-toast"
-              bodyClassName="custom-toast-body"
-            />
-          </ThemeProvider>
-        </HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <HelmetProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <SkipLink />
+              <main id="main-content">
+                <App />
+              </main>
+              <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                toastClassName="custom-toast"
+                bodyClassName="custom-toast-body"
+              />
+              {process.env.NODE_ENV === 'development' && (
+                <ReactQueryDevtools initialIsOpen={false} />
+              )}
+            </ThemeProvider>
+          </HelmetProvider>
+        </QueryClientProvider>
       </React.StrictMode>
     );
   };

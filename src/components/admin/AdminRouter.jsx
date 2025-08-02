@@ -12,6 +12,10 @@ const SmartlinkEdit = React.lazy(() => import('../../pages/admin/smartlinks/Smar
 const SmartlinkAnalytics = React.lazy(() => import('../../pages/admin/smartlinks/SmartlinkAnalyticsPage.jsx'));
 const ShortLinkManager = React.lazy(() => import('./ShortLinkManager.jsx'));
 
+// Nouveaux dashboards optimisés
+const DashboardTestPage = React.lazy(() => import('../../pages/admin/DashboardTestPage.jsx'));
+const OptimizedDashboard = React.lazy(() => import('../../dashboard/layouts/DashboardLayout.jsx'));
+
 // Composant Dashboard simple par défaut
 const AdminDashboard = () => (
   <div>
@@ -28,7 +32,13 @@ const AdminRouter = () => {
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       
       {/* Dashboard */}
-      <Route path="/dashboard" element={<AdminDashboard />} />
+      <Route path="/dashboard" element={<OptimizedDashboard />} />
+      
+      {/* Page de test du dashboard */}
+      <Route path="/dashboard-test" element={<DashboardTestPage />} />
+      
+      {/* Dashboard legacy (backup) */}
+      <Route path="/dashboard-legacy" element={<AdminDashboard />} />
       
       {/* Routes artistes */}
       <Route path="/artists" element={<ArtistList />} />

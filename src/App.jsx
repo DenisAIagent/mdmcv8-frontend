@@ -84,6 +84,8 @@ import TikTokPromotionMusicale from './pages/services/TikTokPromotionMusicale';
 
 import AdminLogin from './components/admin/AdminLogin';
 import AdminPanel from './components/admin/AdminPanel';
+import DashboardLayout from './dashboard/layouts/DashboardLayout';
+import DashboardTestPage from './pages/admin/DashboardTestPage';
 import ArtistListPage from './pages/admin/artists/ArtistListPage';
 import ArtistCreatePage from './pages/admin/artists/ArtistCreatePage';
 import ArtistEditPage from './pages/admin/artists/ArtistEditPage';
@@ -347,7 +349,9 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<AdminPanel />} />
+          <Route path="dashboard" element={<DashboardLayout />} />
+          <Route path="dashboard-test" element={<DashboardTestPage />} />
+          <Route path="dashboard-legacy" element={<AdminPanel />} />
           <Route path="artists" element={<Outlet />}>
             <Route index element={<ArtistListPage />} />
             <Route path="new" element={<ArtistCreatePage />} />
