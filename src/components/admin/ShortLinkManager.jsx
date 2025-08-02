@@ -73,6 +73,17 @@ const ShortLinkManager = () => {
         // Debug: voir la structure des SmartLinks
         console.log('🔍 Structure SmartLink exemple:', smartLinksRes.data[0]);
         
+        // Debug: chercher spécifiquement le SmartLink qui vient d'être mis à jour
+        const updatedSmartLink = smartLinksRes.data.find(sl => sl._id === '688deca050f718914244f35e');
+        if (updatedSmartLink) {
+          console.log('🎯 SmartLink mis à jour trouvé:', {
+            id: updatedSmartLink._id,
+            title: updatedSmartLink.trackTitle,
+            shortId: updatedSmartLink.shortId,
+            hasShortId: !!updatedSmartLink.shortId
+          });
+        }
+        
         const smartLinksWithShortCodes = smartLinksRes.data
           .filter(smartlink => smartlink.shortId) // Seulement ceux avec shortId
           
