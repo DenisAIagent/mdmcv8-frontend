@@ -163,11 +163,9 @@ const ShortLinkManager = () => {
       const newShortCode = generateShortCode();
       console.log('🔧 Génération nouveau code court:', newShortCode);
       
-      // Mettre à jour le SmartLink avec le nouveau shortId
+      // Mettre à jour seulement le shortId (éviter erreur artistId)
       const updateData = {
-        shortId: newShortCode,
-        // Préserver les autres données existantes
-        ...selectedSmart
+        shortId: newShortCode
       };
       
       const response = await apiService.smartlinks.update(selectedSmartLink, updateData);
