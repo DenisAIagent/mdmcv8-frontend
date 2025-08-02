@@ -40,7 +40,8 @@
       "Bash(gh pr create:*)",
       "Bash(gh auth:*)",
       "Bash(npm start)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(git cherry-pick:*)"
     ],
     "deny": []
   }
