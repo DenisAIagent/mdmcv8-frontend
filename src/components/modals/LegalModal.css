@@ -87,7 +87,7 @@
 }
 
 .modal-content h3 {
-  color: #ffd700;
+  color: #e50914;
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -131,12 +131,12 @@
 }
 
 .modal-content a:hover {
-  color: #ffd700;
+  color: #ffffff;
   text-decoration: underline;
 }
 
 .modal-content strong {
-  color: #ffd700;
+  color: #e50914;
   font-weight: 600;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .legal-modal::-webkit-scrollbar-thumb:hover {
-  background: #ffd700;
+  background: #ffffff;
 }
 
 /* Responsive Design */

@@ -460,7 +460,7 @@ const TestimonialCard = ({
         }
 
         .star.filled {
-          color: #ffd700;
+          color: #e50914;
         }
 
         .testimonial-text {
