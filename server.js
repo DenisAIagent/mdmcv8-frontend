@@ -43,89 +43,83 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// Route pour servir l'application React (SPA routing)
-app.get('*', (req, res, next) => {
-  // Vérifier si c'est une route SmartLink
-  const smartlinkMatch = req.path.match(/^\/smartlinks\/([^\/]+)\/([^\/]+)$/);
+// Route spécifique pour SmartLinks (SANS HASH) - pour bots sociaux
+app.get('/smartlinks/:artistSlug/:trackSlug', async (req, res) => {
+  const { artistSlug, trackSlug } = req.params;
+  const userAgent = req.get('User-Agent') || '';
+  const currentUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
   
-  if (smartlinkMatch) {
-    const [, artistSlug, trackSlug] = smartlinkMatch;
-    const userAgent = req.get('User-Agent') || '';
-    const currentUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+  console.log(`🔍 SmartLink request (no hash): ${artistSlug}/${trackSlug}`);
+  console.log(`👤 User-Agent: ${userAgent}`);
+  console.log(`🤖 Is bot: ${isSocialBot(userAgent)}`);
+  
+  // Si ce n'est pas un bot, rediriger vers la version hash pour l'application React
+  if (!isSocialBot(userAgent)) {
+    console.log('👤 Human user - redirecting to hash route');
+    return res.redirect(`/#/smartlinks/${artistSlug}/${trackSlug}`);
+  }
+  
+  // C'est un bot - générer la réponse avec meta tags dynamiques
+  console.log('🤖 Bot detected - generating dynamic meta tags');
+  
+  try {
+    // Lire le fichier index.html
+    const htmlPath = path.join(__dirname, 'dist', 'index.html');
+    let html = fs.readFileSync(htmlPath, 'utf8');
     
-    console.log(`🔍 SmartLink request: ${artistSlug}/${trackSlug}`);
-    console.log(`👤 User-Agent: ${userAgent}`);
-    console.log(`🤖 Is bot: ${isSocialBot(userAgent)}`);
+    // Récupérer les données du SmartLink avec validation stricte
+    const smartlinkData = await fetchSmartLinkData(artistSlug, trackSlug);
     
-    // Si ce n'est pas un bot, servir l'application React normale
-    if (!isSocialBot(userAgent)) {
-      console.log('👤 Human user - serving React app');
+    // VÉRIFICATION STRICTE - AUCUN FALLBACK
+    if (!smartlinkData || !smartlinkData.coverImageUrl || !smartlinkData.trackTitle || !smartlinkData.artistName) {
+      console.log('❌ INCOMPLETE/MISSING SmartLink data - NO social meta tags generated:', {
+        hasData: !!smartlinkData,
+        hasImage: !!smartlinkData?.coverImageUrl,
+        hasTitle: !!smartlinkData?.trackTitle,
+        hasArtist: !!smartlinkData?.artistName,
+        fallbackRejected: true
+      });
+      
+      // Servir l'application React normale SANS meta tags sociaux
       return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
     }
     
-    // C'est un bot - générer la réponse avec meta tags dynamiques
-    console.log('🤖 Bot detected - generating dynamic meta tags');
+    console.log(`✅ COMPLETE SmartLink data found - generating social meta tags:`, {
+      title: smartlinkData.trackTitle,
+      artist: smartlinkData.artistName,
+      image: smartlinkData.coverImageUrl.substring(0, 100) + '...'
+    });
     
-    // Fonction asynchrone pour gérer les bots
-    (async () => {
-      try {
-        // Lire le fichier index.html
-        const htmlPath = path.join(__dirname, 'dist', 'index.html');
-        let html = fs.readFileSync(htmlPath, 'utf8');
-        
-        // Récupérer les données du SmartLink avec validation stricte
-        const smartlinkData = await fetchSmartLinkData(artistSlug, trackSlug);
-        
-        // VÉRIFICATION STRICTE - AUCUN FALLBACK
-        if (!smartlinkData || !smartlinkData.coverImageUrl || !smartlinkData.trackTitle || !smartlinkData.artistName) {
-          console.log('❌ INCOMPLETE/MISSING SmartLink data - NO social meta tags generated:', {
-            hasData: !!smartlinkData,
-            hasImage: !!smartlinkData?.coverImageUrl,
-            hasTitle: !!smartlinkData?.trackTitle,
-            hasArtist: !!smartlinkData?.artistName,
-            fallbackRejected: true
-          });
-          
-          // Servir l'application React normale SANS meta tags sociaux
-          return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-        }
-        
-        console.log(`✅ COMPLETE SmartLink data found - generating social meta tags:`, {
-          title: smartlinkData.trackTitle,
-          artist: smartlinkData.artistName,
-          image: smartlinkData.coverImageUrl.substring(0, 100) + '...'
-        });
-        
-        // Générer les meta tags SEULEMENT avec vraies données
-        const metaTags = generateSocialMetaTags(smartlinkData, currentUrl, { artistSlug, trackSlug });
-        
-        // Si aucun meta tag généré (validation a échoué), servir la SPA normale
-        if (!metaTags || metaTags.trim() === '') {
-          console.log('❌ Meta tags generation failed - serving normal SPA');
-          return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-        }
-        
-        // Injecter les meta tags dans le HTML
-        html = injectMetaTags(html, metaTags);
-        
-        // Ajouter des headers pour le cache des bots
-        res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 heure de cache
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        
-        return res.send(html);
-        
-      } catch (error) {
-        console.error('❌ Error in SmartLink bot middleware:', error);
-        
-        // En cas d'erreur, servir l'application React normale
-        return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-      }
-    })();
+    // Générer les meta tags SEULEMENT avec vraies données
+    const metaTags = generateSocialMetaTags(smartlinkData, currentUrl, { artistSlug, trackSlug });
     
-    return; // Important: ne pas continuer après l'appel async
+    // Si aucun meta tag généré (validation a échoué), servir la SPA normale
+    if (!metaTags || metaTags.trim() === '') {
+      console.log('❌ Meta tags generation failed - serving normal SPA');
+      return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    }
+    
+    // Injecter les meta tags dans le HTML
+    html = injectMetaTags(html, metaTags);
+    
+    // Ajouter des headers pour le cache des bots
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 heure de cache
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    
+    console.log('✅ Serving HTML with dynamic meta tags to bot');
+    return res.send(html);
+    
+  } catch (error) {
+    console.error('❌ Error in SmartLink bot middleware:', error);
+    
+    // En cas d'erreur, servir l'application React normale
+    return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
   }
-  
-  // Pour toutes les autres routes, servir l'application React
+});
+
+// Route catch-all pour l'application React (SPA routing)
+app.get('*', (req, res) => {
+  console.log(`📄 Serving React app for: ${req.path}`);
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
@@ -140,15 +134,14 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Health check: http://localhost:${PORT}/health`);
+  console.log(`📱 SmartLinks bot route: /smartlinks/:artist/:track`);
+  console.log(`🔍 React app route: /#/smartlinks/:artist/:track`);
 });
 
 // Gestion gracieuse de l'arrêt
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
+  console.log('💤 Server shutting down gracefully...');
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
-  process.exit(0);
-});
+export default app;
