@@ -57,12 +57,21 @@ const ShortLinkManager = () => {
         apiService.smartlinks.getAll()
       ]);
 
+      console.log('🔍 DEBUG ShortLinks response:', shortLinksRes);
+      console.log('🔍 DEBUG SmartLinks response:', smartLinksRes);
+
       if (shortLinksRes.success) {
+        console.log('✅ ShortLinks data:', shortLinksRes.data);
         setShortLinks(shortLinksRes.data);
+      } else {
+        console.warn('❌ ShortLinks failed:', shortLinksRes);
       }
       
       if (smartLinksRes.success) {
+        console.log('✅ SmartLinks data:', smartLinksRes.data);
         setSmartLinks(smartLinksRes.data);
+      } else {
+        console.warn('❌ SmartLinks failed:', smartLinksRes);
       }
     } catch (error) {
       console.error('Erreur chargement données:', error);

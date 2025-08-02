@@ -36,7 +36,9 @@
       "Bash(node test-shortlinks.js)",
       "Bash(timeout 5s npm run dev)",
       "Bash(npm run build:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh auth:*)"
     ],
     "deny": []
   }

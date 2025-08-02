@@ -193,7 +193,14 @@ class ApiService {
   smartlinks = {
     getAll: async () => {
       console.log('🔗 SmartLinks: Récupération liste...');
-      return await this.request('/smartlinks');
+      try {
+        const response = await this.request('/smartlinks');
+        console.log('🔍 DEBUG SmartLinks API response:', response);
+        return response;
+      } catch (error) {
+        console.error('🔍 DEBUG SmartLinks API error:', error);
+        throw error;
+      }
     },
 
     create: async (smartlinkData) => {
@@ -240,6 +247,18 @@ fetchPlatformLinks: async (sourceUrl, userCountry = 'FR') => {
 
   // SERVICE SHORTLINKS - Gestion liens courts
   shortlinks = {
+    getAll: async () => {
+      console.log('🔗 ShortLinks: Récupération liste complète...');
+      try {
+        const response = await this.request('/shortlinks');
+        console.log('🔍 DEBUG ShortLinks API response:', response);
+        return response;
+      } catch (error) {
+        console.error('🔍 DEBUG ShortLinks API error:', error);
+        throw error;
+      }
+    },
+
     create: async (smartLinkId) => {
       console.log('🔗 ShortLinks: Création code court...', smartLinkId);
       return await this.request('/shortlinks', {
@@ -258,10 +277,6 @@ fetchPlatformLinks: async (sourceUrl, userCountry = 'FR') => {
       return await this.request(`/shortlinks/${shortCode}/stats`);
     },
 
-    getAll: async () => {
-      console.log('🔗 ShortLinks: Récupération liste complète...');
-      return await this.request('/shortlinks');
-    },
 
     deactivate: async (shortCode) => {
       console.log('🔗 ShortLinks: Désactivation...', shortCode);
