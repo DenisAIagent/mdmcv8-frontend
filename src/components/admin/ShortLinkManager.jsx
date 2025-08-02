@@ -52,27 +52,39 @@ const ShortLinkManager = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [shortLinksRes, smartLinksRes] = await Promise.all([
-        apiService.shortlinks.getAll(),
-        apiService.smartlinks.getAll()
-      ]);
-
-      console.log('🔍 DEBUG ShortLinks response:', shortLinksRes);
-      console.log('🔍 DEBUG SmartLinks response:', smartLinksRes);
-
-      if (shortLinksRes.success) {
-        console.log('✅ ShortLinks data:', shortLinksRes.data);
-        setShortLinks(shortLinksRes.data);
-      } else {
-        console.warn('❌ ShortLinks failed:', shortLinksRes);
-      }
       
-      if (smartLinksRes.success) {
-        console.log('✅ SmartLinks data:', smartLinksRes.data);
-        setSmartLinks(smartLinksRes.data);
-      } else {
-        console.warn('❌ SmartLinks failed:', smartLinksRes);
+      // Charger SmartLinks et ShortLinks séparément
+      let shortLinksRes = { success: false, data: [] };
+      let smartLinksRes = { success: false, data: [] };
+
+      // Charger SmartLinks (fonctionne)
+      try {
+        smartLinksRes = await apiService.smartlinks.getAll();
+        console.log('✅ SmartLinks chargés:', smartLinksRes.data?.length || 0);
+        if (smartLinksRes.success) {
+          setSmartLinks(smartLinksRes.data);
+        }
+      } catch (smartError) {
+        console.warn('❌ SmartLinks indisponibles:', smartError);
       }
+
+      // Charger ShortLinks (peut échouer)
+      try {
+        shortLinksRes = await apiService.shortlinks.getAll();
+        console.log('✅ ShortLinks chargés:', shortLinksRes.data?.length || 0);
+        if (shortLinksRes.success) {
+          setShortLinks(shortLinksRes.data);
+        }
+      } catch (shortError) {
+        console.warn('❌ ShortLinks indisponibles (endpoint manquant):', shortError);
+        setShortLinks([]); // Liste vide mais pas d'erreur
+      }
+
+      // Erreur uniquement si AUCUN des deux ne fonctionne
+      if (!smartLinksRes.success && !shortLinksRes.success) {
+        setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
+      }
+
     } catch (error) {
       console.error('Erreur chargement données:', error);
       setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
@@ -98,7 +110,7 @@ const ShortLinkManager = () => {
       }
     } catch (error) {
       console.error('Erreur création ShortLink:', error);
-      setError('Le nombre de données est manquant pour s\'afficher - Backend indisponible');
+      setError('Endpoint ShortLinks manquant côté backend - Contactez le développeur');
     } finally {
       setCreating(false);
     }
