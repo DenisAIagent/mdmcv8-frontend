@@ -515,21 +515,25 @@ const SmartLinkPageDoubleTracking = () => {
           gtag('config', 'G-098G18MJ7M');`}
         </script>
         
-        {/* Open Graph */}
-        <meta property="og:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
-        <meta property="og:description" content={`Écouter sur toutes les plateformes de streaming`} />
-        <meta property="og:image" content={smartlinkData.coverImageUrl} />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1024" />
-        <meta property="og:image:height" content="1024" />
+        {/* Open Graph - Force override des meta tags globaux */}
         <meta property="og:type" content="music.song" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
+        <meta property="og:description" content={`Écouter "${smartlinkData.trackTitle}" de ${smartlinkData.artistName} sur toutes les plateformes de streaming`} />
+        <meta property="og:image" content={smartlinkData.coverImageUrl || 'https://www.mdmcmusicads.com/assets/images/banniere site.jpg'} />
+        <meta property="og:image:secure_url" content={smartlinkData.coverImageUrl || 'https://www.mdmcmusicads.com/assets/images/banniere site.jpg'} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="1200" />
+        <meta property="og:site_name" content="MDMC Music Ads" />
         <meta property="music:musician" content={smartlinkData.artistName} />
         
-        {/* Twitter Card */}
+        {/* Twitter Card - Force override */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
-        <meta name="twitter:description" content="Écouter sur toutes les plateformes de streaming" />
-        <meta name="twitter:image" content={smartlinkData.coverImageUrl} />
+        <meta name="twitter:description" content={`Écouter "${smartlinkData.trackTitle}" de ${smartlinkData.artistName} sur toutes les plateformes de streaming`} />
+        <meta name="twitter:image" content={smartlinkData.coverImageUrl || 'https://www.mdmcmusicads.com/assets/images/banniere site.jpg'} />
+        <meta name="twitter:image:alt" content={`Couverture de ${smartlinkData.trackTitle} par ${smartlinkData.artistName}`} />
         
         {/* Structured Data */}
         <script type="application/ld+json">

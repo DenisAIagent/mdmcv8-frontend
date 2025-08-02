@@ -1,6 +1,13 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { 
+  isSocialBot, 
+  fetchSmartLinkData, 
+  generateSocialMetaTags, 
+  injectMetaTags 
+} from './src/utils/botDetection.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,7 +44,68 @@ app.get('/health', (req, res) => {
 });
 
 // Route pour servir l'application React (SPA routing)
-app.get('*', (req, res) => {
+app.get('*', (req, res, next) => {
+  // Vérifier si c'est une route SmartLink
+  const smartlinkMatch = req.path.match(/^\/smartlinks\/([^\/]+)\/([^\/]+)$/);
+  
+  if (smartlinkMatch) {
+    const [, artistSlug, trackSlug] = smartlinkMatch;
+    const userAgent = req.get('User-Agent') || '';
+    const currentUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+    
+    console.log(`🔍 SmartLink request: ${artistSlug}/${trackSlug}`);
+    console.log(`👤 User-Agent: ${userAgent}`);
+    console.log(`🤖 Is bot: ${isSocialBot(userAgent)}`);
+    
+    // Si ce n'est pas un bot, servir l'application React normale
+    if (!isSocialBot(userAgent)) {
+      console.log('👤 Human user - serving React app');
+      return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    }
+    
+    // C'est un bot - générer la réponse avec meta tags dynamiques
+    console.log('🤖 Bot detected - generating dynamic meta tags');
+    
+    // Fonction asynchrone pour gérer les bots
+    (async () => {
+      try {
+        // Lire le fichier index.html
+        const htmlPath = path.join(__dirname, 'dist', 'index.html');
+        let html = fs.readFileSync(htmlPath, 'utf8');
+        
+        // Récupérer les données du SmartLink
+        const smartlinkData = await fetchSmartLinkData(artistSlug, trackSlug);
+        
+        if (smartlinkData) {
+          console.log(`✅ SmartLink data found: ${smartlinkData.trackTitle} - ${smartlinkData.artistName}`);
+        } else {
+          console.log('⚠️ SmartLink data not found - using fallback meta tags');
+        }
+        
+        // Générer les meta tags appropriés
+        const metaTags = generateSocialMetaTags(smartlinkData, currentUrl);
+        
+        // Injecter les meta tags dans le HTML
+        html = injectMetaTags(html, metaTags);
+        
+        // Ajouter des headers pour le cache des bots
+        res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 heure de cache
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        
+        return res.send(html);
+        
+      } catch (error) {
+        console.error('❌ Error in SmartLink bot middleware:', error);
+        
+        // En cas d'erreur, servir l'application React normale
+        return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+      }
+    })();
+    
+    return; // Important: ne pas continuer après l'appel async
+  }
+  
+  // Pour toutes les autres routes, servir l'application React
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
