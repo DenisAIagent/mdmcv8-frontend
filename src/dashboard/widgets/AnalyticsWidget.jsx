@@ -21,7 +21,7 @@ import {
   ArrowUpward,
   ArrowDownward
 } from '@mui/icons-material';
-import { useMockMetrics } from '../hooks/useSmartLinkMetrics';
+import { useSmartLinkMetrics } from '../hooks/useSmartLinkMetrics';
 
 // Composant pour une métrique individuelle
 const MetricCard = ({ 
@@ -143,7 +143,7 @@ const AnalyticsWidget = ({
   title = 'Analytics Overview'
 }) => {
   const theme = useTheme();
-  const { data, isLoading, error } = useMockMetrics();
+  const { data, isLoading, error } = useSmartLinkMetrics();
 
   // Définir les métriques selon la variante
   const getMetrics = () => {

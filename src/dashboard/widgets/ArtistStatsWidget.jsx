@@ -29,7 +29,7 @@ import {
   Album
 } from '@mui/icons-material';
 import { PieChart as RechartsPieChart, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
-import { useMockMetrics } from '../hooks/useSmartLinkMetrics';
+import { useSmartLinkMetrics } from '../hooks/useSmartLinkMetrics';
 
 // Composant de tooltip personnalisé pour le graphique
 const CustomTooltip = ({ active, payload }) => {
@@ -181,7 +181,7 @@ const ArtistStatsWidget = ({
   title = 'Répartition artistes'
 }) => {
   const theme = useTheme();
-  const { data, isLoading, error } = useMockMetrics();
+  const { data, isLoading, error } = useSmartLinkMetrics();
   
   const [viewMode, setViewMode] = useState(showChart ? 'chart' : 'list');
 

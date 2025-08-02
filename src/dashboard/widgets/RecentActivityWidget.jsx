@@ -37,7 +37,7 @@ import {
 } from '@mui/icons-material';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { useMockMetrics } from '../hooks/useSmartLinkMetrics';
+import { useSmartLinkMetrics } from '../hooks/useSmartLinkMetrics';
 
 // Types d'activités avec leur configuration
 const ACTIVITY_TYPES = {
@@ -335,7 +335,7 @@ const RecentActivityWidget = ({
   title = 'Activité récente'
 }) => {
   const theme = useTheme();
-  const { data, isLoading, error } = useMockMetrics();
+  const { data, isLoading, error } = useSmartLinkMetrics();
   
   const [filter, setFilter] = useState('all'); // 'all', 'high', 'smartlinks'
   const [activities] = useState(() => generateMockActivities(20));

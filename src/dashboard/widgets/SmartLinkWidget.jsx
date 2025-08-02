@@ -30,7 +30,7 @@ import {
   Analytics,
   MusicNote
 } from '@mui/icons-material';
-import { useMockMetrics } from '../hooks/useSmartLinkMetrics';
+import { useSmartLinkMetrics } from '../hooks/useSmartLinkMetrics';
 
 // Composant pour un SmartLink individuel dans la liste
 const SmartLinkItem = ({ 
@@ -213,7 +213,7 @@ const SmartLinkWidget = ({
   title = 'Top SmartLinks'
 }) => {
   const theme = useTheme();
-  const { data, isLoading, error } = useMockMetrics();
+  const { data, isLoading, error } = useSmartLinkMetrics();
   
   const [viewMode, setViewMode] = useState('list'); // 'list' ou 'grid'
 

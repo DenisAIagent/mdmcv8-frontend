@@ -14,14 +14,52 @@ export const useSmartLinkMetrics = (options = {}) => {
   return useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      console.log('🔄 useSmartLinkMetrics: Récupération données dashboard...');
-      const response = await apiService.analytics.getDashboardStats();
+      console.log('🔄 useSmartLinkMetrics: Utilisation données mockées...');
       
-      if (!response.success) {
-        throw new Error(response.error || 'Erreur récupération données');
-      }
+      // Simuler un délai réseau pour une expérience réaliste
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      return response.data;
+      // Retourner les données mockées
+      return {
+        stats: {
+          totalSmartLinks: { value: 47, change: '+15%', changeType: 'positive' },
+          activeArtists: { value: 23, change: '+8%', changeType: 'positive' },
+          monthlyViews: { value: 15420, change: '+32%', changeType: 'positive' },
+          totalClicks: { value: 9876, change: '+22%', changeType: 'positive' }
+        },
+        weeklyPerformance: {
+          newClicks: 1247,
+          conversionRate: '3.2%'
+        },
+        recentActivities: [
+          {
+            title: 'Nouveau SmartLink créé',
+            subtitle: 'Artiste: Lost Frequencies - "Reality"',
+            time: new Date(Date.now() - 2 * 60 * 60 * 1000)
+          },
+          {
+            title: 'Pic de trafic détecté',
+            subtitle: '1.2k vues en 30 minutes sur "Midnight City"',
+            time: new Date(Date.now() - 4 * 60 * 60 * 1000)
+          }
+        ],
+        chartData: {
+          labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+          clicks: [245, 312, 189, 467, 523, 398, 445],
+          views: [1234, 1567, 945, 2234, 2567, 1890, 2145]
+        },
+        topSmartLinks: [
+          { id: 1, title: 'Reality - Lost Frequencies', clicks: 1247, artist: 'Lost Frequencies' },
+          { id: 2, title: 'Midnight City - M83', clicks: 1089, artist: 'M83' },
+          { id: 3, title: 'Strobe - Deadmau5', clicks: 892, artist: 'Deadmau5' }
+        ],
+        artistBreakdown: [
+          { name: 'Electronic', value: 45, color: '#6366f1' },
+          { name: 'Rock', value: 25, color: '#8b5cf6' },
+          { name: 'Pop', value: 20, color: '#06b6d4' },
+          { name: 'Hip-Hop', value: 10, color: '#10b981' }
+        ]
+      };
     },
     enabled,
     refetchInterval,

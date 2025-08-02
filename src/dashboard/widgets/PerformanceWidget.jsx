@@ -19,7 +19,7 @@ import {
   Speed
 } from '@mui/icons-material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { useMockMetrics } from '../hooks/useSmartLinkMetrics';
+import { useSmartLinkMetrics } from '../hooks/useSmartLinkMetrics';
 
 // Composant de tooltip personnalisé pour les graphiques
 const CustomTooltip = ({ active, payload, label }) => {
@@ -142,7 +142,7 @@ const PerformanceWidget = ({
   title = 'Performance'
 }) => {
   const theme = useTheme();
-  const { data, isLoading, error } = useMockMetrics();
+  const { data, isLoading, error } = useSmartLinkMetrics();
   
   const [timeRange, setTimeRange] = useState(initialTimeRange);
   const [chartType, setChartType] = useState('area'); // 'line' ou 'area'
