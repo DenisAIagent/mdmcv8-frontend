@@ -70,23 +70,52 @@ const ShortLinkManager = () => {
 
       // Utiliser SmartLinks comme ShortLinks (ils ont déjà des shortId)
       if (smartLinksRes.success && smartLinksRes.data) {
+        // Debug: voir la structure des SmartLinks
+        console.log('🔍 Structure SmartLink exemple:', smartLinksRes.data[0]);
+        
         const smartLinksWithShortCodes = smartLinksRes.data
           .filter(smartlink => smartlink.shortId) // Seulement ceux avec shortId
-          .map(smartlink => ({
-            _id: smartlink._id,
-            shortCode: smartlink.shortId,
-            smartLinkId: {
-              trackTitle: smartlink.trackTitle,
-              artistId: { name: smartlink.artistId?.name }
-            },
-            clickCount: smartlink.totalClicks || smartlink.platformClickCount || 0,
-            isActive: smartlink.isPublished,
-            createdAt: smartlink.createdAt,
-            lastAccessedAt: smartlink.lastViewedAt || smartlink.updatedAt
-          }));
+          
+        console.log('📊 SmartLinks disponibles:', smartLinksRes.data.length);
+        console.log('📊 SmartLinks avec shortId:', smartLinksWithShortCodes.length);
+        console.log('📊 SmartLinks sans shortId:', smartLinksRes.data.length - smartLinksWithShortCodes.length);
         
-        console.log('✅ ShortLinks convertis depuis SmartLinks:', smartLinksWithShortCodes.length);
-        setShortLinks(smartLinksWithShortCodes);
+        const finalMappedLinks = smartLinksWithShortCodes
+          .map(smartlink => {
+            // Gérer les deux formats de SmartLinks
+            const trackTitle = smartlink.trackTitle || smartlink.title || 'Titre inconnu';
+            const artistName = smartlink.artistId?.name || smartlink.artist || 'Artiste inconnu';
+            const totalClicks = smartlink.totalClicks || smartlink.totalViews || smartlink.platformClickCount || 0;
+            
+            console.log('🔍 Mapping SmartLink:', {
+              id: smartlink._id,
+              trackTitle,
+              artistName,
+              shortId: smartlink.shortId,
+              totalClicks,
+              isPublished: smartlink.isPublished
+            });
+            
+            return {
+              _id: smartlink._id,
+              shortCode: smartlink.shortId,
+              smartLinkId: {
+                trackTitle,
+                artistId: { name: artistName }
+              },
+              // Données directement accessibles pour l'affichage
+              trackTitle,
+              artistName,
+              clickCount: totalClicks,
+              isActive: smartlink.isPublished || smartlink.status === 'published',
+              createdAt: smartlink.createdAt,
+              lastAccessedAt: smartlink.lastViewedAt || smartlink.updatedAt
+            };
+          });
+        
+        console.log('✅ ShortLinks convertis depuis SmartLinks:', finalMappedLinks.length);
+        console.log('🔍 Exemple ShortLink converti:', finalMappedLinks[0]);
+        setShortLinks(finalMappedLinks);
       }
 
       // Erreur uniquement si AUCUN des deux ne fonctionne
@@ -297,11 +326,11 @@ const ShortLinkManager = () => {
                     </TableCell>
                     
                     <TableCell>
-                      {shortLink.smartLinkId?.trackTitle || 'N/A'}
+                      {shortLink.trackTitle || shortLink.smartLinkId?.trackTitle || 'N/A'}
                     </TableCell>
                     
                     <TableCell>
-                      {shortLink.smartLinkId?.artistId?.name || 'N/A'}
+                      {shortLink.artistName || shortLink.smartLinkId?.artistId?.name || 'N/A'}
                     </TableCell>
                     
                     <TableCell>
