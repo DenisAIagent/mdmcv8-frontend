@@ -73,17 +73,37 @@ app.get('*', (req, res, next) => {
         const htmlPath = path.join(__dirname, 'dist', 'index.html');
         let html = fs.readFileSync(htmlPath, 'utf8');
         
-        // Récupérer les données du SmartLink
+        // Récupérer les données du SmartLink avec validation stricte
         const smartlinkData = await fetchSmartLinkData(artistSlug, trackSlug);
         
-        if (smartlinkData) {
-          console.log(`✅ SmartLink data found: ${smartlinkData.trackTitle} - ${smartlinkData.artistName}`);
-        } else {
-          console.log('⚠️ SmartLink data not found - using fallback meta tags');
+        // VÉRIFICATION STRICTE - AUCUN FALLBACK
+        if (!smartlinkData || !smartlinkData.coverImageUrl || !smartlinkData.trackTitle || !smartlinkData.artistName) {
+          console.log('❌ INCOMPLETE/MISSING SmartLink data - NO social meta tags generated:', {
+            hasData: !!smartlinkData,
+            hasImage: !!smartlinkData?.coverImageUrl,
+            hasTitle: !!smartlinkData?.trackTitle,
+            hasArtist: !!smartlinkData?.artistName,
+            fallbackRejected: true
+          });
+          
+          // Servir l'application React normale SANS meta tags sociaux
+          return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
         }
         
-        // Générer les meta tags appropriés
-        const metaTags = generateSocialMetaTags(smartlinkData, currentUrl);
+        console.log(`✅ COMPLETE SmartLink data found - generating social meta tags:`, {
+          title: smartlinkData.trackTitle,
+          artist: smartlinkData.artistName,
+          image: smartlinkData.coverImageUrl.substring(0, 100) + '...'
+        });
+        
+        // Générer les meta tags SEULEMENT avec vraies données
+        const metaTags = generateSocialMetaTags(smartlinkData, currentUrl, { artistSlug, trackSlug });
+        
+        // Si aucun meta tag généré (validation a échoué), servir la SPA normale
+        if (!metaTags || metaTags.trim() === '') {
+          console.log('❌ Meta tags generation failed - serving normal SPA');
+          return res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+        }
         
         // Injecter les meta tags dans le HTML
         html = injectMetaTags(html, metaTags);
