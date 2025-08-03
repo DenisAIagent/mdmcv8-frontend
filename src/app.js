@@ -1,0 +1,102 @@
+// MDMC SmartLinks Service - Application Express dédiée
+// Service HTML statique pour SmartLinks avec SEO optimal
+
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const compression = require('compression');
+require('dotenv').config();
+
+const app = express();
+
+// --- Compression GZIP ---
+app.use(compression());
+
+// --- Configuration de sécurité ---
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com", "https://www.google-analytics.com", "https://connect.facebook.net"],
+      connectSrc: ["'self'", "https://www.google-analytics.com", "https://www.facebook.com"]
+    }
+  }
+}));
+
+// --- CORS pour sous-domaine ---
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['https://smartlink.mdmcmusicads.com'],
+  credentials: true
+}));
+
+// --- Logging ---
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined'));
+} else {
+  app.use(morgan('dev'));
+}
+
+// --- Middleware de base ---
+app.use(express.json({ limit: process.env.MAX_FILE_SIZE || '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: process.env.MAX_FILE_SIZE || '10mb' }));
+
+// --- Servir les fichiers statiques ---
+app.use(express.static(path.join(__dirname, '../public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
+  etag: true,
+  lastModified: true
+}));
+
+// --- Routes pour SmartLinks HTML statiques ---
+const smartlinkRoutes = require('../routes/smartlinks');
+app.use('/', smartlinkRoutes);
+
+// --- API Routes ---
+const apiRoutes = require('../routes/api');
+app.use('/api', apiRoutes);
+
+// --- Health Check ---
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    service: 'MDMC SmartLinks Service',
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0'
+  });
+});
+
+// --- Gestion d'erreurs 404 ---
+app.use('*', (req, res) => {
+  res.status(404).json({
+    error: 'SmartLink non trouvé',
+    message: 'Cette URL SmartLink n\'existe pas',
+    service: 'MDMC SmartLinks'
+  });
+});
+
+// --- Gestionnaire d'erreurs global ---
+app.use((err, req, res, next) => {
+  console.error('Erreur SmartLinks Service:', err);
+  
+  res.status(err.status || 500).json({
+    error: 'Erreur du service SmartLinks',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Erreur interne',
+    service: 'MDMC SmartLinks'
+  });
+});
+
+// --- Démarrage du serveur ---
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`🎵 MDMC SmartLinks Service démarré sur le port ${PORT}`);
+  console.log(`🌐 Environnement: ${process.env.NODE_ENV}`);
+  console.log(`🔗 URLs: http://localhost:${PORT}`);
+  console.log(`🚀 Service dédié HTML statique pour SEO optimal`);
+});
+
+module.exports = app;
