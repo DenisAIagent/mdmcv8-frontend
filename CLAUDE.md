@@ -1,60 +1,70 @@
-# Configuration Claude - MDMC Music Ads
+# Configuration Claude - Expert SmartLinks MDMC
 
-## Règles de développement strictes
+## CONTEXTE RÉEL PLATEFORME MDMC
+
+### QUI SOMMES-NOUS
+- **MDMC Music Ads** : Agence marketing musical française spécialisée artistes/labels
+- **Service SmartLinks** : Création de liens intelligents pour partage musical multi-plateformes
+- **Position** : Alternative française à Linkfire/Toneden/Features.fm
+
+### CE QU'ON A CONSTRUIT
+- **Interface admin** : Création SmartLinks depuis URLs Odesli (song.link/bandcamp.link/etc)
+- **Import automatique** : Métadonnées (artwork, titre, artiste) via API Odesli
+- **Landing pages** : Routes dynamiques `/smartlinks/:artist/:track`
+- **Tracking intégré** : Analytics clics et conversions
+- **Architecture** : Express.js backend + React frontend
+
+### PROBLÈME CRITIQUE ACTUEL
+**PARTAGE SOCIAL DYSFONCTIONNEL**
+
+Quand clients partagent leurs SmartLinks sur Facebook/Twitter/WhatsApp :
+- **Attendu** : Affichage titre track + artwork + nom artiste
+- **Réalité** : Meta tags globaux MDMC ("Marketing Musical MDMC" + bannière MDMC)
+- **Impact** : Service perçu comme non professionnel, partages non attractifs
+
+### SOLUTION TECHNIQUE IMPLÉMENTÉE
+**Middleware Express.js pour meta tags dynamiques :**
+
+```javascript
+// Détection bots sociaux (Facebook, Twitter, WhatsApp, etc.)
+// Route `/smartlinks/:artist/:track` 
+// Injection meta tags spécifiques au track
+// fetchSmartLinkData depuis API backend
+// Validation stricte, zéro fallback
+```
+
+**STATUT** : Pushé sur `mdmcv8-frontend/feature/shortlinks-management`
+
+### PROBLÈME PERSISTANT
+**Facebook Debugger continue d'afficher meta tags globaux MDMC malgré middleware**
+
+Les bots sociaux ne semblent pas déclencher le middleware ou celui-ci ne fonctionne pas en production.
+
+## RÈGLES TECHNIQUES STRICTES
 
 ### ❌ JAMAIS DE PICTOGRAMMES / EMOJIS
-**RÈGLE ABSOLUE : Ne jamais utiliser de pictogrammes, émojis ou symboles dans le code, interfaces utilisateur, ou textes du site.**
+**RÈGLE ABSOLUE : Ne jamais utiliser de pictogrammes, émojis ou symboles.**
 
-- ❌ Pas d'emojis dans les textes : "🎯 **Approche sur-mesure**"
-- ❌ Pas de symboles Unicode : "📊", "🔍", "💰", "✅", etc.
-- ❌ Pas d'icônes textuelles : "▶", "✓", "⚠️"
-- ✅ Texte simple et professionnel uniquement
+### ❌ JAMAIS DE FALLBACKS PLATEFORMES
+**RÈGLE CRITIQUE : Ne jamais créer de fallbacks pour logos de plateformes musicales.**
+- Si logo manquant : ne rien afficher
+- Utiliser uniquement logos officiels
+- **Raison** : Les fallbacks compromettent la valeur du service
 
-### Informations confidentielles
-- Ne jamais divulguer les tarifs, frais de gestion, ou structure tarifaire
-- Les outils de suivi sont les dashboards natifs des plateformes (Google Ads, Meta Business Manager, TikTok Ads Manager)
-- Pas d'outils internes propriétaires
+### ❌ JAMAIS DE DONNÉES INVENTÉES
+**RÈGLE ABSOLUE : Ne jamais inventer ou supposer des données.**
+- Pas de métadonnées fictives
+- Pas de tracks/artistes imaginaires
+- Validation stricte des données Odesli uniquement
 
-### Architecture technique
-- HashRouter pour la navigation React
-- Utiliser `<Link to>` pour la navigation interne, pas `<a href>`
-- Variables CSS dans `variables.css` pour la cohérence
-- Couleur principale : #E50914 (rouge MDMC)
+### ARCHITECTURE VALIDÉE
+- **HashRouter** React pour navigation
+- **Variables CSS** dans `variables.css`
+- **Couleur principale** : #E50914 (rouge MDMC)
+- **Responsive** mobile-first
 
-### SEO et contenu
-- Contenu riche en mots-clés pour le référencement naturel
-- Structure sémantique optimisée (H1, H2, H3)
-- Définitions complètes pour featured snippets
-
-### UX/UI
-- Design cohérent avec l'identité MDMC
-- Animations fluides (0.3s transitions)
-- Responsive mobile-first
-- États visuels : hover, focus, active
-
-### ❌ JAMAIS DE FALLBACKS POUR LES LOGOS DE PLATEFORMES
-**RÈGLE CRITIQUE : Ne jamais créer de fallbacks/placeholders pour les logos de plateformes musicales.**
-
-- ❌ Pas de SVG data URIs générés automatiquement
-- ❌ Pas d'initiales des plateformes en fallback  
-- ❌ Pas de placeholders génériques
-- ✅ Si un logo de plateforme est manquant : ne rien afficher ou masquer l'élément
-- ✅ Utiliser uniquement les logos officiels des plateformes
-- **Raison :** Les fallbacks compromettent la valeur et l'authenticité du service SmartLinks
-
-## Services proposés
-- Campagnes YouTube Ads
-- Meta Ads (Facebook/Instagram) 
-- TikTok Promotion
-- Analytics & Reporting
-- Consulting Stratégique
-- SmartLinks
-
-## Sujets de contact autorisés
-1. Demande de devis
-2. Demande de formation
-3. Demande médias
-4. RGPD
+## MISSION PRIORITAIRE
+**Résoudre le problème de partage social pour que les SmartLinks affichent correctement les métadonnées des tracks sur Facebook/Twitter/WhatsApp.**
 
 ## 🚫 RESTRICTIONS DE MODIFICATION CODE
 
