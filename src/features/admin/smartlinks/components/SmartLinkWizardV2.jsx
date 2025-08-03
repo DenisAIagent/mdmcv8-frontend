@@ -340,8 +340,19 @@ const SmartLinkWizardV2 = () => {
             
             if (staticResult.success) {
               console.log('✅ Page statique générée:', staticResult.url);
-              toast.success(`SmartLink créé avec succès ! 
-              URL de partage: ${staticResult.url}`);
+              
+              // 🔥 URL POUR PARTAGE RÉSEAUX SOCIAUX (statique HTML)
+              const socialSharingURL = `https://www.mdmcmusicads.com/sl/${response.data.shortId}.html`;
+              
+              // 🎯 URL POUR NAVIGATION UTILISATEUR (React app avec hash)
+              const userNavigationURL = `https://www.mdmcmusicads.com/#/smartlinks/${response.data.artistSlug || 'artist'}/${response.data.trackSlug || response.data.shortId}`;
+              
+              toast.success(`SmartLink créé avec succès !
+              
+🔗 URL pour partage social: ${socialSharingURL}
+🌐 URL pour navigation: ${userNavigationURL}
+              
+La page statique est optimisée pour Facebook, Twitter, WhatsApp !`);
             } else {
               console.warn('⚠️ Erreur génération page statique:', staticResult.error);
               toast.success('SmartLink créé avec succès ! (Page statique en cours...)');
