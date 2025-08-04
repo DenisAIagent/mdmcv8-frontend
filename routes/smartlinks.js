@@ -1152,15 +1152,15 @@ router.get('/dashboard', (req, res) => {
             // Affichage de la preview
             const objectUrl = URL.createObjectURL(file);
             audioPlayer.src = objectUrl;
-            audioInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+            audioInfo.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + 'MB)';
             audioPreview.style.display = 'block';
             
             // Validation de la durée
             audioPlayer.addEventListener('loadedmetadata', function() {
               if (audioPlayer.duration > 30) {
-                audioInfo.innerHTML += ` <span style="color: #cc271a;">⚠️ Durée: ${audioPlayer.duration.toFixed(1)}s (>30s détecté, seules les 3 premières secondes seront lues)</span>`;
+                audioInfo.innerHTML += ' <span style="color: #cc271a;">⚠️ Durée: ' + audioPlayer.duration.toFixed(1) + 's (>30s détecté, seules les 3 premières secondes seront lues)</span>';
               } else {
-                audioInfo.innerHTML += ` <span style="color: #4CAF50;">✓ Durée: ${audioPlayer.duration.toFixed(1)}s</span>`;
+                audioInfo.innerHTML += ' <span style="color: #4CAF50;">✓ Durée: ' + audioPlayer.duration.toFixed(1) + 's</span>';
               }
             });
           } else {
@@ -1614,15 +1614,15 @@ function generateEditInterface(data) {
             <div class="help-text" style="margin-bottom: 1rem;">
               Sélectionnez les plateformes à afficher sur votre SmartLink
             </div>
-            ${data.platforms.map(platform => `
-              <div class="platform-item">
-                <input type="checkbox" class="platform-checkbox" id="platform-${platform.id}" ${platform.enabled ? 'checked' : ''}>
-                <div class="platform-info">
-                  <div class="platform-name">${platform.name}</div>
-                  <div class="platform-url">${platform.url}</div>
-                </div>
-              </div>
-            `).join('')}
+${data.platforms.map(platform => 
+              '<div class="platform-item">' +
+                '<input type="checkbox" class="platform-checkbox" id="platform-' + platform.id + '" ' + (platform.enabled ? 'checked' : '') + '>' +
+                '<div class="platform-info">' +
+                  '<div class="platform-name">' + platform.name + '</div>' +
+                  '<div class="platform-url">' + platform.url + '</div>' +
+                '</div>' +
+              '</div>'
+            ).join('')}
           </div>
           
           <!-- Tracking UTM -->
@@ -1721,9 +1721,9 @@ function generateEditInterface(data) {
               Choisissez votre plateforme préférée
             </div>
             <div class="preview-platforms">
-              ${data.platforms.filter(p => p.enabled).map(platform => `
-                <div class="preview-platform">${platform.name}</div>
-              `).join('')}
+${data.platforms.filter(p => p.enabled).map(platform => 
+                '<div class="preview-platform">' + platform.name + '</div>'
+              ).join('')}
             </div>
             <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; color: #999999;">
               Propulsé par MDMC Music Ads<br>
