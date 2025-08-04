@@ -97,7 +97,89 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// POST /api/create-smartlink - Créer un nouveau SmartLink (interface utilisateur)
+// POST /api/create-smartlink-auto - Créer SmartLink automatiquement depuis URL (nouveau workflow)
+router.post('/create-smartlink-auto', async (req, res) => {
+  try {
+    const { sourceUrl } = req.body;
+    
+    // Validation de l'URL seulement
+    if (!sourceUrl) {
+      return res.status(400).json({
+        error: 'URL source requise'
+      });
+    }
+    
+    try {
+      new URL(sourceUrl);
+    } catch {
+      return res.status(400).json({
+        error: 'URL source invalide'
+      });
+    }
+    
+    console.log(`🎵 Création SmartLink automatique depuis: ${sourceUrl}`);
+    
+    // Récupération automatique des données via Odesli
+    let odesliData;
+    try {
+      console.log(`🔄 Récupération automatique via Odesli...`);
+      odesliData = await odesliService.fetchPlatformLinks(sourceUrl, 'FR');
+      console.log(`✅ Données Odesli récupérées automatiquement: ${odesliData.platformLinks?.length || 0} plateformes`);
+    } catch (odesliError) {
+      console.error('❌ Erreur Odesli:', odesliError.message);
+      return res.status(500).json({
+        error: 'Impossible de récupérer les informations de cette URL',
+        details: 'Vérifiez que l\'URL provient d\'une plateforme musicale supportée (Spotify, Apple Music, etc.)'
+      });
+    }
+    
+    // Utilisation des données Odesli pour les slugs
+    const artistSlug = odesliData.artist?.slug || createSlug(odesliData.artist?.name || 'unknown-artist');
+    const trackSlug = odesliData.slug || createSlug(odesliData.trackTitle || 'unknown-track');
+    
+    // Données prêtes pour le générateur HTML (directement depuis Odesli)
+    const smartlinkData = {
+      title: odesliData.trackTitle,
+      artist: odesliData.artist,
+      slug: trackSlug,
+      image: odesliData.coverImageUrl,
+      coverImageUrl: odesliData.coverImageUrl,
+      description: odesliData.description,
+      links: formatPlatformLinksForTemplate(odesliData.platformLinks || []),
+      createdAt: new Date(),
+      sourceUrl,
+      odesliData: odesliData.odesliData
+    };
+    
+    // Génération du fichier HTML statique
+    console.log(`📝 Génération HTML automatique...`);
+    const htmlPath = await htmlGenerator.generateSmartLinkHtml(smartlinkData);
+    console.log(`✅ HTML généré automatiquement: ${htmlPath}`);
+    
+    // Réponse de succès avec toutes les infos récupérées
+    res.json({
+      success: true,
+      title: odesliData.trackTitle,
+      artist: odesliData.artist?.name,
+      artistSlug,
+      trackSlug,
+      url: `https://smartlink.mdmcmusicads.com/${artistSlug}/${trackSlug}`,
+      platforms: odesliData.platformLinks?.map(p => p.platform) || [],
+      platformCount: odesliData.platformLinks?.length || 0,
+      coverImage: odesliData.coverImageUrl,
+      message: 'SmartLink créé automatiquement via Odesli'
+    });
+    
+  } catch (error) {
+    console.error('❌ Erreur création SmartLink automatique:', error);
+    res.status(500).json({
+      error: 'Erreur interne du serveur',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// POST /api/create-smartlink - Créer un nouveau SmartLink (ancienne interface manuelle)
 router.post('/create-smartlink', async (req, res) => {
   try {
     const { artistName, trackTitle, sourceUrl } = req.body;

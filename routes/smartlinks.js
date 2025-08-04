@@ -507,6 +507,32 @@ router.get('/dashboard', (req, res) => {
           line-height: 1.6;
           margin-bottom: 0.5rem;
         }
+        .help-text {
+          display: block;
+          font-size: 0.85rem;
+          color: #999999;
+          margin-top: 0.5rem;
+          font-style: italic;
+        }
+        .retrieved-info {
+          background: #0f0f0f;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          margin-bottom: 1.5rem;
+          border: 1px solid rgba(204, 39, 26, 0.2);
+        }
+        .retrieved-info p {
+          margin: 0.5rem 0;
+          color: #cccccc;
+          font-size: 0.9rem;
+        }
+        .retrieved-info strong {
+          color: #ffffff;
+        }
+        .retrieved-info span {
+          color: #cc271a;
+          font-weight: 500;
+        }
       </style>
     </head>
     <body>
@@ -525,22 +551,20 @@ router.get('/dashboard', (req, res) => {
         <div class="form-card">
           <form id="smartlinkForm">
             <div class="form-group">
-              <label for="artistName">Nom de l'artiste</label>
-              <input type="text" id="artistName" name="artistName" placeholder="Ex: Muse" required>
+              <label for="sourceUrl">URL de la musique</label>
+              <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Collez votre lien Spotify, Apple Music, Deezer, YouTube..." required>
+              <small class="help-text">Collez n'importe quel lien de plateforme musicale et nous récupérerons automatiquement toutes les informations</small>
             </div>
-            <div class="form-group">
-              <label for="trackTitle">Titre du morceau</label>
-              <input type="text" id="trackTitle" name="trackTitle" placeholder="Ex: Uprising" required>
-            </div>
-            <div class="form-group">
-              <label for="sourceUrl">URL source (Spotify, Apple Music, etc.)</label>
-              <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Ex: https://open.spotify.com/track/..." required>
-            </div>
-            <button type="submit" class="create-btn">Créer SmartLink</button>
+            <button type="submit" class="create-btn">Générer SmartLink automatiquement</button>
           </form>
           
           <div id="result" class="result-section">
             <h3>SmartLink créé avec succès !</h3>
+            <div class="retrieved-info">
+              <p><strong>Titre :</strong> <span id="retrievedTitle">-</span></p>
+              <p><strong>Artiste :</strong> <span id="retrievedArtist">-</span></p>
+              <p><strong>Plateformes détectées :</strong> <span id="platformCount">0</span></p>
+            </div>
             <div class="smartlink-url">
               <input type="text" id="generatedUrl" readonly>
               <button onclick="copyToClipboard()">Copier</button>
@@ -549,38 +573,40 @@ router.get('/dashboard', (req, res) => {
         </div>
         
         <div class="info-section">
-          <h3>Comment ça marche ?</h3>
-          <p>• Collez l'URL d'une plateforme musicale (Spotify, Apple Music, Deezer, etc.)</p>
-          <p>• Le système récupère automatiquement les liens de toutes les plateformes</p>
-          <p>• Votre SmartLink est optimisé pour le partage sur les réseaux sociaux</p>
-          <p>• URLs propres et SEO-friendly pour un meilleur référencement</p>
+          <h3>Magie d'Odesli - Tout automatique !</h3>
+          <p>• <strong>Collez simplement</strong> n'importe quel lien musical (Spotify, Apple Music, Deezer, YouTube, etc.)</p>
+          <p>• <strong>Récupération automatique</strong> du titre, artiste, pochette et description</p>
+          <p>• <strong>Génération de tous les liens</strong> : Spotify, Apple Music, Deezer, YouTube Music, Tidal, SoundCloud, Amazon Music...</p>
+          <p>• <strong>SmartLink optimisé</strong> pour le partage sur réseaux sociaux avec métadonnées parfaites</p>
+          <p>• <strong>URLs propres</strong> pour un référencement optimal</p>
         </div>
       </div>
       
       <script>
-        // Gestion du formulaire
+        // Gestion du formulaire simplifié
         document.getElementById('smartlinkForm').addEventListener('submit', async (e) => {
           e.preventDefault();
           
           const formData = new FormData(e.target);
-          const data = {
-            artistName: formData.get('artistName').trim(),
-            trackTitle: formData.get('trackTitle').trim(),
-            sourceUrl: formData.get('sourceUrl').trim()
-          };
+          const sourceUrl = formData.get('sourceUrl').trim();
+          
+          if (!sourceUrl) {
+            alert('Veuillez saisir une URL de musique');
+            return;
+          }
           
           const submitBtn = document.querySelector('.create-btn');
           const resultSection = document.getElementById('result');
           
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Création en cours...';
+          submitBtn.textContent = 'Récupération des données automatique...';
           resultSection.style.display = 'none';
           
           try {
-            const response = await fetch('/api/create-smartlink', {
+            const response = await fetch('/api/create-smartlink-auto', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
+              body: JSON.stringify({ sourceUrl })
             });
             
             const result = await response.json();
@@ -588,16 +614,23 @@ router.get('/dashboard', (req, res) => {
             if (response.ok) {
               const generatedUrl = \`https://smartlink.mdmcmusicads.com/\${result.artistSlug}/\${result.trackSlug}\`;
               document.getElementById('generatedUrl').value = generatedUrl;
+              
+              // Afficher les informations récupérées
+              document.getElementById('retrievedTitle').textContent = result.title || 'Titre récupéré';
+              document.getElementById('retrievedArtist').textContent = result.artist || 'Artiste récupéré';
+              document.getElementById('platformCount').textContent = result.platforms?.length || 0;
+              
               resultSection.style.display = 'block';
               e.target.reset();
             } else {
               alert('Erreur: ' + result.error);
             }
           } catch (error) {
+            console.error('Erreur:', error);
             alert('Erreur de connexion. Veuillez réessayer.');
           } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Créer SmartLink';
+            submitBtn.textContent = 'Générer SmartLink automatiquement';
           }
         });
         
