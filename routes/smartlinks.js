@@ -127,68 +127,73 @@ router.get('/', (req, res) => {
       <style>
         body { 
           font-family: 'Inter', sans-serif; 
-          background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
-          color: #141414;
+          background-color: #0a0a0a;
+          color: #ffffff;
           text-align: center;
           padding: 2rem;
           margin: 0;
+          min-height: 100vh;
         }
         .container { 
           max-width: 500px; 
           margin: 0 auto;
-          background: white;
+          background: #141414;
           padding: 3rem;
           border-radius: 1rem;
-          box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+          border: 1px solid rgba(255,255,255,0.1);
         }
         h1 { 
-          color: #E50914; 
+          color: #cc271a; 
           font-size: 2rem; 
           margin-bottom: 1rem;
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
         }
         .tagline {
-          color: #6C757D; 
+          color: #cc271a; 
           margin-bottom: 2rem;
           font-style: italic;
           font-size: 1.1rem;
         }
         .description {
-          color: #495057;
+          color: #cccccc;
           margin-bottom: 2rem;
           line-height: 1.6;
         }
         .example {
-          background: #F8F9FA;
+          background: #1a1a1a;
           padding: 1rem;
           border-radius: 0.5rem;
           font-family: monospace;
-          color: #E50914;
+          color: #cc271a;
           margin-bottom: 2rem;
+          border: 1px solid rgba(204, 39, 26, 0.3);
         }
         a { 
-          color: #E50914; 
+          color: #cc271a; 
           text-decoration: none; 
           font-weight: 500;
           padding: 0.75rem 1.5rem;
-          border: 2px solid #E50914;
-          border-radius: 0.5rem;
+          border: 2px solid #cc271a;
+          border-radius: 50px;
           display: inline-block;
-          transition: all 0.3s;
+          transition: all 0.3s ease;
           margin: 0.5rem;
+          font-family: 'Poppins', sans-serif;
         }
         a:hover { 
-          background: #E50914; 
-          color: white; 
-          transform: translateY(-2px);
+          background: #cc271a; 
+          color: #ffffff; 
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 10px 30px rgba(204, 39, 26, 0.3);
         }
         .footer {
           margin-top: 2rem;
           padding-top: 2rem;
-          border-top: 1px solid #E9ECEF;
+          border-top: 1px solid rgba(255,255,255,0.1);
           font-size: 0.9rem;
-          color: #6C757D;
+          color: #999999;
         }
       </style>
     </head>
