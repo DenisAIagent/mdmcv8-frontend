@@ -191,6 +191,9 @@ class StaticHtmlGenerator {
     const artistName = smartlinkData.artist.name;
     const trackTitle = smartlinkData.trackTitle;
     
+    // Paramètres UTM depuis les données ou defaults
+    const utmParams = smartlinkData.utm || {};
+    
     return {
       // Métadonnées SEO
       title: `${trackTitle} - ${artistName}`,
@@ -206,11 +209,15 @@ class StaticHtmlGenerator {
       track: {
         title: trackTitle,
         slug: smartlinkData.slug,
-        subtitle: smartlinkData.subtitle || ''
+        subtitle: smartlinkData.subtitle || '',
+        previewUrl: smartlinkData.previewUrl || null
       },
       
-      // Liens plateformes organisés
-      platforms: this.organizePlatformLinks(smartlinkData.platformLinks),
+      // Liens plateformes organisés avec UTM
+      platforms: this.organizePlatformLinks(smartlinkData.platformLinks, utmParams),
+      
+      // Paramètres UTM pour affichage/debug
+      utm: utmParams,
       
       // Configuration
       baseUrl: this.baseUrl,
@@ -229,11 +236,12 @@ class StaticHtmlGenerator {
   }
 
   /**
-   * Organise les liens des plateformes avec métadonnées
+   * Organise les liens des plateformes avec métadonnées et UTM tracking
    * @param {Array} platformLinks - Liens bruts des plateformes
-   * @returns {Array} - Liens organisés avec métadonnées
+   * @param {Object} utmParams - Paramètres UTM personnalisés
+   * @returns {Array} - Liens organisés avec métadonnées et tracking
    */
-  organizePlatformLinks(platformLinks) {
+  organizePlatformLinks(platformLinks, utmParams = {}) {
     const platformConfig = {
       spotify: { name: 'Spotify', color: '#1DB954', priority: 1 },
       apple: { name: 'Apple Music', color: '#FA243C', priority: 2 },
@@ -250,9 +258,54 @@ class StaticHtmlGenerator {
       .map(link => ({
         ...link,
         ...platformConfig[link.platform],
-        displayName: platformConfig[link.platform]?.name || link.platform
+        displayName: platformConfig[link.platform]?.name || link.platform,
+        url: this.addUtmParameters(link.url, link.platform, utmParams)
       }))
       .sort((a, b) => (a.priority || 99) - (b.priority || 99));
+  }
+
+  /**
+   * Ajoute les paramètres UTM à une URL
+   * @param {string} originalUrl - URL originale
+   * @param {string} platform - Nom de la plateforme
+   * @param {Object} utmParams - Paramètres UTM personnalisés
+   * @returns {string} - URL avec paramètres UTM
+   */
+  addUtmParameters(originalUrl, platform, utmParams = {}) {
+    try {
+      const url = new URL(originalUrl);
+      
+      // Paramètres UTM par défaut
+      const defaultUtm = {
+        source: 'mdmc_smartlinks',
+        medium: 'smartlink',
+        campaign: 'music_promotion'
+      };
+      
+      // Fusion avec les paramètres personnalisés
+      const finalUtm = {
+        ...defaultUtm,
+        ...utmParams
+      };
+      
+      // Ajout des paramètres UTM
+      if (finalUtm.source) url.searchParams.append('utm_source', finalUtm.source);
+      if (finalUtm.medium) url.searchParams.append('utm_medium', finalUtm.medium);
+      if (finalUtm.campaign) url.searchParams.append('utm_campaign', finalUtm.campaign);
+      if (finalUtm.term) url.searchParams.append('utm_term', finalUtm.term);
+      if (finalUtm.content) url.searchParams.append('utm_content', platform);
+      
+      // Paramètres de tracking supplémentaires MDMC
+      url.searchParams.append('mdmc_source', 'smartlink');
+      url.searchParams.append('mdmc_platform', platform);
+      url.searchParams.append('mdmc_timestamp', Date.now().toString());
+      
+      return url.toString();
+      
+    } catch (error) {
+      console.warn(`⚠️ Impossible d'ajouter UTM à l'URL ${originalUrl}:`, error.message);
+      return originalUrl; // Retourne l'URL originale en cas d'erreur
+    }
   }
 
   /**

@@ -682,7 +682,7 @@ router.get('/edit/:artistSlug/:trackSlug', async (req, res) => {
     
   } catch (error) {
     console.error('❌ Erreur route édition:', error);
-    res.status(500).send('Erreur chargement interface d\\'édition');
+    res.status(500).send('Erreur chargement interface d\'édition');
   }
 });
 
@@ -945,18 +945,36 @@ function generateEditInterface(data) {
           <!-- Tracking UTM -->
           <div class="section">
             <h2 class="section-title">📊 Paramètres UTM</h2>
-            <div class="form-group">
-              <label for="utm_source">Source</label>
-              <input type="text" id="utm_source" value="wiseband" placeholder="ex: wiseband, instagram, newsletter">
+            <div class="help-text" style="margin-bottom: 1rem;">
+              Ces paramètres seront automatiquement ajoutés à tous les liens de plateformes pour le tracking analytics
             </div>
             <div class="form-group">
-              <label for="utm_medium">Medium</label>
+              <label for="utm_source">Source UTM</label>
+              <input type="text" id="utm_source" value="mdmc_smartlinks" placeholder="ex: wiseband, instagram, newsletter">
+              <div class="help-text">Source de trafic (ex: facebook, newsletter, website)</div>
+            </div>
+            <div class="form-group">
+              <label for="utm_medium">Medium UTM</label>
               <input type="text" id="utm_medium" value="smartlink" placeholder="ex: smartlink, social, email">
+              <div class="help-text">Type de medium (ex: email, social, cpc, smartlink)</div>
             </div>
             <div class="form-group">
-              <label for="utm_campaign">Campaign</label>
+              <label for="utm_campaign">Campaign UTM</label>
               <input type="text" id="utm_campaign" value="${data.artist.slug}-${data.slug}" placeholder="ex: nom-artiste-titre">
+              <div class="help-text">Nom de la campagne marketing</div>
             </div>
+            
+            <!-- Aperçu des URLs avec tracking -->
+            <div id="utmPreview" style="background: #0f0f0f; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; display: none;">
+              <h4 style="color: #cc271a; margin-bottom: 0.5rem; font-size: 0.9rem;">🔗 Aperçu des URLs avec tracking</h4>
+              <div id="trackedUrls" style="font-family: monospace; font-size: 0.8rem; color: #999; max-height: 200px; overflow-y: auto;"></div>
+              <button type="button" onclick="toggleUtmPreview()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #cc271a; color: white; border: none; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
+                Masquer l'aperçu
+              </button>
+            </div>
+            <button type="button" onclick="toggleUtmPreview()" id="showUtmBtn" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: transparent; color: #cc271a; border: 1px solid #cc271a; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
+              🔍 Voir les URLs avec tracking
+            </button>
           </div>
           
           <button class="save-btn" onclick="saveSmartLink()">
@@ -999,9 +1017,14 @@ function generateEditInterface(data) {
           document.querySelector('.preview-artist').textContent = e.target.value;
         });
         
-        // Gestion des checkboxes plateformes
+        // Gestion des checkboxes plateformes et UTM
         document.querySelectorAll('.platform-checkbox').forEach(checkbox => {
           checkbox.addEventListener('change', updatePreview);
+        });
+        
+        // Écoute des changements UTM
+        document.querySelectorAll('#utm_source, #utm_medium, #utm_campaign').forEach(input => {
+          input.addEventListener('input', updatePreview);
         });
         
         function updatePreview() {
@@ -1017,14 +1040,181 @@ function generateEditInterface(data) {
             \`<div class="preview-platform">\${name}</div>\`
           ).join('');
           
-          // Mise à jour du compteur
-          document.querySelector('.preview-smartlink div:last-child strong').textContent = 
-            \`\${enabledPlatforms.length} liens de plateformes trouvés !\`;
+          // Mise à jour du compteur avec UTM info
+          const utmSource = document.getElementById('utm_source').value || 'mdmc_smartlinks';
+          const utmMedium = document.getElementById('utm_medium').value || 'smartlink';
+          const utmCampaign = document.getElementById('utm_campaign').value || 'music_promotion';
+          
+          document.querySelector('.preview-smartlink div:last-child strong').innerHTML = 
+            \`\${enabledPlatforms.length} liens de plateformes trouvés !<br>
+            <small style="font-weight: normal; color: #999;">UTM: \${utmSource} | \${utmMedium} | \${utmCampaign}</small>\`;
+          
+          // Mise à jour de l'aperçu UTM si visible
+          updateUtmPreview();
         }
         
-        function saveSmartLink() {
-          // TODO: Sauvegarder et générer le SmartLink final
-          alert('Génération du SmartLink final... (à implémenter)');
+        function toggleUtmPreview() {
+          const preview = document.getElementById('utmPreview');
+          const btn = document.getElementById('showUtmBtn');
+          
+          if (preview.style.display === 'none') {
+            preview.style.display = 'block';
+            btn.style.display = 'none';
+            updateUtmPreview();
+          } else {
+            preview.style.display = 'none';
+            btn.style.display = 'inline-block';
+          }
+        }
+        
+        function updateUtmPreview() {
+          const preview = document.getElementById('utmPreview');
+          if (preview.style.display === 'none') return;
+          
+          const utmSource = document.getElementById('utm_source').value || 'mdmc_smartlinks';
+          const utmMedium = document.getElementById('utm_medium').value || 'smartlink';
+          const utmCampaign = document.getElementById('utm_campaign').value || 'music_promotion';
+          
+          const trackedUrls = document.getElementById('trackedUrls');
+          let urlsHtml = '';
+          
+          // Génération des URLs avec UTM pour les plateformes sélectionnées
+          document.querySelectorAll('.platform-checkbox:checked').forEach(checkbox => {
+            const platformItem = checkbox.closest('.platform-item');
+            const platformName = platformItem.querySelector('.platform-name').textContent;
+            const originalUrl = platformItem.querySelector('.platform-url').textContent;
+            
+            try {
+              const url = new URL(originalUrl);
+              url.searchParams.set('utm_source', utmSource);
+              url.searchParams.set('utm_medium', utmMedium);
+              url.searchParams.set('utm_campaign', utmCampaign);
+              url.searchParams.set('utm_content', platformName.toLowerCase().replace(' ', '_'));
+              url.searchParams.set('mdmc_source', 'smartlink');
+              url.searchParams.set('mdmc_platform', platformName.toLowerCase());
+              
+              urlsHtml += \`
+                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #1a1a1a; border-radius: 0.25rem;">
+                  <strong style="color: #cc271a;">\${platformName}:</strong><br>
+                  <div style="word-break: break-all; margin-top: 0.25rem;">\${url.toString()}</div>
+                </div>
+              \`;
+            } catch (error) {
+              urlsHtml += \`
+                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #1a1a1a; border-radius: 0.25rem;">
+                  <strong style="color: #cc271a;">\${platformName}:</strong><br>
+                  <div style="color: #ff6b6b;">Erreur: URL invalide</div>
+                </div>
+              \`;
+            }
+          });
+          
+          if (!urlsHtml) {
+            urlsHtml = '<div style="color: #666; font-style: italic;">Sélectionnez au moins une plateforme pour voir les URLs trackées</div>';
+          }
+          
+          trackedUrls.innerHTML = urlsHtml;
+        }
+        
+        async function saveSmartLink() {
+          const saveBtn = document.querySelector('.save-btn');
+          
+          // Collecte des données du formulaire
+          const smartlinkData = {
+            title: document.getElementById('title').value.trim(),
+            artist: {
+              name: document.getElementById('artist').value.trim(),
+              slug: '${data.artist.slug}'
+            },
+            slug: '${data.slug}',
+            description: document.getElementById('description').value.trim(),
+            isrc: document.getElementById('isrc').value.trim(),
+            label: document.getElementById('label').value.trim(),
+            coverImageUrl: '${data.coverImageUrl}',
+            
+            // Plateformes sélectionnées
+            platforms: [],
+            
+            // Paramètres UTM
+            utm: {
+              source: document.getElementById('utm_source').value.trim(),
+              medium: document.getElementById('utm_medium').value.trim(),
+              campaign: document.getElementById('utm_campaign').value.trim()
+            }
+          };
+          
+          // Récupération des plateformes sélectionnées
+          document.querySelectorAll('.platform-checkbox:checked').forEach(checkbox => {
+            const platformId = checkbox.id.replace('platform-', '');
+            const platformItem = checkbox.closest('.platform-item');
+            const platformName = platformItem.querySelector('.platform-name').textContent;
+            const platformUrl = platformItem.querySelector('.platform-url').textContent;
+            
+            smartlinkData.platforms.push({
+              id: platformId,
+              name: platformName,
+              url: platformUrl,
+              enabled: true
+            });
+          });
+          
+          // Validation
+          if (!smartlinkData.title || !smartlinkData.artist.name) {
+            alert('Veuillez remplir le titre et le nom de l\\'artiste');
+            return;
+          }
+          
+          if (smartlinkData.platforms.length === 0) {
+            alert('Veuillez sélectionner au moins une plateforme');
+            return;
+          }
+          
+          // Animation du bouton
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '⏳ Génération en cours...';
+          
+          try {
+            // Appel API pour sauvegarder et générer le SmartLink final
+            const response = await fetch(\`/api/update/\${smartlinkData.artist.slug}/\${smartlinkData.slug}\`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(smartlinkData)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+              // Succès - Redirection vers le SmartLink généré
+              saveBtn.innerHTML = '✅ SmartLink généré !';
+              
+              setTimeout(() => {
+                const finalUrl = \`https://smartlink.mdmcmusicads.com/\${smartlinkData.artist.slug}/\${smartlinkData.slug}\`;
+                
+                // Afficher le résultat final
+                if (confirm(\`SmartLink généré avec succès !\\n\\nURL: \${finalUrl}\\n\\nVoulez-vous ouvrir le SmartLink dans un nouvel onglet ?\`)) {
+                  window.open(finalUrl, '_blank');
+                }
+                
+                // Copier l'URL dans le presse-papier
+                navigator.clipboard.writeText(finalUrl).then(() => {
+                  console.log('URL copiée dans le presse-papier');
+                }).catch(err => {
+                  console.warn('Impossible de copier dans le presse-papier:', err);
+                });
+                
+              }, 1000);
+              
+            } else {
+              throw new Error(result.error || 'Erreur lors de la génération');
+            }
+            
+          } catch (error) {
+            console.error('Erreur sauvegarde:', error);
+            alert('Erreur lors de la génération du SmartLink: ' + error.message);
+            
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '💾 Générer SmartLink Final';
+          }
         }
       </script>
     </body>
