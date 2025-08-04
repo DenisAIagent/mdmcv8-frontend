@@ -188,6 +188,95 @@ router.get('/', (req, res) => {
           transform: translateY(-2px) scale(1.05);
           box-shadow: 0 10px 30px rgba(204, 39, 26, 0.3);
         }
+        .creation-form {
+          margin: 2rem 0;
+          text-align: left;
+        }
+        .form-group {
+          margin-bottom: 1.5rem;
+        }
+        .form-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #ffffff;
+          font-weight: 500;
+          font-family: 'Poppins', sans-serif;
+        }
+        .form-group input {
+          width: 100%;
+          padding: 0.75rem;
+          border: 2px solid rgba(255,255,255,0.2);
+          border-radius: 0.5rem;
+          background: #1a1a1a;
+          color: #ffffff;
+          font-family: 'Inter', sans-serif;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+          outline: none;
+          border-color: #cc271a;
+          box-shadow: 0 0 0 3px rgba(204, 39, 26, 0.1);
+        }
+        .create-btn {
+          width: 100%;
+          padding: 1rem;
+          background: #cc271a;
+          color: #ffffff;
+          border: none;
+          border-radius: 50px;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-top: 1rem;
+        }
+        .create-btn:hover {
+          background: #a61f15;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(204, 39, 26, 0.3);
+        }
+        .create-btn:disabled {
+          background: #666666;
+          cursor: not-allowed;
+          transform: none;
+        }
+        .result-section {
+          margin: 2rem 0;
+          padding: 1.5rem;
+          background: #1a1a1a;
+          border-radius: 0.5rem;
+          border: 1px solid rgba(204, 39, 26, 0.3);
+        }
+        .result-section h3 {
+          color: #cc271a;
+          margin-bottom: 1rem;
+          font-family: 'Poppins', sans-serif;
+        }
+        .smartlink-url {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .smartlink-url input {
+          flex: 1;
+          padding: 0.75rem;
+          background: #141414;
+          border: 1px solid rgba(255,255,255,0.2);
+          border-radius: 0.5rem;
+          color: #ffffff;
+          font-family: monospace;
+        }
+        .smartlink-url button {
+          padding: 0.75rem 1.5rem;
+          background: #cc271a;
+          color: #ffffff;
+          border: none;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 500;
+        }
         .footer {
           margin-top: 2rem;
           padding-top: 2rem;
@@ -205,6 +294,31 @@ router.get('/', (req, res) => {
           Service de SmartLinks pour partager votre musique sur toutes les plateformes de streaming. 
           URLs optimisées pour le partage social avec métadonnées Open Graph parfaites.
         </p>
+        <!-- Formulaire de création SmartLink -->
+        <form id="smartlinkForm" class="creation-form">
+          <div class="form-group">
+            <label for="artistName">Nom de l'artiste</label>
+            <input type="text" id="artistName" name="artistName" placeholder="Ex: Muse" required>
+          </div>
+          <div class="form-group">
+            <label for="trackTitle">Titre du morceau</label>
+            <input type="text" id="trackTitle" name="trackTitle" placeholder="Ex: Uprising" required>
+          </div>
+          <div class="form-group">
+            <label for="sourceUrl">URL de la source</label>
+            <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Ex: https://open.spotify.com/track/..." required>
+          </div>
+          <button type="submit" class="create-btn">Créer SmartLink</button>
+        </form>
+        
+        <div id="result" class="result-section" style="display: none;">
+          <h3>SmartLink créé avec succès !</h3>
+          <div class="smartlink-url">
+            <input type="text" id="generatedUrl" readonly>
+            <button onclick="copyToClipboard()">Copier</button>
+          </div>
+        </div>
+        
         <div class="example">
           smartlink.mdmcmusicads.com/artist/track
         </div>
@@ -215,6 +329,72 @@ router.get('/', (req, res) => {
           Service HTML statique pour SEO optimal
         </div>
       </div>
+      
+      <script>
+        // Gestion du formulaire de création SmartLink
+        document.getElementById('smartlinkForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const formData = new FormData(e.target);
+          const data = {
+            artistName: formData.get('artistName').trim(),
+            trackTitle: formData.get('trackTitle').trim(),
+            sourceUrl: formData.get('sourceUrl').trim()
+          };
+          
+          const submitBtn = document.querySelector('.create-btn');
+          const resultSection = document.getElementById('result');
+          
+          // État de chargement
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Création en cours...';
+          resultSection.style.display = 'none';
+          
+          try {
+            const response = await fetch('/api/create-smartlink', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+              // Succès
+              const generatedUrl = \`https://smartlink.mdmcmusicads.com/\${result.artistSlug}/\${result.trackSlug}\`;
+              document.getElementById('generatedUrl').value = generatedUrl;
+              resultSection.style.display = 'block';
+              
+              // Reset form
+              e.target.reset();
+            } else {
+              alert('Erreur lors de la création: ' + result.error);
+            }
+          } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur de connexion. Veuillez réessayer.');
+          } finally {
+            // Restaurer bouton
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Créer SmartLink';
+          }
+        });
+        
+        // Fonction pour copier l'URL
+        function copyToClipboard() {
+          const urlInput = document.getElementById('generatedUrl');
+          urlInput.select();
+          document.execCommand('copy');
+          
+          const copyBtn = event.target;
+          copyBtn.textContent = 'Copié !';
+          setTimeout(() => {
+            copyBtn.textContent = 'Copier';
+          }, 2000);
+        }
+      </script>
     </body>
     </html>
   `);

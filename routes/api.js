@@ -9,6 +9,53 @@ const router = express.Router();
 const htmlGenerator = new StaticHtmlGenerator();
 const odesliService = new OdesliService();
 
+// Fonction pour créer un slug valide
+function createSlug(text) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[àáâãäå]/g, 'a')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/[òóôõö]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[ç]/g, 'c')
+    .replace(/[ñ]/g, 'n')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+// Fonction utilitaire pour extraire le domaine
+function getDomainFromUrl(url) {
+  try {
+    const domain = new URL(url).hostname;
+    
+    // Mapping des domaines vers les plateformes
+    const platformMap = {
+      'open.spotify.com': 'spotify',
+      'music.apple.com': 'apple',
+      'geo.music.apple.com': 'apple',
+      'youtube.com': 'youtube',
+      'music.youtube.com': 'youtube',
+      'www.youtube.com': 'youtube',
+      'm.youtube.com': 'youtube',
+      'deezer.com': 'deezer',
+      'www.deezer.com': 'deezer',
+      'tidal.com': 'tidal',
+      'listen.tidal.com': 'tidal',
+      'soundcloud.com': 'soundcloud',
+      'amazon.com': 'amazon',
+      'music.amazon.com': 'amazon'
+    };
+    
+    return platformMap[domain] || domain.replace('www.', '');
+  } catch {
+    return 'unknown';
+  }
+}
+
 // GET /api/stats - Statistiques du service
 router.get('/stats', async (req, res) => {
   try {
@@ -27,6 +74,99 @@ router.get('/stats', async (req, res) => {
   } catch (error) {
     console.error('❌ Erreur stats:', error);
     res.status(500).json({ error: 'Erreur récupération statistiques' });
+  }
+});
+
+// POST /api/create-smartlink - Créer un nouveau SmartLink (interface utilisateur)
+router.post('/create-smartlink', async (req, res) => {
+  try {
+    const { artistName, trackTitle, sourceUrl } = req.body;
+    
+    // Validation des données
+    if (!artistName || !trackTitle || !sourceUrl) {
+      return res.status(400).json({
+        error: 'Tous les champs sont requis (artistName, trackTitle, sourceUrl)'
+      });
+    }
+    
+    // Validation de l'URL
+    try {
+      new URL(sourceUrl);
+    } catch {
+      return res.status(400).json({
+        error: 'URL source invalide'
+      });
+    }
+    
+    console.log(`🎵 Création SmartLink: ${artistName} - ${trackTitle}`);
+    console.log(`📎 Source URL: ${sourceUrl}`);
+    
+    // Création des slugs
+    const artistSlug = createSlug(artistName);
+    const trackSlug = createSlug(trackTitle);
+    
+    if (!artistSlug || !trackSlug) {
+      return res.status(400).json({
+        error: 'Impossible de créer des URLs valides à partir des noms fournis'
+      });
+    }
+    
+    // Récupération des données via Odesli
+    let trackData;
+    try {
+      console.log(`🔄 Récupération données Odesli...`);
+      trackData = await odesliService.fetchPlatformLinks(sourceUrl, 'FR');
+      console.log(`✅ Données Odesli récupérées: ${Object.keys(trackData.links || {}).length} plateformes`);
+    } catch (odesliError) {
+      console.error('❌ Erreur Odesli:', odesliError.message);
+      
+      // En cas d'échec Odesli, créer un SmartLink basique avec l'URL source
+      trackData = {
+        title: trackTitle,
+        artist: artistName,
+        image: null,
+        links: {
+          [getDomainFromUrl(sourceUrl)]: {
+            url: sourceUrl,
+            nativeAppUriDesktop: sourceUrl
+          }
+        },
+        description: `${trackTitle} par ${artistName}`
+      };
+    }
+    
+    // Enrichissement des données avec les infos utilisateur
+    const enrichedData = {
+      ...trackData,
+      title: trackTitle, // Force le titre utilisateur
+      artist: artistName, // Force l'artiste utilisateur
+      artistSlug,
+      trackSlug,
+      createdAt: new Date(),
+      sourceUrl
+    };
+    
+    // Génération du fichier HTML statique
+    console.log(`📝 Génération HTML statique...`);
+    const htmlPath = await htmlGenerator.generateSmartLinkHtml(enrichedData);
+    console.log(`✅ HTML généré: ${htmlPath}`);
+    
+    // Réponse de succès
+    res.json({
+      success: true,
+      artistSlug,
+      trackSlug,
+      url: `https://smartlink.mdmcmusicads.com/${artistSlug}/${trackSlug}`,
+      platforms: Object.keys(trackData.links || {}),
+      message: 'SmartLink créé avec succès'
+    });
+    
+  } catch (error) {
+    console.error('❌ Erreur création SmartLink:', error);
+    res.status(500).json({
+      error: 'Erreur interne du serveur',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
