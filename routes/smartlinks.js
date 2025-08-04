@@ -1055,9 +1055,9 @@ router.get('/dashboard', (req, res) => {
             const platformDiv = document.createElement('div');
             platformDiv.className = 'platform-option';
             platformDiv.innerHTML = `
-              <input type="checkbox" class="platform-checkbox" value="${platform.id}" id="platform-${platform.id}">
-              <img class="platform-icon" src="/assets/logos/${platform.id}.png" alt="${platform.name}" onerror="this.style.display='none'">
-              <span class="platform-name">${platform.name}</span>
+              <input type='checkbox' class='platform-checkbox' value='${platform.id}' id='platform-${platform.id}'>
+              <img class='platform-icon' src='/assets/logos/${platform.id}.png' alt='${platform.name}' onerror='this.style.display="none"'>
+              <span class='platform-name'>${platform.name}</span>
             `;
             
             // Event listener pour sélection
