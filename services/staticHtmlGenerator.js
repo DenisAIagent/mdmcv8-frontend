@@ -222,10 +222,10 @@ class StaticHtmlGenerator {
       // Configuration
       baseUrl: this.baseUrl,
       analyticsEnabled: process.env.NODE_ENV === 'production',
-      gaId: process.env.GA4_ID,
-      gtmId: process.env.GTM_ID,
-      metaPixelId: process.env.META_PIXEL_ID,
-      tiktokPixelId: process.env.TIKTOK_PIXEL_ID,
+      gaId: smartlinkData.tracking?.ga4Id || process.env.GA4_ID,
+      gtmId: smartlinkData.tracking?.gtmId || process.env.GTM_ID,
+      metaPixelId: smartlinkData.tracking?.metaPixelId || process.env.META_PIXEL_ID,
+      tiktokPixelId: smartlinkData.tracking?.tiktokPixelId || process.env.TIKTOK_PIXEL_ID,
       
       // Charte MDMC
       brandName: 'MDMC Music Ads',

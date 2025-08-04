@@ -533,6 +533,34 @@ router.get('/dashboard', (req, res) => {
           color: #cc271a;
           font-weight: 500;
         }
+        .secondary-btn {
+          background: transparent;
+          border: 2px solid rgba(255,255,255,0.3);
+          color: #cccccc;
+          padding: 0.875rem 1.5rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          font-family: 'Inter', sans-serif;
+          font-size: 1rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
+        .secondary-btn:hover {
+          border-color: rgba(255,255,255,0.5);
+          color: #ffffff;
+          background: rgba(255,255,255,0.05);
+        }
+        .tracking-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        @media (max-width: 768px) {
+          .tracking-grid {
+            grid-template-columns: 1fr;
+          }
+        }
       </style>
     </head>
     <body>
@@ -570,6 +598,48 @@ router.get('/dashboard', (req, res) => {
               <button id="copyBtn">Copier</button>
             </div>
           </div>
+        </div>
+
+        <div class="form-card" id="customizeSection" style="display: none;">
+          <h3 style="color: #ffffff; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif;">
+Personnaliser le tracking analytics
+          </h3>
+          <p style="color: #cccccc; margin-bottom: 2rem; font-size: 0.9rem;">
+            Ajoutez vos propres pixels de tracking pour ce SmartLink spécifique
+          </p>
+          
+          <form id="trackingForm">
+            <div class="tracking-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+              <div class="form-group">
+                <label for="customGa4Id">Google Analytics 4</label>
+                <input type="text" id="customGa4Id" name="ga4Id" placeholder="G-XXXXXXXXXX">
+                <small class="help-text">ID de mesure GA4 (ex: G-XXXXXXXXXX)</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="customGtmId">Google Tag Manager</label>
+                <input type="text" id="customGtmId" name="gtmId" placeholder="GTM-XXXXXXX">
+                <small class="help-text">ID du conteneur GTM (ex: GTM-XXXXXXX)</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="customMetaPixelId">Meta Pixel (Facebook)</label>
+                <input type="text" id="customMetaPixelId" name="metaPixelId" placeholder="123456789012345">
+                <small class="help-text">ID du pixel Meta/Facebook</small>
+              </div>
+              
+              <div class="form-group">
+                <label for="customTiktokPixelId">TikTok Pixel</label>
+                <input type="text" id="customTiktokPixelId" name="tiktokPixelId" placeholder="CXXXXXXXXXXXXXXX">
+                <small class="help-text">ID du pixel TikTok</small>
+              </div>
+            </div>
+            
+            <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+              <button type="button" id="skipTracking" class="secondary-btn">Ignorer le tracking</button>
+              <button type="submit" class="create-btn">Mettre à jour le SmartLink</button>
+            </div>
+          </form>
         </div>
         
         <div class="info-section">
@@ -984,8 +1054,51 @@ function generateEditInterface(data) {
             </button>
           </div>
           
+          <!-- Section Tracking Analytics -->
+          <div class="section">
+            <h2 class="section-title">Analytics et Pixels de Tracking</h2>
+            <div class="help-text" style="margin-bottom: 1rem;">
+              Ajoutez vos codes de tracking personnalisés pour ce SmartLink spécifique
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="form-group">
+                <label for="ga4Id">Google Analytics 4</label>
+                <input type="text" id="ga4Id" name="ga4Id" placeholder="G-XXXXXXXXXX" value="">
+                <div class="help-text">ID de mesure GA4 (ex: G-XXXXXXXXXX)</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="gtmId">Google Tag Manager</label>
+                <input type="text" id="gtmId" name="gtmId" placeholder="GTM-XXXXXXX" value="">
+                <div class="help-text">ID du conteneur GTM (ex: GTM-XXXXXXX)</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="metaPixelId">Meta Pixel (Facebook)</label>
+                <input type="text" id="metaPixelId" name="metaPixelId" placeholder="123456789012345" value="">
+                <div class="help-text">ID du pixel Meta/Facebook</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="tiktokPixelId">TikTok Pixel</label>
+                <input type="text" id="tiktokPixelId" name="tiktokPixelId" placeholder="CXXXXXXXXXXXXXXX" value="">
+                <div class="help-text">ID du pixel TikTok</div>
+              </div>
+            </div>
+            
+            <div class="info-box" style="background: #1a1a1a; padding: 1rem; border-radius: 0.5rem; border-left: 3px solid #cc271a; margin-bottom: 1rem;">
+              <div style="color: #cc271a; font-weight: 600; margin-bottom: 0.5rem;">Priorité des pixels :</div>
+              <div style="color: #cccccc; font-size: 0.9rem;">
+                • Les pixels renseignés ici seront utilisés en priorité<br>
+                • Si vides, les pixels globaux du service seront utilisés<br>
+                • Laissez vide si vous ne souhaitez pas de tracking pour ce SmartLink
+              </div>
+            </div>
+          </div>
+          
           <button class="save-btn" id="saveBtn">
-            💾 Générer SmartLink Final
+            Générer SmartLink Final
           </button>
         </div>
         
@@ -1168,6 +1281,14 @@ function generateEditInterface(data) {
               source: document.getElementById('utm_source').value.trim(),
               medium: document.getElementById('utm_medium').value.trim(),
               campaign: document.getElementById('utm_campaign').value.trim()
+            },
+            
+            // Pixels de tracking personnalisés
+            tracking: {
+              ga4Id: document.getElementById('ga4Id').value.trim() || null,
+              gtmId: document.getElementById('gtmId').value.trim() || null,
+              metaPixelId: document.getElementById('metaPixelId').value.trim() || null,
+              tiktokPixelId: document.getElementById('tiktokPixelId').value.trim() || null
             },
             
             // Métadonnées techniques
