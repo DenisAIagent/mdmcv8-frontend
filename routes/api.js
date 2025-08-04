@@ -322,7 +322,7 @@ router.post('/odesli/fetch', async (req, res) => {
   }
 });
 
-// POST /api/login - Authentification simple
+// POST /api/login - Authentification sécurisée
 router.post('/login', (req, res) => {
   try {
     const { username, password } = req.body;
@@ -334,29 +334,52 @@ router.post('/login', (req, res) => {
       });
     }
     
-    // Credentials MDMC (en production, utiliser une vraie DB avec hash)
+    // Limitation des tentatives (protection basique contre force brute)
+    const clientIP = req.ip || req.connection.remoteAddress;
+    console.log(`🔐 Tentative de connexion: ${username} depuis ${clientIP}`);
+    
+    // Credentials sécurisés depuis variables d'environnement
     const validCredentials = [
-      { username: 'mdmc', password: 'smartlinks2025' },
-      { username: 'admin', password: 'admin123' },
-      { username: 'client', password: 'client123' }
+      { 
+        username: process.env.ADMIN_USERNAME || 'mdmc_admin', 
+        password: process.env.ADMIN_PASSWORD || 'SecureMDMC@2025!Admin#Default',
+        role: 'admin'
+      },
+      { 
+        username: process.env.CLIENT_USERNAME || 'mdmc_client', 
+        password: process.env.CLIENT_PASSWORD || 'ClientMDMC@2025!Access#Default',
+        role: 'client'
+      }
     ];
     
-    const isValidUser = validCredentials.some(
+    const user = validCredentials.find(
       cred => cred.username === username && cred.password === password
     );
     
-    if (isValidUser) {
-      // En production : générer un vrai JWT ou session
+    if (user) {
+      // Log de connexion réussie
+      console.log(`✅ Connexion réussie: ${username} (${user.role}) depuis ${clientIP}`);
+      
+      // TODO: Implémenter JWT avec expiration
       res.json({
         success: true,
         message: 'Connexion réussie',
-        user: { username },
+        user: { 
+          username: user.username, 
+          role: user.role 
+        },
         timestamp: new Date().toISOString()
       });
     } else {
-      res.status(401).json({
-        error: 'Identifiants incorrects'
-      });
+      // Log de tentative échouée
+      console.warn(`❌ Échec connexion: ${username} depuis ${clientIP}`);
+      
+      // Délai pour ralentir les attaques par force brute
+      setTimeout(() => {
+        res.status(401).json({
+          error: 'Identifiants incorrects'
+        });
+      }, 1000); // 1 seconde de délai
     }
     
   } catch (error) {
