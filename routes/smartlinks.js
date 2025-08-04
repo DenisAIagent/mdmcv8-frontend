@@ -213,20 +213,36 @@ router.get('/', (req, res) => {
         }
         .form-group input {
           width: 100%;
-          padding: 0.875rem;
-          border: 2px solid rgba(255,255,255,0.2);
-          border-radius: 0.5rem;
-          background: #1a1a1a;
+          padding: 1rem 1.25rem;
+          border: 2px solid rgba(255,255,255,0.15);
+          border-radius: 0.75rem;
+          background: rgba(26, 26, 26, 0.8);
+          backdrop-filter: blur(10px);
           color: #ffffff;
           font-family: 'Inter', sans-serif;
           font-size: 1rem;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-sizing: border-box;
+          position: relative;
+        }
+        .form-group input::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+          transition: all 0.3s ease;
+        }
+        .form-group input:hover {
+          border-color: rgba(255,255,255,0.3);
+          background: rgba(26, 26, 26, 0.9);
         }
         .form-group input:focus {
           outline: none;
-          border-color: #cc271a;
-          box-shadow: 0 0 0 3px rgba(204, 39, 26, 0.1);
+          border-color: #E50914;
+          box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.15), 0 8px 24px rgba(229, 9, 20, 0.1);
+          background: rgba(26, 26, 26, 0.95);
+          transform: translateY(-1px);
+        }
+        .form-group input:focus::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+          transform: translateY(-2px);
         }
         .login-btn {
           width: 100%;
@@ -447,20 +463,36 @@ router.get('/dashboard', (req, res) => {
         }
         .form-group input {
           width: 100%;
-          padding: 0.875rem;
-          border: 2px solid rgba(255,255,255,0.2);
-          border-radius: 0.5rem;
-          background: #1a1a1a;
+          padding: 1rem 1.25rem;
+          border: 2px solid rgba(255,255,255,0.15);
+          border-radius: 0.75rem;
+          background: rgba(26, 26, 26, 0.8);
+          backdrop-filter: blur(10px);
           color: #ffffff;
           font-family: 'Inter', sans-serif;
           font-size: 1rem;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-sizing: border-box;
+          position: relative;
+        }
+        .form-group input::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+          transition: all 0.3s ease;
+        }
+        .form-group input:hover {
+          border-color: rgba(255,255,255,0.3);
+          background: rgba(26, 26, 26, 0.9);
         }
         .form-group input:focus {
           outline: none;
-          border-color: #cc271a;
-          box-shadow: 0 0 0 3px rgba(204, 39, 26, 0.1);
+          border-color: #E50914;
+          box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.15), 0 8px 24px rgba(229, 9, 20, 0.1);
+          background: rgba(26, 26, 26, 0.95);
+          transform: translateY(-1px);
+        }
+        .form-group input:focus::placeholder {
+          color: rgba(255, 255, 255, 0.7);
+          transform: translateY(-2px);
         }
         .file-input {
           padding: 0.5rem !important;
@@ -558,23 +590,53 @@ router.get('/dashboard', (req, res) => {
           flex: 1;
         }
         .search-btn {
-          background: #cc271a;
+          background: linear-gradient(135deg, #E50914 0%, #cc271a 100%);
           color: white;
           border: none;
-          padding: 0.875rem 1.5rem;
+          padding: 0.875rem 2rem;
           border-radius: 0.5rem;
           font-family: 'Poppins', sans-serif;
-          font-weight: 500;
+          font-weight: 600;
+          font-size: 0.95rem;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           white-space: nowrap;
+          box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+          position: relative;
+          overflow: hidden;
+          min-width: 160px;
+        }
+        .search-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transition: left 0.6s;
+        }
+        .search-btn:hover::before {
+          left: 100%;
         }
         .search-btn:hover {
-          background: #a61f15;
+          background: linear-gradient(135deg, #ff0a1a 0%, #d1241b 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+        }
+        .search-btn:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 8px rgba(229, 9, 20, 0.3);
         }
         .search-btn:disabled {
-          background: #666666;
+          background: linear-gradient(135deg, #666 0%, #555 100%);
           cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+          opacity: 0.7;
+        }
+        .search-btn:disabled::before {
+          display: none;
         }
         .search-results {
           margin-top: 2rem;
@@ -844,14 +906,14 @@ router.get('/dashboard', (req, res) => {
                 <label for="sourceUrl">ISRC / UPC ou URL Spotify/Apple Music/Deezer *</label>
                 <div class="search-input-group">
                   <input type="text" id="sourceUrl" name="sourceUrl" placeholder="ISRC: USUM71703692, UPC: 123456789, ou URL: https://open.spotify.com/track/..." required>
-                  <button type="button" id="searchLinksBtn" class="search-btn">🔍 Rechercher les liens</button>
+                  <button type="button" id="searchLinksBtn" class="search-btn">Rechercher les liens</button>
                 </div>
                 <small class="help-text">Saisissez un code ISRC, UPC ou collez une URL de plateforme musicale</small>
               </div>
 
               <!-- Section de résultats de recherche -->
               <div id="searchResults" class="search-results" style="display: none;">
-                <h4 class="search-results-title">🎵 Musique trouvée</h4>
+                <h4 class="search-results-title">Musique trouvée</h4>
                 <div id="trackInfo" class="track-info-preview">
                   <div class="track-details">
                     <img id="trackArtwork" class="track-artwork" src="" alt="Pochette">
@@ -884,7 +946,7 @@ router.get('/dashboard', (req, res) => {
               
               <!-- Audio de prévisualisation -->
               <div class="subsection">
-                <h4 class="subsection-title">🎵 Audio de prévisualisation</h4>
+                <h4 class="subsection-title">Audio de prévisualisation</h4>
                 <div class="form-group">
                   <label for="audioFile">Fichier audio (optionnel)</label>
                   <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav" class="file-input">
@@ -954,7 +1016,7 @@ router.get('/dashboard', (req, res) => {
             
             <!-- URL générée -->
             <div class="url-section">
-              <h4 style="color: #cc271a; margin: 0 0 1rem 0; font-size: 1rem;">🔗 Votre SmartLink</h4>
+              <h4 style="color: #cc271a; margin: 0 0 1rem 0; font-size: 1rem;">Votre SmartLink</h4>
               <div class="smartlink-url">
                 <input type="text" id="generatedUrl" readonly>
                 <button id="copyBtn" onclick="copyToClipboard()">Copier</button>
@@ -992,8 +1054,10 @@ router.get('/dashboard', (req, res) => {
         let searchData = null;
         let selectedPlatforms = [];
 
-        // Gestion du bouton de recherche
-        document.getElementById('searchLinksBtn').addEventListener('click', async function() {
+        // Gestion du bouton de recherche avec vérification
+        const searchBtn = document.getElementById('searchLinksBtn');
+        if (searchBtn) {
+          searchBtn.addEventListener('click', async function() {
           const sourceUrl = document.getElementById('sourceUrl').value.trim();
           
           if (!sourceUrl) {
@@ -1006,7 +1070,7 @@ router.get('/dashboard', (req, res) => {
           const searchResults = document.getElementById('searchResults');
           
           searchBtn.disabled = true;
-          searchBtn.textContent = '🔍 Recherche en cours...';
+          searchBtn.textContent = 'Recherche en cours...';
           searchResults.style.display = 'none';
 
           try {
@@ -1045,6 +1109,9 @@ router.get('/dashboard', (req, res) => {
             searchBtn.textContent = originalText;
           }
         });
+        } else {
+          console.error('Bouton de recherche non trouvé dans le DOM');
+        }
 
         // Génération de la grille des plateformes
         function generatePlatformsGrid(platforms) {
@@ -1159,9 +1226,9 @@ router.get('/dashboard', (req, res) => {
             // Validation de la durée
             audioPlayer.addEventListener('loadedmetadata', function() {
               if (audioPlayer.duration > 30) {
-                audioInfo.innerHTML += ' <span style="color: #cc271a;">⚠️ Durée: ' + audioPlayer.duration.toFixed(1) + 's (>30s détecté, seules les 3 premières secondes seront lues)</span>';
+                audioInfo.innerHTML += ' <span style="color: #cc271a;">Attention - Durée: ' + audioPlayer.duration.toFixed(1) + 's (>30s détecté, seules les 3 premières secondes seront lues)</span>';
               } else {
-                audioInfo.innerHTML += ' <span style="color: #4CAF50;">✓ Durée: ' + audioPlayer.duration.toFixed(1) + 's</span>';
+                audioInfo.innerHTML += ' <span style="color: #4CAF50;">Validé - Durée: ' + audioPlayer.duration.toFixed(1) + 's</span>';
               }
             });
           } else {
@@ -1205,7 +1272,7 @@ router.get('/dashboard', (req, res) => {
             let audioUrl = null;
             const audioFile = formData.get('audioFile');
             if (audioFile && audioFile.size > 0) {
-              submitBtn.textContent = '🎵 Upload du fichier audio...';
+              submitBtn.textContent = 'Upload du fichier audio...';
               
               const audioFormData = new FormData();
               audioFormData.append('audioFile', audioFile);
@@ -1227,7 +1294,7 @@ router.get('/dashboard', (req, res) => {
             }
             
             // Étape 2: Création du SmartLink avec toutes les données
-            submitBtn.textContent = '🔗 Génération du SmartLink...';
+            submitBtn.textContent = 'Génération du SmartLink...';
             
             const smartlinkData = {
               sourceUrl,
@@ -1258,15 +1325,15 @@ router.get('/dashboard', (req, res) => {
               document.getElementById('generatedUrl').value = result.smartlinkUrl || result.url;
               
               // Statut audio
-              document.getElementById('audioStatus').textContent = result.audioUrl ? 'Oui ✅' : 'Non';
+              document.getElementById('audioStatus').textContent = result.audioUrl ? 'Oui (Validé)' : 'Non';
               document.getElementById('audioStatus').style.color = result.audioUrl ? '#4CAF50' : '#cccccc';
               
               resultSection.style.display = 'block';
               resultSection.scrollIntoView({ behavior: 'smooth' });
               
-              submitBtn.textContent = '✅ SmartLink créé avec succès !';
+              submitBtn.textContent = 'SmartLink créé avec succès !';
               setTimeout(() => {
-                submitBtn.textContent = '🚀 Générer mon SmartLink complet';
+                submitBtn.textContent = 'Générer mon SmartLink complet';
               }, 3000);
               
             } else {
@@ -1290,7 +1357,7 @@ router.get('/dashboard', (req, res) => {
           
           const copyBtn = document.getElementById('copyBtn');
           const originalText = copyBtn.textContent;
-          copyBtn.textContent = '✅ Copié !';
+          copyBtn.textContent = 'Copié !';
           copyBtn.style.background = '#4CAF50';
           
           setTimeout(() => {
@@ -1583,11 +1650,11 @@ function generateEditInterface(data) {
           
           <!-- Métadonnées -->
           <div class="section">
-            <h2 class="section-title">🎵 Métadonnées du morceau</h2>
+            <h2 class="section-title">Métadonnées du morceau</h2>
             <div class="form-group">
               <label for="title">Titre du morceau *</label>
               <input type="text" id="title" value="${data.title}" required>
-              <div class="help-text">✅ Titre détecté automatiquement depuis l'API</div>
+              <div class="help-text">Titre détecté automatiquement depuis l'API</div>
             </div>
             <div class="form-group">
               <label for="artist">Nom de l'artiste *</label>
@@ -1611,7 +1678,7 @@ function generateEditInterface(data) {
           
           <!-- Plateformes -->
           <div class="section">
-            <h2 class="section-title">🔗 Liens des plateformes</h2>
+            <h2 class="section-title">Liens des plateformes</h2>
             <div class="help-text" style="margin-bottom: 1rem;">
               Sélectionnez les plateformes à afficher sur votre SmartLink
             </div>
@@ -1650,14 +1717,14 @@ ${data.platforms.map(platform =>
             
             <!-- Aperçu des URLs avec tracking -->
             <div id="utmPreview" style="background: #0f0f0f; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; display: none;">
-              <h4 style="color: #cc271a; margin-bottom: 0.5rem; font-size: 0.9rem;">🔗 Aperçu des URLs avec tracking</h4>
+              <h4 style="color: #cc271a; margin-bottom: 0.5rem; font-size: 0.9rem;">Aperçu des URLs avec tracking</h4>
               <div id="trackedUrls" style="font-family: monospace; font-size: 0.8rem; color: #999; max-height: 200px; overflow-y: auto;"></div>
               <button type="button" id="hideUtmBtn" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #cc271a; color: white; border: none; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
                 Masquer l'aperçu
               </button>
             </div>
             <button type="button" id="showUtmBtn" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: transparent; color: #cc271a; border: 1px solid #cc271a; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
-              🔍 Voir les URLs avec tracking
+              Voir les URLs avec tracking
             </button>
           </div>
           
@@ -1929,7 +1996,7 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
           
           // Animation du bouton
           saveBtn.disabled = true;
-          saveBtn.innerHTML = '⏳ Génération en cours...';
+          saveBtn.innerHTML = 'Génération en cours...';
           
           try {
             // Appel API pour sauvegarder et générer le SmartLink final
@@ -1943,7 +2010,7 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
             
             if (response.ok) {
               // Succès - Redirection vers le SmartLink généré
-              saveBtn.innerHTML = '✅ SmartLink généré !';
+              saveBtn.innerHTML = 'SmartLink généré !';
               
               setTimeout(() => {
                 const finalUrl = 'https://smartlink.mdmcmusicads.com/' + smartlinkData.artist.slug + '/' + smartlinkData.slug;
@@ -1971,7 +2038,7 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
             alert('Erreur lors de la génération du SmartLink: ' + error.message);
             
             saveBtn.disabled = false;
-            saveBtn.innerHTML = '💾 Générer SmartLink Final';
+            saveBtn.innerHTML = 'Générer SmartLink Final';
           }
         }
       </script>
