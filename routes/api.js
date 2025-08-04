@@ -56,6 +56,26 @@ function getDomainFromUrl(url) {
   }
 }
 
+// Fonction pour formatter les liens Odesli vers le format template
+function formatPlatformLinksForTemplate(platformLinks) {
+  const formattedLinks = {};
+  
+  if (!platformLinks || !Array.isArray(platformLinks)) {
+    return formattedLinks;
+  }
+  
+  platformLinks.forEach(link => {
+    if (link.platform && link.url) {
+      formattedLinks[link.platform] = {
+        url: link.url,
+        nativeAppUriDesktop: link.nativeAppUriDesktop || link.url
+      };
+    }
+  });
+  
+  return formattedLinks;
+}
+
 // GET /api/stats - Statistiques du service
 router.get('/stats', async (req, res) => {
   try {
@@ -135,20 +155,33 @@ router.post('/create-smartlink', async (req, res) => {
       };
     }
     
-    // Enrichissement des données avec les infos utilisateur
-    const enrichedData = {
-      ...trackData,
-      title: trackTitle, // Force le titre utilisateur
-      artist: artistName, // Force l'artiste utilisateur
-      artistSlug,
-      trackSlug,
+    // Transformation des données au format attendu par le générateur HTML
+    const smartlinkData = {
+      // Utiliser les données Odesli si disponibles, sinon les données utilisateur
+      title: trackData.trackTitle || trackTitle,
+      artist: trackData.artist || {
+        name: artistName,
+        slug: artistSlug
+      },
+      slug: trackData.slug || trackSlug,
+      
+      // Métadonnées visuelles depuis Odesli
+      image: trackData.coverImageUrl || null,
+      coverImageUrl: trackData.coverImageUrl || null,
+      description: trackData.description || `${trackTitle} par ${artistName}`,
+      
+      // Liens plateformes (format compatible avec template)
+      links: formatPlatformLinksForTemplate(trackData.platformLinks || []),
+      
+      // Métadonnées techniques
       createdAt: new Date(),
-      sourceUrl
+      sourceUrl,
+      odesliData: trackData.odesliData || null
     };
     
     // Génération du fichier HTML statique
     console.log(`📝 Génération HTML statique...`);
-    const htmlPath = await htmlGenerator.generateSmartLinkHtml(enrichedData);
+    const htmlPath = await htmlGenerator.generateSmartLinkHtml(smartlinkData);
     console.log(`✅ HTML généré: ${htmlPath}`);
     
     // Réponse de succès
