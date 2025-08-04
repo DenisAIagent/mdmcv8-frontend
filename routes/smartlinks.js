@@ -612,16 +612,8 @@ router.get('/dashboard', (req, res) => {
             const result = await response.json();
             
             if (response.ok) {
-              const generatedUrl = \`https://smartlink.mdmcmusicads.com/\${result.artistSlug}/\${result.trackSlug}\`;
-              document.getElementById('generatedUrl').value = generatedUrl;
-              
-              // Afficher les informations récupérées
-              document.getElementById('retrievedTitle').textContent = result.title || 'Titre récupéré';
-              document.getElementById('retrievedArtist').textContent = result.artist || 'Artiste récupéré';
-              document.getElementById('platformCount').textContent = result.platforms?.length || 0;
-              
-              resultSection.style.display = 'block';
-              e.target.reset();
+              // Redirection vers l'interface d'édition au lieu d'afficher le résultat
+              window.location.href = \`/edit/\${result.artistSlug}/\${result.trackSlug}\`;
             } else {
               alert('Erreur: ' + result.error);
             }
@@ -658,6 +650,387 @@ router.get('/dashboard', (req, res) => {
     </html>
   `);
 });
+
+// Route d'édition SmartLink : interface complète post-génération
+router.get('/edit/:artistSlug/:trackSlug', async (req, res) => {
+  try {
+    const { artistSlug, trackSlug } = req.params;
+    
+    // TODO: Récupérer les données depuis la DB/fichier temporaire
+    // Pour l'instant, on simule les données
+    const smartlinkData = {
+      title: 'Wait and Bleed',
+      artist: { name: 'Slipknot', slug: artistSlug },
+      slug: trackSlug,
+      description: 'Écouter "Wait and Bleed" de Slipknot sur toutes les plateformes de streaming musical.',
+      coverImageUrl: 'https://i.scdn.co/image/ab67616d0000b27349de1b4acdde02e84c6023b7',
+      platforms: [
+        { id: 'spotify', name: 'Spotify', url: 'https://open.spotify.com/track/15DLl1r2zi07Ssq5RT1yT0', enabled: true },
+        { id: 'apple', name: 'Apple Music', url: 'https://geo.music.apple.com/fr/album/_/927731469?i=927731733&mt=1&app=music&ls=1&at=1000lHKX&ct=api_http&itscg=30200&itsct=odsl_m', enabled: true },
+        { id: 'deezer', name: 'Deezer', url: 'https://www.deezer.com/track/4197811', enabled: true },
+        { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com/watch?v=B1zCN0YhW1s', enabled: true },
+        { id: 'youtubeMusic', name: 'YouTube Music', url: 'https://music.youtube.com/watch?v=B1zCN0YhW1s', enabled: true },
+        { id: 'tidal', name: 'Tidal', url: 'https://listen.tidal.com/track/3113167', enabled: true },
+        { id: 'soundcloud', name: 'SoundCloud', url: 'https://soundcloud.com/slipknot/wait-and-bleed?utm_medium=api&utm_campaign=social_sharing&utm_source=id_314547', enabled: true },
+        { id: 'amazon', name: 'Amazon Music', url: 'https://music.amazon.com/albums/B0023UCW38?trackAsin=B0023UB90K', enabled: true },
+        { id: 'napster', name: 'Napster', url: 'https://play.napster.com/track/tra.2953351', enabled: true },
+        { id: 'pandora', name: 'Pandora', url: 'https://www.pandora.com/TR:7471639', enabled: true }
+      ]
+    };
+    
+    res.send(generateEditInterface(smartlinkData));
+    
+  } catch (error) {
+    console.error('❌ Erreur route édition:', error);
+    res.status(500).send('Erreur chargement interface d\\'édition');
+  }
+});
+
+// Fonction pour générer l'interface d'édition
+function generateEditInterface(data) {
+  return `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Édition SmartLink - ${data.title} | MDMC</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+          font-family: 'Inter', sans-serif; 
+          background-color: #0a0a0a;
+          color: #ffffff;
+          line-height: 1.6;
+        }
+        .header {
+          background: #141414;
+          padding: 1rem 2rem;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .logo { height: 40px; width: auto; }
+        .main-container {
+          display: grid;
+          grid-template-columns: 1fr 400px;
+          gap: 2rem;
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 2rem;
+        }
+        .edit-panel {
+          background: #141414;
+          border-radius: 1rem;
+          padding: 2rem;
+          height: fit-content;
+        }
+        .preview-panel {
+          background: #1a1a1a;
+          border-radius: 1rem;
+          padding: 2rem;
+          position: sticky;
+          top: 2rem;
+          height: fit-content;
+        }
+        .section {
+          margin-bottom: 2rem;
+          padding-bottom: 2rem;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .section:last-child { border-bottom: none; }
+        .section-title {
+          color: #cc271a;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.2rem;
+          margin-bottom: 1rem;
+        }
+        .form-group {
+          margin-bottom: 1rem;
+        }
+        .form-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #ffffff;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+        .form-group input, .form-group textarea {
+          width: 100%;
+          padding: 0.75rem;
+          border: 2px solid rgba(255,255,255,0.2);
+          border-radius: 0.5rem;
+          background: #1a1a1a;
+          color: #ffffff;
+          font-family: 'Inter', sans-serif;
+          transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+          outline: none;
+          border-color: #cc271a;
+          box-shadow: 0 0 0 3px rgba(204, 39, 26, 0.1);
+        }
+        .platform-item {
+          display: flex;
+          align-items: center;
+          padding: 0.75rem;
+          background: #1a1a1a;
+          border-radius: 0.5rem;
+          margin-bottom: 0.5rem;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        .platform-checkbox {
+          margin-right: 1rem;
+          width: 18px;
+          height: 18px;
+          accent-color: #cc271a;
+        }
+        .platform-info {
+          flex: 1;
+        }
+        .platform-name {
+          font-weight: 500;
+          color: #ffffff;
+        }
+        .platform-url {
+          font-size: 0.8rem;
+          color: #999999;
+          font-family: monospace;
+          word-break: break-all;
+        }
+        .preview-smartlink {
+          background: #0f0f0f;
+          border-radius: 1rem;
+          padding: 2rem;
+          text-align: center;
+          border: 1px solid rgba(204, 39, 26, 0.2);
+        }
+        .preview-cover {
+          width: 200px;
+          height: 200px;
+          border-radius: 1rem;
+          margin: 0 auto 1.5rem;
+          object-fit: cover;
+        }
+        .preview-title {
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #ffffff;
+          margin-bottom: 0.5rem;
+        }
+        .preview-artist {
+          font-size: 1.1rem;
+          color: #cccccc;
+          margin-bottom: 2rem;
+        }
+        .preview-platforms {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          gap: 0.5rem;
+        }
+        .preview-platform {
+          padding: 0.75rem 0.5rem;
+          background: #cc271a;
+          color: #ffffff;
+          border-radius: 0.5rem;
+          font-size: 0.8rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+        }
+        .preview-platform:hover {
+          background: #a61f15;
+          transform: translateY(-2px);
+        }
+        .save-btn {
+          width: 100%;
+          padding: 1rem;
+          background: #cc271a;
+          color: #ffffff;
+          border: none;
+          border-radius: 50px;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-top: 2rem;
+        }
+        .save-btn:hover {
+          background: #a61f15;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(204, 39, 26, 0.3);
+        }
+        .help-text {
+          font-size: 0.8rem;
+          color: #999999;
+          margin-top: 0.25rem;
+          font-style: italic;
+        }
+        @media (max-width: 1200px) {
+          .main-container {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+          .preview-panel {
+            position: relative;
+            top: 0;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <header class="header">
+        <img src="/images/MDMC_logo_blanc fond transparent.png" alt="MDMC" class="logo">
+        <div>Panneau d'Administration</div>
+      </header>
+      
+      <div class="main-container">
+        <!-- Panel d'édition -->
+        <div class="edit-panel">
+          <h1 style="color: #cc271a; font-family: 'Poppins', sans-serif; font-size: 2rem; margin-bottom: 2rem;">
+            📝 Créer un Nouveau SmartLink
+          </h1>
+          
+          <!-- Métadonnées -->
+          <div class="section">
+            <h2 class="section-title">🎵 Métadonnées du morceau</h2>
+            <div class="form-group">
+              <label for="title">Titre du morceau *</label>
+              <input type="text" id="title" value="${data.title}" required>
+              <div class="help-text">✅ Titre détecté automatiquement depuis l'API</div>
+            </div>
+            <div class="form-group">
+              <label for="artist">Nom de l'artiste *</label>
+              <input type="text" id="artist" value="${data.artist.name}" required>
+              <div class="help-text">Nom détecté automatiquement depuis l'API</div>
+            </div>
+            <div class="form-group">
+              <label for="description">Meta description</label>
+              <textarea id="description" rows="3">${data.description}</textarea>
+              <div class="help-text">Description SEO qui apparaîtra dans les résultats de recherche et partages sociaux (max 160 caractères)</div>
+            </div>
+            <div class="form-group">
+              <label for="isrc">ISRC</label>
+              <input type="text" id="isrc" placeholder="ISRC">
+            </div>
+            <div class="form-group">
+              <label for="label">Label</label>
+              <input type="text" id="label" placeholder="Label">
+            </div>
+          </div>
+          
+          <!-- Plateformes -->
+          <div class="section">
+            <h2 class="section-title">🔗 Liens des plateformes</h2>
+            <div class="help-text" style="margin-bottom: 1rem;">
+              Sélectionnez les plateformes à afficher sur votre SmartLink
+            </div>
+            ${data.platforms.map(platform => `
+              <div class="platform-item">
+                <input type="checkbox" class="platform-checkbox" id="platform-${platform.id}" ${platform.enabled ? 'checked' : ''}>
+                <div class="platform-info">
+                  <div class="platform-name">${platform.name}</div>
+                  <div class="platform-url">${platform.url}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <!-- Tracking UTM -->
+          <div class="section">
+            <h2 class="section-title">📊 Paramètres UTM</h2>
+            <div class="form-group">
+              <label for="utm_source">Source</label>
+              <input type="text" id="utm_source" value="wiseband" placeholder="ex: wiseband, instagram, newsletter">
+            </div>
+            <div class="form-group">
+              <label for="utm_medium">Medium</label>
+              <input type="text" id="utm_medium" value="smartlink" placeholder="ex: smartlink, social, email">
+            </div>
+            <div class="form-group">
+              <label for="utm_campaign">Campaign</label>
+              <input type="text" id="utm_campaign" value="${data.artist.slug}-${data.slug}" placeholder="ex: nom-artiste-titre">
+            </div>
+          </div>
+          
+          <button class="save-btn" onclick="saveSmartLink()">
+            💾 Générer SmartLink Final
+          </button>
+        </div>
+        
+        <!-- Panel de prévisualisation -->
+        <div class="preview-panel">
+          <h3 style="color: #cc271a; font-family: 'Poppins', sans-serif; margin-bottom: 1rem;">
+            👀 Prévisualisation
+          </h3>
+          <div class="preview-smartlink">
+            <img src="${data.coverImageUrl}" alt="${data.title}" class="preview-cover">
+            <div class="preview-title">${data.title}</div>
+            <div class="preview-artist">${data.artist.name}</div>
+            <div style="color: #cccccc; margin-bottom: 1.5rem; font-size: 0.9rem;">
+              Choisissez votre plateforme préférée
+            </div>
+            <div class="preview-platforms">
+              ${data.platforms.filter(p => p.enabled).map(platform => `
+                <div class="preview-platform">${platform.name}</div>
+              `).join('')}
+            </div>
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; color: #999999;">
+              Propulsé par MDMC Music Ads<br>
+              <strong>${data.platforms.filter(p => p.enabled).length} liens de plateformes trouvés !</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <script>
+        // Mise à jour en temps réel de la prévisualisation
+        document.getElementById('title').addEventListener('input', (e) => {
+          document.querySelector('.preview-title').textContent = e.target.value;
+        });
+        
+        document.getElementById('artist').addEventListener('input', (e) => {
+          document.querySelector('.preview-artist').textContent = e.target.value;
+        });
+        
+        // Gestion des checkboxes plateformes
+        document.querySelectorAll('.platform-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', updatePreview);
+        });
+        
+        function updatePreview() {
+          const enabledPlatforms = [];
+          document.querySelectorAll('.platform-checkbox:checked').forEach(checkbox => {
+            const platformId = checkbox.id.replace('platform-', '');
+            const platformName = checkbox.closest('.platform-item').querySelector('.platform-name').textContent;
+            enabledPlatforms.push(platformName);
+          });
+          
+          const previewPlatforms = document.querySelector('.preview-platforms');
+          previewPlatforms.innerHTML = enabledPlatforms.map(name => 
+            \`<div class="preview-platform">\${name}</div>\`
+          ).join('');
+          
+          // Mise à jour du compteur
+          document.querySelector('.preview-smartlink div:last-child strong').textContent = 
+            \`\${enabledPlatforms.length} liens de plateformes trouvés !\`;
+        }
+        
+        function saveSmartLink() {
+          // TODO: Sauvegarder et générer le SmartLink final
+          alert('Génération du SmartLink final... (à implémenter)');
+        }
+      </script>
+    </body>
+    </html>
+  `;
+}
 
 // Route de test
 router.get('/test', (req, res) => {
