@@ -853,15 +853,15 @@ router.get('/dashboard', (req, res) => {
             // Affichage de la preview
             const objectUrl = URL.createObjectURL(file);
             audioPlayer.src = objectUrl;
-            audioInfo.textContent = \`\${file.name} (\${(file.size / 1024 / 1024).toFixed(2)}MB)\`;
+            audioInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
             audioPreview.style.display = 'block';
             
             // Validation de la durée
             audioPlayer.addEventListener('loadedmetadata', function() {
               if (audioPlayer.duration > 30) {
-                audioInfo.innerHTML += \` <span style="color: #cc271a;">⚠️ Durée: \${audioPlayer.duration.toFixed(1)}s (>30s détecté, seules les 3 premières secondes seront lues)</span>\`;
+                audioInfo.innerHTML += ` <span style="color: #cc271a;">⚠️ Durée: ${audioPlayer.duration.toFixed(1)}s (>30s détecté, seules les 3 premières secondes seront lues)</span>`;
               } else {
-                audioInfo.innerHTML += \` <span style="color: #4CAF50;">✓ Durée: \${audioPlayer.duration.toFixed(1)}s</span>\`;
+                audioInfo.innerHTML += ` <span style="color: #4CAF50;">✓ Durée: ${audioPlayer.duration.toFixed(1)}s</span>`;
               }
             });
           } else {
