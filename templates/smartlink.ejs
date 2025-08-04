@@ -47,6 +47,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
+  <!-- Analytics - Google Tag Manager (GTM) -->
+  <% if (analyticsEnabled && gtmId) { %>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','<%= gtmId %>');</script>
+  <% } %>
+
   <!-- Analytics - Google Analytics 4 -->
   <% if (analyticsEnabled && gaId) { %>
   <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
@@ -98,6 +107,22 @@
     <img height="1" width="1" style="display:none" 
          src="https://www.facebook.com/tr?id=<%= metaPixelId %>&ev=PageView&noscript=1"/>
   </noscript>
+  <% } %>
+
+  <!-- TikTok Pixel -->
+  <% if (analyticsEnabled && tiktokPixelId) { %>
+  <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+      ttq.load('<%= tiktokPixelId %>');
+      ttq.page();
+      ttq.track('ViewContent', {
+        content_type: 'music',
+        content_name: '<%= track.title %>',
+        content_category: 'SmartLink'
+      });
+    }(window, document, 'ttq');
+  </script>
   <% } %>
 
   <style>
@@ -277,35 +302,51 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 64px;
-      height: 64px;
-      background: rgba(255, 255, 255, 0.95);
-      border: none;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: var(--blur-sm);
+      -webkit-backdrop-filter: var(--blur-sm);
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: var(--transition-base);
-      box-shadow: var(--shadow-lg);
       z-index: 10;
+      opacity: 0.8;
     }
     
     .play-button:hover {
-      background: var(--white);
-      transform: translate(-50%, -50%) scale(1.1);
-      box-shadow: var(--shadow-xl);
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%) scale(1.05);
+      opacity: 1;
     }
     
     .play-button svg {
-      width: 24px;
-      height: 24px;
-      fill: var(--black);
-      margin-left: 2px;
+      width: 32px;
+      height: 32px;
+      fill: var(--white);
+      margin-left: 3px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+    
+    .play-button.playing {
+      background: rgba(204, 39, 26, 0.2);
+      border-color: rgba(204, 39, 26, 0.4);
+      animation: pulse 2s infinite;
     }
     
     .play-button.playing svg {
       margin-left: 0;
+      fill: var(--mdmc-red-light);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
     }
     
     /* Audio Player (hidden) */
@@ -388,15 +429,23 @@
     
     /* Platform logos SVG */
     .platform-logo {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
       margin-right: var(--space-4);
       flex-shrink: 0;
+      transition: var(--transition-base);
+    }
+    
+    .platform-link:hover .platform-logo {
+      transform: scale(1.1);
     }
     
     .platform-name {
       flex: 1;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: var(--font-size-lg);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
     
     .platform-arrow {
@@ -540,8 +589,8 @@
       }
       
       .platform-logo {
-        width: 20px;
-        height: 20px;
+        width: 28px;
+        height: 28px;
         margin-right: var(--space-3);
       }
     }
@@ -607,6 +656,12 @@
 </head>
 
 <body>
+  <!-- GTM Noscript (doit être juste après <body>) -->
+  <% if (analyticsEnabled && gtmId) { %>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= gtmId %>"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <% } %>
+
   <!-- Background avec artwork flou -->
   <div class="background-artwork" style="background-image: url('<%= image %>')"></div>
   <div class="background-overlay"></div>
@@ -734,7 +789,7 @@
               </svg>
             <% } %>
           </div>
-          <span class="platform-name">Écouter sur <%= platform.displayName %></span>
+          <span class="platform-name">Play</span>
           <span class="platform-arrow" aria-hidden="true">↗</span>
         </a>
         <% }); %>
@@ -816,10 +871,10 @@
           updatePlayButton(true);
           trackAudioPlay();
           
-          // Arrêt automatique après 30 secondes
+          // Arrêt automatique après 3 secondes
           audioTimer = setTimeout(() => {
             pauseAudio();
-          }, 30000);
+          }, 3000);
         })
         .catch(error => {
           console.error('Erreur de lecture audio:', error);

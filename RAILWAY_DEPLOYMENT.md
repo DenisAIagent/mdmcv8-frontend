@@ -18,7 +18,9 @@ PORT=3000
 
 # Analytics
 GA4_ID=G-P11JTJ21NZ
+GTM_ID=GTM-XXXXXXX
 META_PIXEL_ID=votre_meta_pixel_id
+TIKTOK_PIXEL_ID=votre_tiktok_pixel_id
 
 # Sécurité
 SESSION_SECRET=générer_clé_secrète_256_bits
@@ -82,7 +84,9 @@ railway variables set PORT=3000
 
 # Analytics
 railway variables set GA4_ID=G-P11JTJ21NZ
+railway variables set GTM_ID=GTM-XXXXXXX
 railway variables set META_PIXEL_ID=votre_meta_pixel_id
+railway variables set TIKTOK_PIXEL_ID=votre_tiktok_pixel_id
 
 # UTM Tracking
 railway variables set UTM_TRACKING_ENABLED=true

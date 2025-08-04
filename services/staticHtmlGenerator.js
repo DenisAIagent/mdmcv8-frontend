@@ -210,7 +210,7 @@ class StaticHtmlGenerator {
         title: trackTitle,
         slug: smartlinkData.slug,
         subtitle: smartlinkData.subtitle || '',
-        previewUrl: smartlinkData.previewUrl || null
+        previewUrl: smartlinkData.audioPreviewUrl || smartlinkData.previewUrl || null
       },
       
       // Liens plateformes organisés avec UTM
@@ -223,7 +223,9 @@ class StaticHtmlGenerator {
       baseUrl: this.baseUrl,
       analyticsEnabled: process.env.NODE_ENV === 'production',
       gaId: process.env.GA4_ID,
+      gtmId: process.env.GTM_ID,
       metaPixelId: process.env.META_PIXEL_ID,
+      tiktokPixelId: process.env.TIKTOK_PIXEL_ID,
       
       // Charte MDMC
       brandName: 'MDMC Music Ads',
