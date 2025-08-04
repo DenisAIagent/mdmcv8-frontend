@@ -115,9 +115,104 @@ router.get('/:artistSlug/:trackSlug', logAccess, async (req, res) => {
   }
 });
 
-// Route racine : redirection vers site principal
+// Route racine : page d'accueil SmartLinks
 router.get('/', (req, res) => {
-  res.redirect('https://www.mdmcmusicads.com');
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>MDMC SmartLinks | Service de partage musical</title>
+      <style>
+        body { 
+          font-family: 'Inter', sans-serif; 
+          background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
+          color: #141414;
+          text-align: center;
+          padding: 2rem;
+          margin: 0;
+        }
+        .container { 
+          max-width: 500px; 
+          margin: 0 auto;
+          background: white;
+          padding: 3rem;
+          border-radius: 1rem;
+          box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        h1 { 
+          color: #E50914; 
+          font-size: 2rem; 
+          margin-bottom: 1rem;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+        }
+        .tagline {
+          color: #6C757D; 
+          margin-bottom: 2rem;
+          font-style: italic;
+          font-size: 1.1rem;
+        }
+        .description {
+          color: #495057;
+          margin-bottom: 2rem;
+          line-height: 1.6;
+        }
+        .example {
+          background: #F8F9FA;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          font-family: monospace;
+          color: #E50914;
+          margin-bottom: 2rem;
+        }
+        a { 
+          color: #E50914; 
+          text-decoration: none; 
+          font-weight: 500;
+          padding: 0.75rem 1.5rem;
+          border: 2px solid #E50914;
+          border-radius: 0.5rem;
+          display: inline-block;
+          transition: all 0.3s;
+          margin: 0.5rem;
+        }
+        a:hover { 
+          background: #E50914; 
+          color: white; 
+          transform: translateY(-2px);
+        }
+        .footer {
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid #E9ECEF;
+          font-size: 0.9rem;
+          color: #6C757D;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>MDMC SmartLinks</h1>
+        <p class="tagline">Marketing musical qui convertit</p>
+        <p class="description">
+          Service de SmartLinks pour partager votre musique sur toutes les plateformes de streaming. 
+          URLs optimisées pour le partage social avec métadonnées Open Graph parfaites.
+        </p>
+        <div class="example">
+          smartlink.mdmcmusicads.com/artist/track
+        </div>
+        <a href="/test">Tester le service</a>
+        <a href="https://www.mdmcmusicads.com">Site principal MDMC</a>
+        <div class="footer">
+          Powered by MDMC Music Ads<br>
+          Service HTML statique pour SEO optimal
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
 });
 
 // Route de test
