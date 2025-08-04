@@ -556,10 +556,65 @@ router.get('/health', (req, res) => {
   });
 });
 
+// POST /api/search-platforms - Rechercher plateformes sans créer SmartLink
+router.post('/search-platforms', async (req, res) => {
+  try {
+    const { sourceUrl } = req.body;
+    
+    if (!sourceUrl) {
+      return res.status(400).json({
+        error: 'URL ou identifiant requis',
+        message: 'Fournir une URL de plateforme ou un code ISRC/UPC'
+      });
+    }
+
+    console.log('🔍 Recherche plateformes pour:', sourceUrl);
+
+    // Récupération des données via Odesli
+    const odesliData = await odesliService.fetchPlatformLinks(sourceUrl);
+    
+    if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
+      return res.status(400).json({
+        error: 'Musique non trouvée',
+        message: 'Vérifiez que l\'URL/ISRC/UPC est valide et que la musique est disponible publiquement'
+      });
+    }
+
+    // Retour des plateformes sans génération de SmartLink
+    res.json({
+      success: true,
+      message: 'Plateformes trouvées avec succès',
+      trackInfo: {
+        title: odesliData.trackTitle,
+        artist: odesliData.artist.name,
+        artwork: odesliData.coverImageUrl,
+        slug: odesliData.slug,
+        artistSlug: odesliData.artist.slug
+      },
+      platforms: odesliData.platformLinks.map(platform => ({
+        id: platform.platform,
+        name: platform.displayName || platform.name,
+        url: platform.url,
+        platform: platform.platform,
+        available: true
+      })),
+      totalPlatforms: odesliData.platformLinks?.length || 0,
+      searchedAt: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('❌ Erreur recherche plateformes:', error);
+    res.status(500).json({
+      error: 'Erreur lors de la recherche',
+      message: error.message
+    });
+  }
+});
+
 // POST /api/create-smartlink-complete - Créer SmartLink complet avec audio et tracking
 router.post('/create-smartlink-complete', async (req, res) => {
   try {
-    const { sourceUrl, audioUrl, tracking } = req.body;
+    const { sourceUrl, audioUrl, tracking, selectedPlatforms, trackInfo } = req.body;
     
     if (!sourceUrl) {
       return res.status(400).json({
@@ -567,24 +622,47 @@ router.post('/create-smartlink-complete', async (req, res) => {
       });
     }
 
-    console.log('🚀 Création SmartLink complet:', { sourceUrl, audioUrl, tracking });
+    console.log('🚀 Création SmartLink complet:', { sourceUrl, audioUrl, tracking, selectedPlatforms: selectedPlatforms?.length });
 
-    // Récupération des données via Odesli
-    const odesliData = await odesliService.fetchPlatformLinks(sourceUrl);
+    // Si des plateformes ont été sélectionnées, utiliser ces données
+    let completeSmartlinkData;
     
-    if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
-      return res.status(400).json({
-        error: 'Impossible de récupérer les données musicales',
-        message: 'Vérifiez que l\'URL est valide et publique'
-      });
-    }
+    if (selectedPlatforms && selectedPlatforms.length > 0 && trackInfo) {
+      // Utilisation des données de recherche existantes
+      completeSmartlinkData = {
+        trackTitle: trackInfo.title,
+        artist: {
+          name: trackInfo.artist,
+          slug: trackInfo.artistSlug
+        },
+        slug: trackInfo.slug,
+        coverImageUrl: trackInfo.artwork,
+        platformLinks: selectedPlatforms.map(platform => ({
+          platform: platform.id,
+          name: platform.name,
+          displayName: platform.name,
+          url: platform.url
+        })),
+        audioUrl, // URL du fichier audio uploadé
+        tracking  // Paramètres de tracking personnalisés
+      };
+    } else {
+      // Fallback : récupération via Odesli
+      const odesliData = await odesliService.fetchPlatformLinks(sourceUrl);
+      
+      if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
+        return res.status(400).json({
+          error: 'Impossible de récupérer les données musicales',
+          message: 'Vérifiez que l\'URL est valide et publique'
+        });
+      }
 
-    // Ajout des données personnalisées
-    const completeSmartlinkData = {
-      ...odesliData,
-      audioUrl, // URL du fichier audio uploadé
-      tracking  // Paramètres de tracking personnalisés
-    };
+      completeSmartlinkData = {
+        ...odesliData,
+        audioUrl, // URL du fichier audio uploadé
+        tracking  // Paramètres de tracking personnalisés
+      };
+    }
 
     // Génération du SmartLink HTML
     const result = await htmlGenerator.generateSmartLinkHtml(completeSmartlinkData);

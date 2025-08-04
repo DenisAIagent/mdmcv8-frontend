@@ -549,6 +549,138 @@ router.get('/dashboard', (req, res) => {
           padding-top: 2rem;
           border-top: 1px solid rgba(255,255,255,0.1);
         }
+        .search-input-group {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .search-input-group input {
+          flex: 1;
+        }
+        .search-btn {
+          background: #cc271a;
+          color: white;
+          border: none;
+          padding: 0.875rem 1.5rem;
+          border-radius: 0.5rem;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+        }
+        .search-btn:hover {
+          background: #a61f15;
+        }
+        .search-btn:disabled {
+          background: #666666;
+          cursor: not-allowed;
+        }
+        .search-results {
+          margin-top: 2rem;
+          padding: 1.5rem;
+          background: #1a1a1a;
+          border-radius: 0.75rem;
+          border: 1px solid rgba(204, 39, 26, 0.3);
+        }
+        .search-results-title {
+          color: #cc271a;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.1rem;
+          margin-bottom: 1rem;
+        }
+        .track-info-preview {
+          margin-bottom: 2rem;
+          padding: 1rem;
+          background: #0f0f0f;
+          border-radius: 0.5rem;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        .track-details {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .track-artwork {
+          width: 60px;
+          height: 60px;
+          border-radius: 0.5rem;
+          object-fit: cover;
+        }
+        .track-meta h5 {
+          color: #ffffff;
+          margin: 0 0 0.25rem 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+        .track-meta p {
+          color: #cccccc;
+          margin: 0;
+          font-size: 0.9rem;
+        }
+        .platforms-title {
+          color: #ffffff;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 500;
+          font-size: 1rem;
+          margin-bottom: 1rem;
+        }
+        .platforms-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .platform-option {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 1rem;
+          background: #141414;
+          border-radius: 0.5rem;
+          border: 2px solid transparent;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .platform-option:hover {
+          border-color: rgba(204, 39, 26, 0.5);
+        }
+        .platform-option.selected {
+          border-color: #cc271a;
+          background: rgba(204, 39, 26, 0.1);
+        }
+        .platform-checkbox {
+          width: 18px;
+          height: 18px;
+          accent-color: #cc271a;
+        }
+        .platform-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 0.25rem;
+          object-fit: cover;
+        }
+        .platform-name {
+          color: #ffffff;
+          font-weight: 500;
+          flex: 1;
+        }
+        .selection-summary {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .selection-summary p {
+          color: #cccccc;
+          margin: 0;
+          flex: 1;
+        }
+        .selection-summary span {
+          color: #cc271a;
+          font-weight: 600;
+        }
         .create-btn {
           width: 100%;
           padding: 1rem;
@@ -700,16 +832,45 @@ router.get('/dashboard', (req, res) => {
         <div class="form-card">
           <form id="completeSmartlinkForm" enctype="multipart/form-data">
             
-            <!-- ÉTAPE 1: URL de la musique -->
+            <!-- ÉTAPE 1: Recherche de la musique -->
             <div class="step-section">
               <div class="step-header">
                 <span class="step-number">1</span>
-                <h3>URL de la musique</h3>
+                <h3>Recherche de votre musique</h3>
               </div>
+              
               <div class="form-group">
-                <label for="sourceUrl">Lien de votre musique</label>
-                <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Collez votre lien Spotify, Apple Music, Deezer, YouTube..." required>
-                <small class="help-text">Collez n'importe quel lien de plateforme musicale et nous récupérerons automatiquement toutes les informations</small>
+                <label for="sourceUrl">ISRC / UPC ou URL Spotify/Apple Music/Deezer *</label>
+                <div class="search-input-group">
+                  <input type="text" id="sourceUrl" name="sourceUrl" placeholder="ISRC: USUM71703692, UPC: 123456789, ou URL: https://open.spotify.com/track/..." required>
+                  <button type="button" id="searchLinksBtn" class="search-btn">🔍 Rechercher les liens</button>
+                </div>
+                <small class="help-text">Saisissez un code ISRC, UPC ou collez une URL de plateforme musicale</small>
+              </div>
+
+              <!-- Section de résultats de recherche -->
+              <div id="searchResults" class="search-results" style="display: none;">
+                <h4 class="search-results-title">🎵 Musique trouvée</h4>
+                <div id="trackInfo" class="track-info-preview">
+                  <div class="track-details">
+                    <img id="trackArtwork" class="track-artwork" src="" alt="Pochette">
+                    <div class="track-meta">
+                      <h5 id="trackTitle">-</h5>
+                      <p id="trackArtist">-</p>
+                    </div>
+                  </div>
+                </div>
+
+                <h4 class="platforms-title">📱 Plateformes détectées - Sélectionnez celles à inclure :</h4>
+                <div id="platformsSelection" class="platforms-grid">
+                  <!-- Les plateformes seront ajoutées dynamiquement ici -->
+                </div>
+                
+                <div class="selection-summary">
+                  <p><strong>Plateformes sélectionnées :</strong> <span id="selectedCount">0</span></p>
+                  <button type="button" id="selectAllBtn" class="secondary-btn">Tout sélectionner</button>
+                  <button type="button" id="deselectAllBtn" class="secondary-btn">Tout désélectionner</button>
+                </div>
               </div>
             </div>
 
@@ -826,6 +987,129 @@ router.get('/dashboard', (req, res) => {
           if (logoutBtn) logoutBtn.addEventListener('click', logout);
         });
         
+        // Variables globales pour les données de recherche
+        let searchData = null;
+        let selectedPlatforms = [];
+
+        // Gestion du bouton de recherche
+        document.getElementById('searchLinksBtn').addEventListener('click', async function() {
+          const sourceUrl = document.getElementById('sourceUrl').value.trim();
+          
+          if (!sourceUrl) {
+            alert('Veuillez saisir un ISRC, UPC ou URL de musique');
+            return;
+          }
+
+          const searchBtn = this;
+          const originalText = searchBtn.textContent;
+          const searchResults = document.getElementById('searchResults');
+          
+          searchBtn.disabled = true;
+          searchBtn.textContent = '🔍 Recherche en cours...';
+          searchResults.style.display = 'none';
+
+          try {
+            const response = await fetch('/api/search-platforms', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sourceUrl })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              // Stockage des données pour la génération finale
+              searchData = result;
+              
+              // Affichage des informations du titre
+              document.getElementById('trackTitle').textContent = result.trackInfo.title;
+              document.getElementById('trackArtist').textContent = result.trackInfo.artist;
+              document.getElementById('trackArtwork').src = result.trackInfo.artwork || '/assets/images/default-cover.jpg';
+              
+              // Génération de la grille des plateformes
+              generatePlatformsGrid(result.platforms);
+              
+              // Affichage des résultats
+              searchResults.style.display = 'block';
+              searchResults.scrollIntoView({ behavior: 'smooth' });
+              
+            } else {
+              alert('Erreur de recherche: ' + result.error);
+            }
+          } catch (error) {
+            console.error('Erreur recherche:', error);
+            alert('Erreur de connexion lors de la recherche');
+          } finally {
+            searchBtn.disabled = false;
+            searchBtn.textContent = originalText;
+          }
+        });
+
+        // Génération de la grille des plateformes
+        function generatePlatformsGrid(platforms) {
+          const grid = document.getElementById('platformsSelection');
+          grid.innerHTML = '';
+          selectedPlatforms = []; // Reset
+
+          platforms.forEach(platform => {
+            const platformDiv = document.createElement('div');
+            platformDiv.className = 'platform-option';
+            platformDiv.innerHTML = `
+              <input type="checkbox" class="platform-checkbox" value="${platform.id}" id="platform-${platform.id}">
+              <img class="platform-icon" src="/assets/logos/${platform.id}.png" alt="${platform.name}" onerror="this.style.display='none'">
+              <span class="platform-name">${platform.name}</span>
+            `;
+            
+            // Event listener pour sélection
+            const checkbox = platformDiv.querySelector('.platform-checkbox');
+            checkbox.addEventListener('change', function() {
+              if (this.checked) {
+                selectedPlatforms.push(platform);
+                platformDiv.classList.add('selected');
+              } else {
+                selectedPlatforms = selectedPlatforms.filter(p => p.id !== platform.id);
+                platformDiv.classList.remove('selected');
+              }
+              updateSelectionCount();
+            });
+
+            // Sélectionner par défaut toutes les plateformes
+            checkbox.checked = true;
+            selectedPlatforms.push(platform);
+            platformDiv.classList.add('selected');
+            
+            grid.appendChild(platformDiv);
+          });
+
+          updateSelectionCount();
+        }
+
+        // Mise à jour du compteur de sélection
+        function updateSelectionCount() {
+          document.getElementById('selectedCount').textContent = selectedPlatforms.length;
+        }
+
+        // Boutons sélection/désélection
+        document.getElementById('selectAllBtn').addEventListener('click', function() {
+          const checkboxes = document.querySelectorAll('.platform-checkbox');
+          checkboxes.forEach(checkbox => {
+            if (!checkbox.checked) {
+              checkbox.checked = true;
+              checkbox.dispatchEvent(new Event('change'));
+            }
+          });
+        });
+
+        document.getElementById('deselectAllBtn').addEventListener('click', function() {
+          const checkboxes = document.querySelectorAll('.platform-checkbox');
+          checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+              checkbox.checked = false;
+              checkbox.dispatchEvent(new Event('change'));
+            }
+          });
+        });
+
         // Validation et preview du fichier audio
         document.getElementById('audioFile').addEventListener('change', function(e) {
           const file = e.target.files[0];
@@ -877,7 +1161,19 @@ router.get('/dashboard', (req, res) => {
           const sourceUrl = formData.get('sourceUrl').trim();
           
           if (!sourceUrl) {
-            alert('Veuillez saisir une URL de musique');
+            alert('Veuillez d\'abord rechercher votre musique');
+            return;
+          }
+
+          // Vérification qu'une recherche a été effectuée
+          if (!searchData) {
+            alert('Veuillez d\'abord cliquer sur "Rechercher les liens" pour trouver votre musique');
+            return;
+          }
+
+          // Vérification qu'au moins une plateforme est sélectionnée
+          if (selectedPlatforms.length === 0) {
+            alert('Veuillez sélectionner au moins une plateforme pour votre SmartLink');
             return;
           }
           
@@ -920,6 +1216,8 @@ router.get('/dashboard', (req, res) => {
             const smartlinkData = {
               sourceUrl,
               audioUrl,
+              selectedPlatforms: selectedPlatforms,
+              trackInfo: searchData.trackInfo,
               tracking: {
                 ga4Id: formData.get('ga4Id')?.trim() || null,
                 gtmId: formData.get('gtmId')?.trim() || null,
