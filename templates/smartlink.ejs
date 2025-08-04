@@ -794,9 +794,9 @@
                 <button class="play-button" id="playButton" aria-label="Lire la musique">
                     <i data-lucide="play" class="play-icon"></i>
                 </button>
-                <% if (track && track.previewUrl) { %>
+                <% if (track && track.audioUrl) { %>
                 <audio class="audio-player" id="audioPlayer" preload="none">
-                    <source src="<%= track.previewUrl %>" type="audio/mpeg">
+                    <source src="<%= track.audioUrl %>" type="audio/mpeg">
                 </audio>
                 <% } %>
             </div>
@@ -880,16 +880,36 @@
         
         playButton.addEventListener('click', function() {
             if (!isPlaying) {
-                // Simuler la lecture (pas de vrai fichier audio)
-                playButton.classList.add('playing');
-                playIcon.setAttribute('data-lucide', 'pause');
-                lucide.createIcons();
-                isPlaying = true;
-                
-                // Arrêter après 3 secondes (simulation)
-                setTimeout(() => {
-                    stopPlayback();
-                }, 3000);
+                if (audioPlayer && audioPlayer.src) {
+                    // Lecture du vrai fichier audio
+                    audioPlayer.currentTime = 0;
+                    audioPlayer.play().then(() => {
+                        playButton.classList.add('playing');
+                        playIcon.setAttribute('data-lucide', 'pause');
+                        lucide.createIcons();
+                        isPlaying = true;
+                        
+                        // Arrêter après 3 secondes maximum
+                        audioTimer = setTimeout(() => {
+                            stopPlayback();
+                        }, 3000);
+                    }).catch(error => {
+                        console.log('Erreur lecture audio:', error);
+                        // Fallback sur simulation si échec lecture
+                        playButton.classList.add('playing');
+                        playIcon.setAttribute('data-lucide', 'pause');
+                        lucide.createIcons();
+                        isPlaying = true;
+                        audioTimer = setTimeout(() => { stopPlayback(); }, 3000);
+                    });
+                } else {
+                    // Simulation si pas de fichier audio
+                    playButton.classList.add('playing');
+                    playIcon.setAttribute('data-lucide', 'pause');
+                    lucide.createIcons();
+                    isPlaying = true;
+                    audioTimer = setTimeout(() => { stopPlayback(); }, 3000);
+                }
             } else {
                 stopPlayback();
             }
@@ -897,6 +917,12 @@
         
         
         function stopPlayback() {
+            // Arrêter l'audio si en cours de lecture
+            if (audioPlayer && !audioPlayer.paused) {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+            }
+            
             playButton.classList.remove('playing');
             playIcon.setAttribute('data-lucide', 'play');
             lucide.createIcons();
@@ -975,7 +1001,7 @@
         }
         
         // Si pas d'URL audio, masquer le bouton
-        <% if (!track || !track.previewUrl) { %>
+        <% if (!track || !track.audioUrl) { %>
         if (playButton) {
             playButton.style.display = 'none';
         }

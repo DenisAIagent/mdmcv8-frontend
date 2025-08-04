@@ -210,7 +210,8 @@ class StaticHtmlGenerator {
         title: trackTitle,
         slug: smartlinkData.slug,
         subtitle: smartlinkData.subtitle || '',
-        previewUrl: smartlinkData.audioPreviewUrl || smartlinkData.previewUrl || null
+        previewUrl: smartlinkData.audioPreviewUrl || smartlinkData.previewUrl || null,
+        audioUrl: smartlinkData.audioUrl || null
       },
       
       // Liens plateformes organisés avec UTM

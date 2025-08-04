@@ -2,12 +2,40 @@
 // CRUD pour créer, modifier, supprimer SmartLinks HTML
 
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const StaticHtmlGenerator = require('../services/staticHtmlGenerator');
 const OdesliService = require('../services/odesliService');
 
 const router = express.Router();
 const htmlGenerator = new StaticHtmlGenerator();
 const odesliService = new OdesliService();
+
+// Configuration multer pour upload audio
+const audioStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../public/audio/'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
+  }
+});
+
+const uploadAudio = multer({
+  storage: audioStorage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('audio/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Seuls les fichiers audio sont autorisés'), false);
+    }
+  },
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max
+    files: 1
+  }
+});
 
 // Fonction pour créer un slug valide
 function createSlug(text) {
@@ -526,6 +554,47 @@ router.get('/health', (req, res) => {
     odesli: odesliService.getServiceStats(),
     timestamp: new Date().toISOString()
   });
+});
+
+// POST /api/upload-audio - Upload fichier audio avec validation durée
+router.post('/upload-audio', uploadAudio.single('audioFile'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        error: 'Aucun fichier audio fourni'
+      });
+    }
+
+    const audioPath = req.file.path;
+    const audioUrl = `/audio/${req.file.filename}`;
+    
+    // TODO: Validation de durée avec ffprobe/ffmpeg
+    // Pour l'instant, on retourne les infos basiques
+    const audioInfo = {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      url: audioUrl,
+      path: audioPath,
+      size: req.file.size,
+      mimetype: req.file.mimetype,
+      uploadedAt: new Date().toISOString()
+    };
+
+    console.log(`🎵 Audio uploadé: ${req.file.originalname} (${(req.file.size / 1024 / 1024).toFixed(2)}MB)`);
+
+    res.json({
+      success: true,
+      message: 'Fichier audio uploadé avec succès',
+      audio: audioInfo
+    });
+
+  } catch (error) {
+    console.error('❌ Erreur upload audio:', error);
+    res.status(500).json({
+      error: 'Erreur lors de l\'upload du fichier audio',
+      message: error.message
+    });
+  }
 });
 
 module.exports = router;

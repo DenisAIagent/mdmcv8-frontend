@@ -4,10 +4,42 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
+const multer = require('multer');
 const StaticHtmlGenerator = require('../services/staticHtmlGenerator');
 
 const router = express.Router();
 const htmlGenerator = new StaticHtmlGenerator();
+
+// Configuration multer pour upload de fichiers audio
+const audioStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '../public/audio/'));
+  },
+  filename: function (req, file, cb) {
+    // Nom unique avec timestamp + extension originale
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
+  }
+});
+
+// Filtrage des fichiers audio seulement
+const audioFileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('audio/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Seuls les fichiers audio sont autorisés'), false);
+  }
+};
+
+// Configuration multer avec limites
+const uploadAudio = multer({
+  storage: audioStorage,
+  fileFilter: audioFileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max
+    files: 1
+  }
+});
 
 // Middleware pour logs et analytics
 const logAccess = (req, res, next) => {
@@ -429,6 +461,35 @@ router.get('/dashboard', (req, res) => {
           border-color: #cc271a;
           box-shadow: 0 0 0 3px rgba(204, 39, 26, 0.1);
         }
+        .file-input {
+          padding: 0.5rem !important;
+          cursor: pointer;
+        }
+        .file-input::-webkit-file-upload-button {
+          background: #cc271a;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 0.25rem;
+          cursor: pointer;
+          margin-right: 0.5rem;
+          font-family: 'Inter', sans-serif;
+        }
+        .file-input::-webkit-file-upload-button:hover {
+          background: #a61f15;
+        }
+        .audio-preview {
+          margin-top: 1rem;
+          padding: 1rem;
+          background: #1a1a1a;
+          border-radius: 0.5rem;
+          border: 1px solid rgba(204, 39, 26, 0.3);
+        }
+        .audio-info {
+          color: #cccccc;
+          font-size: 0.85rem;
+          margin: 0.5rem 0 0 0;
+        }
         .create-btn {
           width: 100%;
           padding: 1rem;
@@ -577,12 +638,23 @@ router.get('/dashboard', (req, res) => {
         <p class="page-subtitle">Générez des liens universels pour vos sorties musicales</p>
         
         <div class="form-card">
-          <form id="smartlinkForm">
+          <form id="smartlinkForm" enctype="multipart/form-data">
             <div class="form-group">
               <label for="sourceUrl">URL de la musique</label>
               <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Collez votre lien Spotify, Apple Music, Deezer, YouTube..." required>
               <small class="help-text">Collez n'importe quel lien de plateforme musicale et nous récupérerons automatiquement toutes les informations</small>
             </div>
+            
+            <div class="form-group">
+              <label for="audioFile">Fichier audio de prévisualisation (optionnel)</label>
+              <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav" class="file-input">
+              <small class="help-text">Format MP3 ou WAV, durée maximum 30 secondes. Seuls les 3 premières secondes seront lues dans le SmartLink.</small>
+              <div id="audioPreview" class="audio-preview" style="display: none;">
+                <audio id="audioPreviewPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
+                <p class="audio-info" id="audioInfo"></p>
+              </div>
+            </div>
+            
             <button type="submit" class="create-btn">Générer SmartLink automatiquement</button>
           </form>
           
@@ -660,6 +732,49 @@ Personnaliser le tracking analytics
           if (logoutBtn) logoutBtn.addEventListener('click', logout);
         });
         
+        // Validation et preview du fichier audio
+        document.getElementById('audioFile').addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          const audioPreview = document.getElementById('audioPreview');
+          const audioPlayer = document.getElementById('audioPreviewPlayer');
+          const audioInfo = document.getElementById('audioInfo');
+          
+          if (file) {
+            // Validation du format
+            if (!file.type.match(/audio\/(mp3|wav|mpeg)/)) {
+              alert('Format non supporté. Utilisez MP3 ou WAV.');
+              e.target.value = '';
+              audioPreview.style.display = 'none';
+              return;
+            }
+            
+            // Validation de la taille (10MB max)
+            if (file.size > 10 * 1024 * 1024) {
+              alert('Fichier trop volumineux. Maximum 10MB.');
+              e.target.value = '';
+              audioPreview.style.display = 'none';
+              return;
+            }
+            
+            // Affichage de la preview
+            const objectUrl = URL.createObjectURL(file);
+            audioPlayer.src = objectUrl;
+            audioInfo.textContent = \`\${file.name} (\${(file.size / 1024 / 1024).toFixed(2)}MB)\`;
+            audioPreview.style.display = 'block';
+            
+            // Validation de la durée
+            audioPlayer.addEventListener('loadedmetadata', function() {
+              if (audioPlayer.duration > 30) {
+                audioInfo.innerHTML += \` <span style="color: #cc271a;">⚠️ Durée: \${audioPlayer.duration.toFixed(1)}s (>30s détecté, seules les 3 premières secondes seront lues)</span>\`;
+              } else {
+                audioInfo.innerHTML += \` <span style="color: #4CAF50;">✓ Durée: \${audioPlayer.duration.toFixed(1)}s</span>\`;
+              }
+            });
+          } else {
+            audioPreview.style.display = 'none';
+          }
+        });
+
         // Gestion du formulaire simplifié
         document.getElementById('smartlinkForm').addEventListener('submit', async (e) => {
           e.preventDefault();
