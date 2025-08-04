@@ -137,15 +137,17 @@ router.post('/create-smartlink-auto', async (req, res) => {
     const artistSlug = odesliData.artist?.slug || createSlug(odesliData.artist?.name || 'unknown-artist');
     const trackSlug = odesliData.slug || createSlug(odesliData.trackTitle || 'unknown-track');
     
-    // Données prêtes pour le générateur HTML (directement depuis Odesli)
+    // Données prêtes pour le générateur HTML (format attendu par validateSmartLinkData)
     const smartlinkData = {
+      trackTitle: odesliData.trackTitle, // trackTitle requis par validation
       title: odesliData.trackTitle,
       artist: odesliData.artist,
       slug: trackSlug,
       image: odesliData.coverImageUrl,
       coverImageUrl: odesliData.coverImageUrl,
       description: odesliData.description,
-      links: formatPlatformLinksForTemplate(odesliData.platformLinks || []),
+      platformLinks: odesliData.platformLinks || [], // platformLinks requis par validation
+      links: formatPlatformLinksForTemplate(odesliData.platformLinks || []), // links pour template
       createdAt: new Date(),
       sourceUrl,
       odesliData: odesliData.odesliData
