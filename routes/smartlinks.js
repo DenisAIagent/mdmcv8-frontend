@@ -1143,10 +1143,15 @@ function generateEditInterface(data) {
           const saveBtn = document.querySelector('.save-btn');
           
           // Collecte des données du formulaire
+          const title = document.getElementById('title').value.trim();
+          const artistName = document.getElementById('artist').value.trim();
+          
           const smartlinkData = {
-            title: document.getElementById('title').value.trim(),
+            // Format attendu par staticHtmlGenerator
+            trackTitle: title,
+            title: title,
             artist: {
-              name: document.getElementById('artist').value.trim(),
+              name: artistName,
               slug: '${data.artist.slug}'
             },
             slug: '${data.slug}',
@@ -1155,29 +1160,33 @@ function generateEditInterface(data) {
             label: document.getElementById('label').value.trim(),
             coverImageUrl: '${data.coverImageUrl}',
             
-            // Plateformes sélectionnées
-            platforms: [],
+            // Plateformes sélectionnées (format platformLinks)
+            platformLinks: [],
             
             // Paramètres UTM
             utm: {
               source: document.getElementById('utm_source').value.trim(),
               medium: document.getElementById('utm_medium').value.trim(),
               campaign: document.getElementById('utm_campaign').value.trim()
-            }
+            },
+            
+            // Métadonnées techniques
+            createdAt: new Date(),
+            updatedAt: new Date()
           };
           
-          // Récupération des plateformes sélectionnées
+          // Récupération des plateformes sélectionnées (format platformLinks)
           document.querySelectorAll('.platform-checkbox:checked').forEach(checkbox => {
             const platformId = checkbox.id.replace('platform-', '');
             const platformItem = checkbox.closest('.platform-item');
             const platformName = platformItem.querySelector('.platform-name').textContent;
             const platformUrl = platformItem.querySelector('.platform-url').textContent;
             
-            smartlinkData.platforms.push({
-              id: platformId,
-              name: platformName,
+            smartlinkData.platformLinks.push({
+              platform: platformId,
               url: platformUrl,
-              enabled: true
+              enabled: true,
+              displayName: platformName
             });
           });
           
@@ -1187,7 +1196,7 @@ function generateEditInterface(data) {
             return;
           }
           
-          if (smartlinkData.platforms.length === 0) {
+          if (smartlinkData.platformLinks.length === 0) {
             alert('Veuillez sélectionner au moins une plateforme');
             return;
           }
