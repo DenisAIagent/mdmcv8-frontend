@@ -908,7 +908,10 @@ router.get('/dashboard', (req, res) => {
                   <input type="text" id="sourceUrl" name="sourceUrl" placeholder="ISRC: USUM71703692, UPC: 123456789, ou URL: https://open.spotify.com/track/..." required>
                   <button type="button" id="searchLinksBtn" class="search-btn">Rechercher les liens</button>
                 </div>
-                <small class="help-text">Saisissez un code ISRC, UPC ou collez une URL de plateforme musicale</small>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                  <small class="help-text" style="flex: 1;">Saisissez un code ISRC, UPC ou collez une URL de plateforme musicale</small>
+                  <button type="button" id="testOdesliBtn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #444; color: white; border: none; border-radius: 0.25rem; cursor: pointer;">Test API</button>
+                </div>
               </div>
 
               <!-- Section de résultats de recherche -->
@@ -1074,13 +1077,17 @@ router.get('/dashboard', (req, res) => {
           searchResults.style.display = 'none';
 
           try {
+            console.log('🔍 Début recherche pour URL:', sourceUrl);
+            
             const response = await fetch('/api/search-platforms', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ sourceUrl })
             });
 
+            console.log('📡 Réponse API reçue, status:', response.status);
             const result = await response.json();
+            console.log('📊 Données reçues:', result);
 
             if (response.ok) {
               // Stockage des données pour la génération finale
@@ -1099,11 +1106,12 @@ router.get('/dashboard', (req, res) => {
               searchResults.scrollIntoView({ behavior: 'smooth' });
               
             } else {
-              alert('Erreur de recherche: ' + result.error);
+              console.error('❌ Erreur API:', result);
+              alert('Erreur de recherche: ' + (result.error || result.message || 'Erreur inconnue'));
             }
           } catch (error) {
-            console.error('Erreur recherche:', error);
-            alert('Erreur de connexion lors de la recherche');
+            console.error('❌ Erreur réseau/connexion:', error);
+            alert('Erreur de connexion: ' + error.message + '\nVérifiez votre connexion internet et l\'URL fournie.');
           } finally {
             searchBtn.disabled = false;
             searchBtn.textContent = originalText;
@@ -1111,6 +1119,34 @@ router.get('/dashboard', (req, res) => {
         });
         } else {
           console.error('Bouton de recherche non trouvé dans le DOM');
+        }
+
+        // Bouton de test API Odesli
+        const testBtn = document.getElementById('testOdesliBtn');
+        if (testBtn) {
+          testBtn.addEventListener('click', async function() {
+            const originalText = this.textContent;
+            this.disabled = true;
+            this.textContent = 'Test...';
+            
+            try {
+              const response = await fetch('/api/test-odesli');
+              const result = await response.json();
+              
+              if (response.ok) {
+                alert('Test API réussi !\\n\\nTrack: ' + result.result.trackTitle + '\\nArtist: ' + result.result.artistName + '\\nPlateformes: ' + result.result.platformCount);
+              } else {
+                console.error('Test échoué:', result);
+                alert('Test API échoué: ' + result.message);
+              }
+            } catch (error) {
+              console.error('Erreur test:', error);
+              alert('Erreur test API: ' + error.message);
+            } finally {
+              this.disabled = false;
+              this.textContent = originalText;
+            }
+          });
         }
 
         // Génération de la grille des plateformes

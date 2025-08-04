@@ -568,10 +568,37 @@ router.post('/search-platforms', async (req, res) => {
       });
     }
 
-    console.log('🔍 Recherche plateformes pour:', sourceUrl);
+    // Validation et nettoyage de l'URL
+    const cleanUrl = sourceUrl.trim();
+    console.log('🧹 URL nettoyée:', cleanUrl);
+    
+    // Vérification format URL Spotify
+    if (cleanUrl.includes('spotify.com') && !cleanUrl.includes('open.spotify.com')) {
+      console.log('⚠️ URL Spotify détectée, possible redirection nécessaire');
+    }
 
-    // Récupération des données via Odesli
-    const odesliData = await odesliService.fetchPlatformLinks(sourceUrl);
+    console.log('🔍 Recherche plateformes pour:', cleanUrl);
+
+    // Récupération des données via Odesli avec gestion d'erreur
+    console.log('📡 Appel service Odesli...');
+    let odesliData;
+    try {
+      odesliData = await odesliService.fetchPlatformLinks(cleanUrl);
+      console.log('📊 Données Odesli reçues:', odesliData ? 'SUCCESS' : 'FAILED');
+      
+      if (odesliData) {
+        console.log('🎵 Track:', odesliData.trackTitle);
+        console.log('🎤 Artist:', odesliData.artist?.name);
+        console.log('🔗 Platforms:', odesliData.platformLinks?.length || 0);
+      }
+    } catch (odesliError) {
+      console.error('❌ Erreur service Odesli:', odesliError.message);
+      return res.status(500).json({
+        error: 'Erreur du service de recherche',
+        message: 'Impossible de récupérer les données musicales. Vérifiez que l\'URL est correcte et accessible.',
+        details: odesliError.message
+      });
+    }
     
     if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
       return res.status(400).json({
@@ -606,7 +633,42 @@ router.post('/search-platforms', async (req, res) => {
     console.error('❌ Erreur recherche plateformes:', error);
     res.status(500).json({
       error: 'Erreur lors de la recherche',
-      message: error.message
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+
+// GET /api/test-odesli - Test rapide du service Odesli avec URL exemple
+router.get('/test-odesli', async (req, res) => {
+  try {
+    const testUrl = 'https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh'; // Test avec "Never Gonna Give You Up"
+    console.log('🧪 Test Odesli avec URL exemple:', testUrl);
+    
+    const result = await odesliService.fetchPlatformLinks(testUrl);
+    
+    res.json({
+      success: true,
+      message: 'Test Odesli réussi',
+      testUrl,
+      result: {
+        hasData: !!result,
+        trackTitle: result?.trackTitle,
+        artistName: result?.artist?.name,
+        platformCount: result?.platformLinks?.length || 0,
+        platforms: result?.platformLinks?.map(p => p.platform) || []
+      },
+      serviceStats: odesliService.getServiceStats(),
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Test Odesli échoué:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Test Odesli échoué',
+      message: error.message,
+      serviceStats: odesliService.getServiceStats(),
+      timestamp: new Date().toISOString()
     });
   }
 });
