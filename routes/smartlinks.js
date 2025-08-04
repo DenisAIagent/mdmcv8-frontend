@@ -1054,14 +1054,29 @@ router.get('/dashboard', (req, res) => {
           platforms.forEach(platform => {
             const platformDiv = document.createElement('div');
             platformDiv.className = 'platform-option';
-            platformDiv.innerHTML = `
-              <input type='checkbox' class='platform-checkbox' value='${platform.id}' id='platform-${platform.id}'>
-              <img class='platform-icon' src='/assets/logos/${platform.id}.png' alt='${platform.name}' onerror='this.style.display="none"'>
-              <span class='platform-name'>${platform.name}</span>
-            `;
+            
+            // Création des éléments DOM directement
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'platform-checkbox';
+            checkbox.value = platform.id;
+            checkbox.id = 'platform-' + platform.id;
+            
+            const img = document.createElement('img');
+            img.className = 'platform-icon';
+            img.src = '/assets/logos/' + platform.id + '.png';
+            img.alt = platform.name;
+            img.onerror = function() { this.style.display = 'none'; };
+            
+            const span = document.createElement('span');
+            span.className = 'platform-name';
+            span.textContent = platform.name;
+            
+            platformDiv.appendChild(checkbox);
+            platformDiv.appendChild(img);
+            platformDiv.appendChild(span);
             
             // Event listener pour sélection
-            const checkbox = platformDiv.querySelector('.platform-checkbox');
             checkbox.addEventListener('change', function() {
               if (this.checked) {
                 selectedPlatforms.push(platform);
