@@ -773,15 +773,37 @@ router.get('/dashboard', (req, res) => {
           
           <!-- Résultat -->
           <div id="result" class="result-section">
-            <h3>SmartLink créé avec succès !</h3>
+            <h3>🎉 SmartLink créé avec succès !</h3>
+            
+            <!-- Informations récupérées -->
             <div class="retrieved-info">
-              <p><strong>Titre :</strong> <span id="retrievedTitle">-</span></p>
-              <p><strong>Artiste :</strong> <span id="retrievedArtist">-</span></p>
-              <p><strong>Plateformes détectées :</strong> <span id="platformCount">0</span></p>
+              <h4 style="color: #cc271a; margin: 0 0 1rem 0; font-size: 1rem;">📄 Informations détectées</h4>
+              <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                  <p><strong>Titre :</strong> <span id="retrievedTitle">-</span></p>
+                  <p><strong>Artiste :</strong> <span id="retrievedArtist">-</span></p>
+                </div>
+                <div>
+                  <p><strong>Plateformes :</strong> <span id="platformCount">0</span></p>
+                  <p><strong>Audio ajouté :</strong> <span id="audioStatus">Non</span></p>
+                </div>
+              </div>
             </div>
-            <div class="smartlink-url">
-              <input type="text" id="generatedUrl" readonly>
-              <button id="copyBtn">Copier</button>
+            
+            <!-- URL générée -->
+            <div class="url-section">
+              <h4 style="color: #cc271a; margin: 0 0 1rem 0; font-size: 1rem;">🔗 Votre SmartLink</h4>
+              <div class="smartlink-url">
+                <input type="text" id="generatedUrl" readonly>
+                <button id="copyBtn" onclick="copyToClipboard()">Copier</button>
+              </div>
+              <p class="help-text" style="margin-top: 0.5rem;">Partagez ce lien sur vos réseaux sociaux, site web, ou partout où vous voulez !</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="result-actions" style="margin-top: 1.5rem; text-align: center;">
+              <button onclick="testSmartLink()" class="secondary-btn" style="margin-right: 1rem;">👀 Tester le SmartLink</button>
+              <button onclick="createAnother()" class="secondary-btn">➕ Créer un autre</button>
             </div>
           </div>
         </div>
@@ -921,6 +943,10 @@ router.get('/dashboard', (req, res) => {
               document.getElementById('platformCount').textContent = result.platformCount || result.platforms?.length || 0;
               document.getElementById('generatedUrl').value = result.smartlinkUrl || result.url;
               
+              // Statut audio
+              document.getElementById('audioStatus').textContent = result.audioUrl ? 'Oui ✅' : 'Non';
+              document.getElementById('audioStatus').style.color = result.audioUrl ? '#4CAF50' : '#cccccc';
+              
               resultSection.style.display = 'block';
               resultSection.scrollIntoView({ behavior: 'smooth' });
               
@@ -948,9 +974,37 @@ router.get('/dashboard', (req, res) => {
           urlInput.select();
           document.execCommand('copy');
           
-          const copyBtn = event.target;
-          copyBtn.textContent = 'Copié !';
-          setTimeout(() => copyBtn.textContent = 'Copier', 2000);
+          const copyBtn = document.getElementById('copyBtn');
+          const originalText = copyBtn.textContent;
+          copyBtn.textContent = '✅ Copié !';
+          copyBtn.style.background = '#4CAF50';
+          
+          setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.background = '#cc271a';
+          }, 2000);
+        }
+        
+        // Tester le SmartLink (ouverture dans nouvel onglet)
+        function testSmartLink() {
+          const url = document.getElementById('generatedUrl').value;
+          if (url) {
+            window.open(url, '_blank');
+          }
+        }
+        
+        // Créer un autre SmartLink
+        function createAnother() {
+          // Reset du formulaire
+          document.getElementById('completeSmartlinkForm').reset();
+          document.getElementById('result').style.display = 'none';
+          document.getElementById('audioPreview').style.display = 'none';
+          
+          // Scroll vers le haut
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+          // Focus sur le champ URL
+          document.getElementById('sourceUrl').focus();
         }
         
         // Déconnexion
