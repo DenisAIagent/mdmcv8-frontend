@@ -686,7 +686,11 @@
           class="platform-link platform-<%= platform.platform %>"
           target="_blank" 
           rel="noopener noreferrer"
-          onclick="trackPlatformClick('<%= platform.platform %>', '<%= artist.slug %>', '<%= track.slug %>')"
+          data-platform="<%= platform.platform %>"
+          data-artist-slug="<%= artist.slug %>"
+          data-track-slug="<%= track.slug %>"
+          data-artist-name="<%= artist.name %>"
+          data-track-title="<%= track.title %>"
           aria-label="Écouter <%= track.title %> sur <%= platform.displayName %>"
         >
           <!-- Logo SVG de la plateforme -->
@@ -765,6 +769,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       initializeAudioPlayer();
       initializeAnimations();
+      initializePlatformTracking();
     });
     
     // ================================
@@ -917,18 +922,34 @@
     // ================================
     // ANALYTICS ET TRACKING
     // ================================
-    function trackPlatformClick(platform, artistSlug, trackSlug) {
+    function initializePlatformTracking() {
+      // Ajouter event listeners pour tous les liens de plateformes
+      const platformLinks = document.querySelectorAll('.platform-link');
+      platformLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+          const platform = this.getAttribute('data-platform');
+          const artistSlug = this.getAttribute('data-artist-slug');
+          const trackSlug = this.getAttribute('data-track-slug');
+          const artistName = this.getAttribute('data-artist-name');
+          const trackTitle = this.getAttribute('data-track-title');
+          
+          trackPlatformClick(platform, artistSlug, trackSlug, artistName, trackTitle, event);
+        });
+      });
+    }
+    
+    function trackPlatformClick(platform, artistSlug, trackSlug, artistName, trackTitle, event) {
       <% if (analyticsEnabled) { %>
       // Google Analytics
       if (typeof gtag !== 'undefined') {
         gtag('event', 'platform_click', {
           event_category: 'SmartLink',
-          event_label: platform + ' - <%= artist.name %> - <%= track.title %>',
+          event_label: platform + ' - ' + artistName + ' - ' + trackTitle,
           platform: platform,
           artist_slug: artistSlug,
           track_slug: trackSlug,
-          artist_name: '<%= artist.name %>',
-          track_title: '<%= track.title %>',
+          artist_name: artistName,
+          track_title: trackTitle,
           value: 1
         });
       }
@@ -936,7 +957,7 @@
       // Meta Pixel
       if (typeof fbq !== 'undefined') {
         fbq('track', 'Lead', {
-          content_name: '<%= track.title %>',
+          content_name: trackTitle,
           content_category: 'SmartLink',
           platform: platform
         });
@@ -946,8 +967,8 @@
       // Console log pour debug
       console.log('Platform click:', {
         platform: platform,
-        artist: '<%= artist.name %>',
-        track: '<%= track.title %>',
+        artist: artistName,
+        track: trackTitle,
         url: event.target.href,
         timestamp: new Date().toISOString()
       });

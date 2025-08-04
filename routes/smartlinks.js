@@ -540,7 +540,7 @@ router.get('/dashboard', (req, res) => {
         <img src="/images/MDMC_logo_blanc fond transparent.png" alt="MDMC" class="logo">
         <div class="user-info">
           <span>Dashboard SmartLinks</span>
-          <button class="logout-btn" onclick="logout()">Déconnexion</button>
+          <button class="logout-btn" id="logoutBtn">Déconnexion</button>
         </div>
       </header>
       
@@ -567,7 +567,7 @@ router.get('/dashboard', (req, res) => {
             </div>
             <div class="smartlink-url">
               <input type="text" id="generatedUrl" readonly>
-              <button onclick="copyToClipboard()">Copier</button>
+              <button id="copyBtn">Copier</button>
             </div>
           </div>
         </div>
@@ -583,6 +583,13 @@ router.get('/dashboard', (req, res) => {
       </div>
       
       <script>
+        // Initialisation des event listeners au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+          // Event listeners pour les boutons
+          const logoutBtn = document.getElementById('logoutBtn');
+          if (logoutBtn) logoutBtn.addEventListener('click', logout);
+        });
+        
         // Gestion du formulaire simplifié
         document.getElementById('smartlinkForm').addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -968,16 +975,16 @@ function generateEditInterface(data) {
             <div id="utmPreview" style="background: #0f0f0f; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem; display: none;">
               <h4 style="color: #cc271a; margin-bottom: 0.5rem; font-size: 0.9rem;">🔗 Aperçu des URLs avec tracking</h4>
               <div id="trackedUrls" style="font-family: monospace; font-size: 0.8rem; color: #999; max-height: 200px; overflow-y: auto;"></div>
-              <button type="button" onclick="toggleUtmPreview()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #cc271a; color: white; border: none; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
+              <button type="button" id="hideUtmBtn" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #cc271a; color: white; border: none; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
                 Masquer l'aperçu
               </button>
             </div>
-            <button type="button" onclick="toggleUtmPreview()" id="showUtmBtn" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: transparent; color: #cc271a; border: 1px solid #cc271a; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
+            <button type="button" id="showUtmBtn" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: transparent; color: #cc271a; border: 1px solid #cc271a; border-radius: 0.25rem; font-size: 0.8rem; cursor: pointer;">
               🔍 Voir les URLs avec tracking
             </button>
           </div>
           
-          <button class="save-btn" onclick="saveSmartLink()">
+          <button class="save-btn" id="saveBtn">
             💾 Générer SmartLink Final
           </button>
         </div>
@@ -1008,6 +1015,22 @@ function generateEditInterface(data) {
       </div>
       
       <script>
+        // Initialisation des event listeners au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+          // Event listeners pour les boutons
+          const logoutBtn = document.getElementById('logoutBtn');
+          const copyBtn = document.getElementById('copyBtn');
+          const showUtmBtn = document.getElementById('showUtmBtn');
+          const hideUtmBtn = document.getElementById('hideUtmBtn');
+          const saveBtn = document.getElementById('saveBtn');
+          
+          if (logoutBtn) logoutBtn.addEventListener('click', logout);
+          if (copyBtn) copyBtn.addEventListener('click', copyToClipboard);
+          if (showUtmBtn) showUtmBtn.addEventListener('click', toggleUtmPreview);
+          if (hideUtmBtn) hideUtmBtn.addEventListener('click', toggleUtmPreview);
+          if (saveBtn) saveBtn.addEventListener('click', saveSmartLink);
+        });
+        
         // Mise à jour en temps réel de la prévisualisation
         document.getElementById('title').addEventListener('input', (e) => {
           document.querySelector('.preview-title').textContent = e.target.value;
