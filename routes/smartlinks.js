@@ -365,6 +365,7 @@ router.get('/dashboard', (req, res) => {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Dashboard | MDMC SmartLinks</title>
+      <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0U1MDkxNCIvPgo8cGF0aCBkPSJNOCAxMkgxNlYyMEg4VjEyWiIgZmlsbD0id2hpdGUiLz4KPHA+dGggZD0iTTIwIDhIMjhWMTZIMjBWOFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCAyMEgyOFYyOEgyMFYyMFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" type="image/svg+xml">
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -1779,7 +1780,7 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
           
           const previewPlatforms = document.querySelector('.preview-platforms');
           previewPlatforms.innerHTML = enabledPlatforms.map(name => 
-            \`<div class="preview-platform">\${name}</div>\`
+            '<div class="preview-platform">' + name + '</div>'
           ).join('');
           
           // Mise à jour du compteur avec UTM info
@@ -1788,8 +1789,8 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
           const utmCampaign = document.getElementById('utm_campaign').value || 'music_promotion';
           
           document.querySelector('.preview-smartlink div:last-child strong').innerHTML = 
-            \`\${enabledPlatforms.length} liens de plateformes trouvés !<br>
-            <small style="font-weight: normal; color: #999;">UTM: \${utmSource} | \${utmMedium} | \${utmCampaign}</small>\`;
+            enabledPlatforms.length + ' liens de plateformes trouvés !<br>' +
+            '<small style="font-weight: normal; color: #999;">UTM: ' + utmSource + ' | ' + utmMedium + ' | ' + utmCampaign + '</small>';
           
           // Mise à jour de l'aperçu UTM si visible
           updateUtmPreview();
@@ -1835,19 +1836,17 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
               url.searchParams.set('mdmc_source', 'smartlink');
               url.searchParams.set('mdmc_platform', platformName.toLowerCase());
               
-              urlsHtml += \`
-                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #1a1a1a; border-radius: 0.25rem;">
-                  <strong style="color: #cc271a;">\${platformName}:</strong><br>
-                  <div style="word-break: break-all; margin-top: 0.25rem;">\${url.toString()}</div>
-                </div>
-              \`;
+              urlsHtml += 
+                '<div style="margin-bottom: 1rem; padding: 0.5rem; background: #1a1a1a; border-radius: 0.25rem;">' +
+                  '<strong style="color: #cc271a;">' + platformName + ':</strong><br>' +
+                  '<div style="word-break: break-all; margin-top: 0.25rem;">' + url.toString() + '</div>' +
+                '</div>';
             } catch (error) {
-              urlsHtml += \`
-                <div style="margin-bottom: 1rem; padding: 0.5rem; background: #1a1a1a; border-radius: 0.25rem;">
-                  <strong style="color: #cc271a;">\${platformName}:</strong><br>
-                  <div style="color: #ff6b6b;">Erreur: URL invalide</div>
-                </div>
-              \`;
+              urlsHtml += 
+                '<div style="margin-bottom: 1rem; padding: 0.5rem; background: #1a1a1a; border-radius: 0.25rem;">' +
+                  '<strong style="color: #cc271a;">' + platformName + ':</strong><br>' +
+                  '<div style="color: #ff6b6b;">Erreur: URL invalide</div>' +
+                '</div>';
             }
           });
           
@@ -1934,7 +1933,7 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
           
           try {
             // Appel API pour sauvegarder et générer le SmartLink final
-            const response = await fetch(\`/api/update/\${smartlinkData.artist.slug}/\${smartlinkData.slug}\`, {
+            const response = await fetch('/api/update/' + smartlinkData.artist.slug + '/' + smartlinkData.slug, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(smartlinkData)
@@ -1947,10 +1946,10 @@ ${data.platforms.filter(p => p.enabled).map(platform =>
               saveBtn.innerHTML = '✅ SmartLink généré !';
               
               setTimeout(() => {
-                const finalUrl = \`https://smartlink.mdmcmusicads.com/\${smartlinkData.artist.slug}/\${smartlinkData.slug}\`;
+                const finalUrl = 'https://smartlink.mdmcmusicads.com/' + smartlinkData.artist.slug + '/' + smartlinkData.slug;
                 
                 // Afficher le résultat final
-                if (confirm(\`SmartLink généré avec succès !\\n\\nURL: \${finalUrl}\\n\\nVoulez-vous ouvrir le SmartLink dans un nouvel onglet ?\`)) {
+                if (confirm('SmartLink généré avec succès !\\n\\nURL: ' + finalUrl + '\\n\\nVoulez-vous ouvrir le SmartLink dans un nouvel onglet ?')) {
                   window.open(finalUrl, '_blank');
                 }
                 
