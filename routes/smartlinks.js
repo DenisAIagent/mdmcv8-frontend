@@ -115,7 +115,7 @@ router.get('/:artistSlug/:trackSlug', logAccess, async (req, res) => {
   }
 });
 
-// Route racine : page d'accueil SmartLinks
+// Route racine : page de connexion
 router.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -123,7 +123,10 @@ router.get('/', (req, res) => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>MDMC SmartLinks | Service de partage musical</title>
+      <title>Connexion | MDMC SmartLinks</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
       <style>
         body { 
           font-family: 'Inter', sans-serif; 
@@ -133,64 +136,271 @@ router.get('/', (req, res) => {
           padding: 2rem;
           margin: 0;
           min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .container { 
-          max-width: 500px; 
-          margin: 0 auto;
+        .login-container { 
+          max-width: 400px; 
+          width: 100%;
           background: #141414;
-          padding: 3rem;
+          padding: 3rem 2rem;
           border-radius: 1rem;
           box-shadow: 0 10px 25px rgba(0,0,0,0.5);
           border: 1px solid rgba(255,255,255,0.1);
         }
+        .logo {
+          width: 200px;
+          height: auto;
+          margin-bottom: 2rem;
+          filter: brightness(1.1);
+        }
         h1 { 
           color: #ffffff; 
-          font-size: 2rem; 
-          margin-bottom: 1rem;
+          font-size: 1.5rem; 
+          margin-bottom: 0.5rem;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+        }
+        .subtitle {
+          color: #cccccc;
+          margin-bottom: 2rem;
+          font-size: 0.9rem;
+        }
+        .form-group {
+          margin-bottom: 1.5rem;
+          text-align: left;
+        }
+        .form-group label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: #ffffff;
+          font-weight: 500;
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.9rem;
+        }
+        .form-group input {
+          width: 100%;
+          padding: 0.875rem;
+          border: 2px solid rgba(255,255,255,0.2);
+          border-radius: 0.5rem;
+          background: #1a1a1a;
+          color: #ffffff;
+          font-family: 'Inter', sans-serif;
+          font-size: 1rem;
+          transition: all 0.3s ease;
+          box-sizing: border-box;
+        }
+        .form-group input:focus {
+          outline: none;
+          border-color: #cc271a;
+          box-shadow: 0 0 0 3px rgba(204, 39, 26, 0.1);
+        }
+        .login-btn {
+          width: 100%;
+          padding: 1rem;
+          background: #cc271a;
+          color: #ffffff;
+          border: none;
+          border-radius: 50px;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-top: 1rem;
+        }
+        .login-btn:hover {
+          background: #a61f15;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(204, 39, 26, 0.3);
+        }
+        .login-btn:disabled {
+          background: #666666;
+          cursor: not-allowed;
+          transform: none;
+        }
+        .error-message {
+          background: #2d1b1b;
+          color: #ff6b6b;
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          margin-top: 1rem;
+          font-size: 0.9rem;
+          display: none;
+          border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        .footer {
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid rgba(255,255,255,0.1);
+          font-size: 0.8rem;
+          color: #999999;
+        }
+        .footer a {
+          color: #cc271a;
+          text-decoration: none;
+        }
+        .footer a:hover {
+          text-decoration: underline;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="login-container">
+        <img src="/images/MDMC_logo_blanc fond transparent.png" alt="MDMC Music Ads" class="logo">
+        <h1>SmartLinks Service</h1>
+        <p class="subtitle">Accès réservé aux clients MDMC</p>
+        
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Nom d'utilisateur</label>
+            <input type="text" id="username" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          <button type="submit" class="login-btn">Se connecter</button>
+          <div id="errorMessage" class="error-message"></div>
+        </form>
+        
+        <div class="footer">
+          <a href="https://www.mdmcmusicads.com">Retour au site MDMC</a><br>
+          Marketing musical qui convertit
+        </div>
+      </div>
+      
+      <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const formData = new FormData(e.target);
+          const credentials = {
+            username: formData.get('username').trim(),
+            password: formData.get('password').trim()
+          };
+          
+          const submitBtn = document.querySelector('.login-btn');
+          const errorDiv = document.getElementById('errorMessage');
+          
+          // État de chargement
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Connexion...';
+          errorDiv.style.display = 'none';
+          
+          try {
+            const response = await fetch('/api/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(credentials)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+              // Connexion réussie - redirection vers dashboard
+              window.location.href = '/dashboard';
+            } else {
+              // Erreur de connexion
+              errorDiv.textContent = result.error || 'Identifiants incorrects';
+              errorDiv.style.display = 'block';
+            }
+          } catch (error) {
+            console.error('Erreur:', error);
+            errorDiv.textContent = 'Erreur de connexion. Veuillez réessayer.';
+            errorDiv.style.display = 'block';
+          } finally {
+            // Restaurer bouton
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Se connecter';
+          }
+        });
+      </script>
+    </body>
+    </html>
+  `);
+});
+
+// Route dashboard : interface de création SmartLinks (sécurisée)
+router.get('/dashboard', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Dashboard | MDMC SmartLinks</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+      <style>
+        body { 
+          font-family: 'Inter', sans-serif; 
+          background-color: #0a0a0a;
+          color: #ffffff;
+          margin: 0;
+          min-height: 100vh;
+        }
+        .header {
+          background: #141414;
+          padding: 1rem 2rem;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .logo {
+          height: 40px;
+          width: auto;
+        }
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          color: #cccccc;
+          font-size: 0.9rem;
+        }
+        .logout-btn {
+          background: none;
+          border: 1px solid #cc271a;
+          color: #cc271a;
+          padding: 0.5rem 1rem;
+          border-radius: 0.25rem;
+          cursor: pointer;
+          font-size: 0.8rem;
+          transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+          background: #cc271a;
+          color: #ffffff;
+        }
+        .container { 
+          max-width: 600px; 
+          margin: 2rem auto;
+          padding: 0 2rem;
+        }
+        .page-title {
+          color: #ffffff;
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
         }
-        .tagline {
-          color: #ffffff; 
-          margin-bottom: 2rem;
-          font-style: italic;
-          font-size: 1.1rem;
-        }
-        .description {
+        .page-subtitle {
           color: #cccccc;
+          margin-bottom: 3rem;
+          font-size: 1rem;
+        }
+        .form-card {
+          background: #141414;
+          padding: 2rem;
+          border-radius: 1rem;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+          border: 1px solid rgba(255,255,255,0.1);
           margin-bottom: 2rem;
-          line-height: 1.6;
-        }
-        .example {
-          background: #1a1a1a;
-          padding: 1rem;
-          border-radius: 0.5rem;
-          font-family: monospace;
-          color: #cc271a;
-          margin-bottom: 2rem;
-          border: 1px solid rgba(204, 39, 26, 0.3);
-        }
-        a { 
-          color: #cc271a; 
-          text-decoration: none; 
-          font-weight: 500;
-          padding: 0.75rem 1.5rem;
-          border: 2px solid #cc271a;
-          border-radius: 50px;
-          display: inline-block;
-          transition: all 0.3s ease;
-          margin: 0.5rem;
-          font-family: 'Poppins', sans-serif;
-        }
-        a:hover { 
-          background: #cc271a; 
-          color: #ffffff; 
-          transform: translateY(-2px) scale(1.05);
-          box-shadow: 0 10px 30px rgba(204, 39, 26, 0.3);
-        }
-        .creation-form {
-          margin: 2rem 0;
-          text-align: left;
         }
         .form-group {
           margin-bottom: 1.5rem;
@@ -204,7 +414,7 @@ router.get('/', (req, res) => {
         }
         .form-group input {
           width: 100%;
-          padding: 0.75rem;
+          padding: 0.875rem;
           border: 2px solid rgba(255,255,255,0.2);
           border-radius: 0.5rem;
           background: #1a1a1a;
@@ -212,6 +422,7 @@ router.get('/', (req, res) => {
           font-family: 'Inter', sans-serif;
           font-size: 1rem;
           transition: all 0.3s ease;
+          box-sizing: border-box;
         }
         .form-group input:focus {
           outline: none;
@@ -243,11 +454,11 @@ router.get('/', (req, res) => {
           transform: none;
         }
         .result-section {
-          margin: 2rem 0;
-          padding: 1.5rem;
           background: #1a1a1a;
+          padding: 1.5rem;
           border-radius: 0.5rem;
           border: 1px solid rgba(204, 39, 26, 0.3);
+          display: none;
         }
         .result-section h3 {
           color: #cc271a;
@@ -260,15 +471,16 @@ router.get('/', (req, res) => {
         }
         .smartlink-url input {
           flex: 1;
-          padding: 0.75rem;
+          padding: 0.875rem;
           background: #141414;
           border: 1px solid rgba(255,255,255,0.2);
           border-radius: 0.5rem;
           color: #ffffff;
           font-family: monospace;
+          font-size: 0.9rem;
         }
         .smartlink-url button {
-          padding: 0.75rem 1.5rem;
+          padding: 0.875rem 1.5rem;
           background: #cc271a;
           color: #ffffff;
           border: none;
@@ -276,62 +488,77 @@ router.get('/', (req, res) => {
           cursor: pointer;
           font-family: 'Poppins', sans-serif;
           font-weight: 500;
+          white-space: nowrap;
         }
-        .footer {
+        .info-section {
+          background: #141414;
+          padding: 1.5rem;
+          border-radius: 0.5rem;
+          border: 1px solid rgba(255,255,255,0.1);
           margin-top: 2rem;
-          padding-top: 2rem;
-          border-top: 1px solid rgba(255,255,255,0.1);
-          font-size: 0.9rem;
-          color: #999999;
+        }
+        .info-section h3 {
+          color: #ffffff;
+          margin-bottom: 1rem;
+          font-family: 'Poppins', sans-serif;
+        }
+        .info-section p {
+          color: #cccccc;
+          line-height: 1.6;
+          margin-bottom: 0.5rem;
         }
       </style>
     </head>
     <body>
+      <header class="header">
+        <img src="/images/MDMC_logo_blanc fond transparent.png" alt="MDMC" class="logo">
+        <div class="user-info">
+          <span>Dashboard SmartLinks</span>
+          <button class="logout-btn" onclick="logout()">Déconnexion</button>
+        </div>
+      </header>
+      
       <div class="container">
-        <h1>MDMC SmartLinks</h1>
-        <p class="tagline">Marketing musical qui convertit</p>
-        <p class="description">
-          Service de SmartLinks pour partager votre musique sur toutes les plateformes de streaming. 
-          URLs optimisées pour le partage social avec métadonnées Open Graph parfaites.
-        </p>
-        <!-- Formulaire de création SmartLink -->
-        <form id="smartlinkForm" class="creation-form">
-          <div class="form-group">
-            <label for="artistName">Nom de l'artiste</label>
-            <input type="text" id="artistName" name="artistName" placeholder="Ex: Muse" required>
-          </div>
-          <div class="form-group">
-            <label for="trackTitle">Titre du morceau</label>
-            <input type="text" id="trackTitle" name="trackTitle" placeholder="Ex: Uprising" required>
-          </div>
-          <div class="form-group">
-            <label for="sourceUrl">URL de la source</label>
-            <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Ex: https://open.spotify.com/track/..." required>
-          </div>
-          <button type="submit" class="create-btn">Créer SmartLink</button>
-        </form>
+        <h1 class="page-title">Créer un SmartLink</h1>
+        <p class="page-subtitle">Générez des liens universels pour vos sorties musicales</p>
         
-        <div id="result" class="result-section" style="display: none;">
-          <h3>SmartLink créé avec succès !</h3>
-          <div class="smartlink-url">
-            <input type="text" id="generatedUrl" readonly>
-            <button onclick="copyToClipboard()">Copier</button>
+        <div class="form-card">
+          <form id="smartlinkForm">
+            <div class="form-group">
+              <label for="artistName">Nom de l'artiste</label>
+              <input type="text" id="artistName" name="artistName" placeholder="Ex: Muse" required>
+            </div>
+            <div class="form-group">
+              <label for="trackTitle">Titre du morceau</label>
+              <input type="text" id="trackTitle" name="trackTitle" placeholder="Ex: Uprising" required>
+            </div>
+            <div class="form-group">
+              <label for="sourceUrl">URL source (Spotify, Apple Music, etc.)</label>
+              <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Ex: https://open.spotify.com/track/..." required>
+            </div>
+            <button type="submit" class="create-btn">Créer SmartLink</button>
+          </form>
+          
+          <div id="result" class="result-section">
+            <h3>SmartLink créé avec succès !</h3>
+            <div class="smartlink-url">
+              <input type="text" id="generatedUrl" readonly>
+              <button onclick="copyToClipboard()">Copier</button>
+            </div>
           </div>
         </div>
         
-        <div class="example">
-          smartlink.mdmcmusicads.com/artist/track
-        </div>
-        <a href="/test">Tester le service</a>
-        <a href="https://www.mdmcmusicads.com">Site principal MDMC</a>
-        <div class="footer">
-          Powered by MDMC Music Ads<br>
-          Service HTML statique pour SEO optimal
+        <div class="info-section">
+          <h3>Comment ça marche ?</h3>
+          <p>• Collez l'URL d'une plateforme musicale (Spotify, Apple Music, Deezer, etc.)</p>
+          <p>• Le système récupère automatiquement les liens de toutes les plateformes</p>
+          <p>• Votre SmartLink est optimisé pour le partage sur les réseaux sociaux</p>
+          <p>• URLs propres et SEO-friendly pour un meilleur référencement</p>
         </div>
       </div>
       
       <script>
-        // Gestion du formulaire de création SmartLink
+        // Gestion du formulaire
         document.getElementById('smartlinkForm').addEventListener('submit', async (e) => {
           e.preventDefault();
           
@@ -345,7 +572,6 @@ router.get('/', (req, res) => {
           const submitBtn = document.querySelector('.create-btn');
           const resultSection = document.getElementById('result');
           
-          // État de chargement
           submitBtn.disabled = true;
           submitBtn.textContent = 'Création en cours...';
           resultSection.style.display = 'none';
@@ -353,36 +579,29 @@ router.get('/', (req, res) => {
           try {
             const response = await fetch('/api/create-smartlink', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data)
             });
             
             const result = await response.json();
             
             if (response.ok) {
-              // Succès
               const generatedUrl = \`https://smartlink.mdmcmusicads.com/\${result.artistSlug}/\${result.trackSlug}\`;
               document.getElementById('generatedUrl').value = generatedUrl;
               resultSection.style.display = 'block';
-              
-              // Reset form
               e.target.reset();
             } else {
-              alert('Erreur lors de la création: ' + result.error);
+              alert('Erreur: ' + result.error);
             }
           } catch (error) {
-            console.error('Erreur:', error);
             alert('Erreur de connexion. Veuillez réessayer.');
           } finally {
-            // Restaurer bouton
             submitBtn.disabled = false;
             submitBtn.textContent = 'Créer SmartLink';
           }
         });
         
-        // Fonction pour copier l'URL
+        // Copier URL
         function copyToClipboard() {
           const urlInput = document.getElementById('generatedUrl');
           urlInput.select();
@@ -390,9 +609,16 @@ router.get('/', (req, res) => {
           
           const copyBtn = event.target;
           copyBtn.textContent = 'Copié !';
-          setTimeout(() => {
-            copyBtn.textContent = 'Copier';
-          }, 2000);
+          setTimeout(() => copyBtn.textContent = 'Copier', 2000);
+        }
+        
+        // Déconnexion
+        function logout() {
+          if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+            fetch('/api/logout', { method: 'POST' })
+              .then(() => window.location.href = '/')
+              .catch(() => window.location.href = '/');
+          }
         }
       </script>
     </body>

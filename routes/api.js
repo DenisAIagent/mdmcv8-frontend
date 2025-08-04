@@ -322,6 +322,61 @@ router.post('/odesli/fetch', async (req, res) => {
   }
 });
 
+// POST /api/login - Authentification simple
+router.post('/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Validation basique
+    if (!username || !password) {
+      return res.status(400).json({
+        error: 'Nom d\'utilisateur et mot de passe requis'
+      });
+    }
+    
+    // Credentials MDMC (en production, utiliser une vraie DB avec hash)
+    const validCredentials = [
+      { username: 'mdmc', password: 'smartlinks2025' },
+      { username: 'admin', password: 'admin123' },
+      { username: 'client', password: 'client123' }
+    ];
+    
+    const isValidUser = validCredentials.some(
+      cred => cred.username === username && cred.password === password
+    );
+    
+    if (isValidUser) {
+      // En production : générer un vrai JWT ou session
+      res.json({
+        success: true,
+        message: 'Connexion réussie',
+        user: { username },
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(401).json({
+        error: 'Identifiants incorrects'
+      });
+    }
+    
+  } catch (error) {
+    console.error('❌ Erreur login:', error);
+    res.status(500).json({
+      error: 'Erreur interne du serveur'
+    });
+  }
+});
+
+// POST /api/logout - Déconnexion
+router.post('/logout', (req, res) => {
+  // En production : invalider JWT ou session
+  res.json({
+    success: true,
+    message: 'Déconnexion réussie',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // GET /api/health - Health check
 router.get('/health', (req, res) => {
   res.json({
