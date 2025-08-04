@@ -556,6 +556,65 @@ router.get('/health', (req, res) => {
   });
 });
 
+// POST /api/create-smartlink-complete - Créer SmartLink complet avec audio et tracking
+router.post('/create-smartlink-complete', async (req, res) => {
+  try {
+    const { sourceUrl, audioUrl, tracking } = req.body;
+    
+    if (!sourceUrl) {
+      return res.status(400).json({
+        error: 'URL source requise'
+      });
+    }
+
+    console.log('🚀 Création SmartLink complet:', { sourceUrl, audioUrl, tracking });
+
+    // Récupération des données via Odesli
+    const odesliData = await odesliService.fetchPlatformLinks(sourceUrl);
+    
+    if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
+      return res.status(400).json({
+        error: 'Impossible de récupérer les données musicales',
+        message: 'Vérifiez que l\'URL est valide et publique'
+      });
+    }
+
+    // Ajout des données personnalisées
+    const completeSmartlinkData = {
+      ...odesliData,
+      audioUrl, // URL du fichier audio uploadé
+      tracking  // Paramètres de tracking personnalisés
+    };
+
+    // Génération du SmartLink HTML
+    const result = await htmlGenerator.generateSmartLinkHtml(completeSmartlinkData);
+    const publicUrl = htmlGenerator.getPublicUrl(completeSmartlinkData.artist.slug, completeSmartlinkData.slug);
+    
+    console.log('✅ SmartLink complet créé:', publicUrl);
+
+    res.json({
+      success: true,
+      message: 'SmartLink complet créé avec succès',
+      trackTitle: completeSmartlinkData.trackTitle,
+      artistName: completeSmartlinkData.artist.name,
+      artistSlug: completeSmartlinkData.artist.slug,
+      trackSlug: completeSmartlinkData.slug,
+      platformCount: completeSmartlinkData.platformLinks?.length || 0,
+      smartlinkUrl: publicUrl,
+      audioUrl: audioUrl,
+      tracking: tracking,
+      generatedAt: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('❌ Erreur création SmartLink complet:', error);
+    res.status(500).json({
+      error: 'Erreur lors de la création du SmartLink complet',
+      message: error.message
+    });
+  }
+});
+
 // POST /api/upload-audio - Upload fichier audio avec validation durée
 router.post('/upload-audio', uploadAudio.single('audioFile'), async (req, res) => {
   try {

@@ -490,6 +490,65 @@ router.get('/dashboard', (req, res) => {
           font-size: 0.85rem;
           margin: 0.5rem 0 0 0;
         }
+        .step-section {
+          margin-bottom: 2.5rem;
+          padding-bottom: 2rem;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .step-section:last-child {
+          border-bottom: none;
+        }
+        .step-header {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .step-number {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          background: #cc271a;
+          color: white;
+          border-radius: 50%;
+          font-weight: 600;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.2rem;
+        }
+        .step-header h3 {
+          color: #ffffff;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.3rem;
+          margin: 0;
+        }
+        .subsection {
+          margin-bottom: 2rem;
+          padding: 1.5rem;
+          background: #1a1a1a;
+          border-radius: 0.75rem;
+          border: 1px solid rgba(255,255,255,0.1);
+        }
+        .subsection-title {
+          color: #cc271a;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 1.1rem;
+          margin-bottom: 1rem;
+        }
+        .tracking-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        .form-actions {
+          text-align: center;
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid rgba(255,255,255,0.1);
+        }
         .create-btn {
           width: 100%;
           padding: 1rem;
@@ -637,27 +696,82 @@ router.get('/dashboard', (req, res) => {
         <h1 class="page-title">Créer un SmartLink</h1>
         <p class="page-subtitle">Générez des liens universels pour vos sorties musicales</p>
         
+        <!-- Formulaire unique avec toutes les options -->
         <div class="form-card">
-          <form id="smartlinkForm" enctype="multipart/form-data">
-            <div class="form-group">
-              <label for="sourceUrl">URL de la musique</label>
-              <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Collez votre lien Spotify, Apple Music, Deezer, YouTube..." required>
-              <small class="help-text">Collez n'importe quel lien de plateforme musicale et nous récupérerons automatiquement toutes les informations</small>
-            </div>
+          <form id="completeSmartlinkForm" enctype="multipart/form-data">
             
-            <div class="form-group">
-              <label for="audioFile">Fichier audio de prévisualisation (optionnel)</label>
-              <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav" class="file-input">
-              <small class="help-text">Format MP3 ou WAV, durée maximum 30 secondes. Seuls les 3 premières secondes seront lues dans le SmartLink.</small>
-              <div id="audioPreview" class="audio-preview" style="display: none;">
-                <audio id="audioPreviewPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
-                <p class="audio-info" id="audioInfo"></p>
+            <!-- ÉTAPE 1: URL de la musique -->
+            <div class="step-section">
+              <div class="step-header">
+                <span class="step-number">1</span>
+                <h3>URL de la musique</h3>
+              </div>
+              <div class="form-group">
+                <label for="sourceUrl">Lien de votre musique</label>
+                <input type="url" id="sourceUrl" name="sourceUrl" placeholder="Collez votre lien Spotify, Apple Music, Deezer, YouTube..." required>
+                <small class="help-text">Collez n'importe quel lien de plateforme musicale et nous récupérerons automatiquement toutes les informations</small>
               </div>
             </div>
-            
-            <button type="submit" class="create-btn">Générer SmartLink automatiquement</button>
+
+            <!-- ÉTAPE 2: Personnalisation -->
+            <div class="step-section">
+              <div class="step-header">
+                <span class="step-number">2</span>
+                <h3>Personnalisation (optionnel)</h3>
+              </div>
+              
+              <!-- Audio de prévisualisation -->
+              <div class="subsection">
+                <h4 class="subsection-title">🎵 Audio de prévisualisation</h4>
+                <div class="form-group">
+                  <label for="audioFile">Fichier audio (optionnel)</label>
+                  <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav" class="file-input">
+                  <small class="help-text">Format MP3 ou WAV, durée maximum 30 secondes. Seuls les 3 premières secondes seront lues dans le SmartLink.</small>
+                  <div id="audioPreview" class="audio-preview" style="display: none;">
+                    <audio id="audioPreviewPlayer" controls style="width: 100%; margin-top: 0.5rem;"></audio>
+                    <p class="audio-info" id="audioInfo"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tracking Analytics -->
+              <div class="subsection">
+                <h4 class="subsection-title">📊 Tracking Analytics</h4>
+                <div class="tracking-grid">
+                  <div class="form-group">
+                    <label for="customGa4Id">Google Analytics 4</label>
+                    <input type="text" id="customGa4Id" name="ga4Id" placeholder="G-XXXXXXXXXX">
+                    <small class="help-text">ID de mesure GA4 (ex: G-XXXXXXXXXX)</small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="customGtmId">Google Tag Manager</label>
+                    <input type="text" id="customGtmId" name="gtmId" placeholder="GTM-XXXXXXX">
+                    <small class="help-text">ID du conteneur GTM (ex: GTM-XXXXXXX)</small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="customMetaPixelId">Meta Pixel (Facebook)</label>
+                    <input type="text" id="customMetaPixelId" name="metaPixelId" placeholder="123456789012345">
+                    <small class="help-text">ID du pixel Meta/Facebook</small>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="customTiktokPixelId">TikTok Pixel</label>
+                    <input type="text" id="customTiktokPixelId" name="tiktokPixelId" placeholder="CXXXXXXXXXXXXXXX">
+                    <small class="help-text">ID du pixel TikTok</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bouton de génération -->
+            <div class="form-actions">
+              <button type="submit" class="create-btn">🚀 Générer mon SmartLink complet</button>
+            </div>
           </form>
           
+          <!-- Résultat -->
           <div id="result" class="result-section">
             <h3>SmartLink créé avec succès !</h3>
             <div class="retrieved-info">
@@ -670,48 +784,6 @@ router.get('/dashboard', (req, res) => {
               <button id="copyBtn">Copier</button>
             </div>
           </div>
-        </div>
-
-        <div class="form-card" id="customizeSection" style="display: none;">
-          <h3 style="color: #ffffff; margin-bottom: 1.5rem; font-family: 'Poppins', sans-serif;">
-Personnaliser le tracking analytics
-          </h3>
-          <p style="color: #cccccc; margin-bottom: 2rem; font-size: 0.9rem;">
-            Ajoutez vos propres pixels de tracking pour ce SmartLink spécifique
-          </p>
-          
-          <form id="trackingForm">
-            <div class="tracking-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-              <div class="form-group">
-                <label for="customGa4Id">Google Analytics 4</label>
-                <input type="text" id="customGa4Id" name="ga4Id" placeholder="G-XXXXXXXXXX">
-                <small class="help-text">ID de mesure GA4 (ex: G-XXXXXXXXXX)</small>
-              </div>
-              
-              <div class="form-group">
-                <label for="customGtmId">Google Tag Manager</label>
-                <input type="text" id="customGtmId" name="gtmId" placeholder="GTM-XXXXXXX">
-                <small class="help-text">ID du conteneur GTM (ex: GTM-XXXXXXX)</small>
-              </div>
-              
-              <div class="form-group">
-                <label for="customMetaPixelId">Meta Pixel (Facebook)</label>
-                <input type="text" id="customMetaPixelId" name="metaPixelId" placeholder="123456789012345">
-                <small class="help-text">ID du pixel Meta/Facebook</small>
-              </div>
-              
-              <div class="form-group">
-                <label for="customTiktokPixelId">TikTok Pixel</label>
-                <input type="text" id="customTiktokPixelId" name="tiktokPixelId" placeholder="CXXXXXXXXXXXXXXX">
-                <small class="help-text">ID du pixel TikTok</small>
-              </div>
-            </div>
-            
-            <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
-              <button type="button" id="skipTracking" class="secondary-btn">Ignorer le tracking</button>
-              <button type="submit" class="create-btn">Mettre à jour le SmartLink</button>
-            </div>
-          </form>
         </div>
         
         <div class="info-section">
@@ -775,8 +847,8 @@ Personnaliser le tracking analytics
           }
         });
 
-        // Gestion du formulaire simplifié
-        document.getElementById('smartlinkForm').addEventListener('submit', async (e) => {
+        // Gestion du formulaire complet
+        document.getElementById('completeSmartlinkForm').addEventListener('submit', async (e) => {
           e.preventDefault();
           
           const formData = new FormData(e.target);
@@ -791,30 +863,82 @@ Personnaliser le tracking analytics
           const resultSection = document.getElementById('result');
           
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Récupération des données automatique...';
+          submitBtn.textContent = '🔄 Création du SmartLink complet...';
           resultSection.style.display = 'none';
           
           try {
-            const response = await fetch('/api/create-smartlink-auto', {
+            // Étape 1: Upload audio si présent
+            let audioUrl = null;
+            const audioFile = formData.get('audioFile');
+            if (audioFile && audioFile.size > 0) {
+              submitBtn.textContent = '🎵 Upload du fichier audio...';
+              
+              const audioFormData = new FormData();
+              audioFormData.append('audioFile', audioFile);
+              
+              const audioResponse = await fetch('/api/upload-audio', {
+                method: 'POST',
+                body: audioFormData
+              });
+              
+              if (audioResponse.ok) {
+                const audioResult = await audioResponse.json();
+                audioUrl = audioResult.audio.url;
+                console.log('Audio uploadé:', audioUrl);
+              } else {
+                const error = await audioResponse.json();
+                alert('Erreur upload audio: ' + error.error);
+                return;
+              }
+            }
+            
+            // Étape 2: Création du SmartLink avec toutes les données
+            submitBtn.textContent = '🔗 Génération du SmartLink...';
+            
+            const smartlinkData = {
+              sourceUrl,
+              audioUrl,
+              tracking: {
+                ga4Id: formData.get('ga4Id')?.trim() || null,
+                gtmId: formData.get('gtmId')?.trim() || null,
+                metaPixelId: formData.get('metaPixelId')?.trim() || null,
+                tiktokPixelId: formData.get('tiktokPixelId')?.trim() || null
+              }
+            };
+            
+            const response = await fetch('/api/create-smartlink-complete', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ sourceUrl })
+              body: JSON.stringify(smartlinkData)
             });
             
             const result = await response.json();
             
             if (response.ok) {
-              // Redirection vers l'interface d'édition au lieu d'afficher le résultat
-              window.location.href = \`/edit/\${result.artistSlug}/\${result.trackSlug}\`;
+              // Affichage du résultat
+              document.getElementById('retrievedTitle').textContent = result.trackTitle || result.title;
+              document.getElementById('retrievedArtist').textContent = result.artistName || result.artist?.name;
+              document.getElementById('platformCount').textContent = result.platformCount || result.platforms?.length || 0;
+              document.getElementById('generatedUrl').value = result.smartlinkUrl || result.url;
+              
+              resultSection.style.display = 'block';
+              resultSection.scrollIntoView({ behavior: 'smooth' });
+              
+              submitBtn.textContent = '✅ SmartLink créé avec succès !';
+              setTimeout(() => {
+                submitBtn.textContent = '🚀 Générer mon SmartLink complet';
+              }, 3000);
+              
             } else {
               alert('Erreur: ' + result.error);
+              submitBtn.textContent = '🚀 Générer mon SmartLink complet';
             }
           } catch (error) {
             console.error('Erreur:', error);
             alert('Erreur de connexion. Veuillez réessayer.');
+            submitBtn.textContent = '🚀 Générer mon SmartLink complet';
           } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Générer SmartLink automatiquement';
           }
         });
         
