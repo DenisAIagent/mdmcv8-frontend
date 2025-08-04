@@ -144,14 +144,14 @@ router.get('/', (req, res) => {
           border: 1px solid rgba(255,255,255,0.1);
         }
         h1 { 
-          color: #cc271a; 
+          color: #ffffff; 
           font-size: 2rem; 
           margin-bottom: 1rem;
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
         }
         .tagline {
-          color: #cc271a; 
+          color: #ffffff; 
           margin-bottom: 2rem;
           font-style: italic;
           font-size: 1.1rem;
