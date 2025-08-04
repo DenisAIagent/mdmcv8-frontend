@@ -823,40 +823,30 @@
                 <% if (typeof platforms !== 'undefined' && platforms.length > 0) { %>
                 <% platforms.forEach(function(platform) { %>
                 <a href="<%= platform.url %>" 
-                   class="platform-link platform-<%= platform.platform %>" 
+                   class="platform-link <%= platform.name.toLowerCase().replace(/\s+/g, '-') %>" 
                    target="_blank" 
                    rel="noopener noreferrer"
-                   data-platform="<%= platform.platform %>"
-                   data-artist-slug="<%= artist.slug %>"
-                   data-track-slug="<%= track.slug %>"
-                   data-artist-name="<%= artist.name %>"
-                   data-track-title="<%= track.title %>"
-                   aria-label="Écouter <%= track.title %> sur <%= platform.displayName %>">
-                    
+                   data-platform="<%= platform.name.toLowerCase().replace(/\s+/g, '-') %>">
                     <% 
                     let logoPath = '';
-                    const platformName = platform.platform;
-                    if (platformName === 'spotify') {
-                        logoPath = baseUrl + '/assets/logos/spotify.png';
-                    } else if (platformName === 'apple') {
-                        logoPath = baseUrl + '/assets/logos/apple-music.png';
-                    } else if (platformName === 'deezer') {
-                        logoPath = baseUrl + '/assets/logos/deezer.jpg';
-                    } else if (platformName === 'youtube') {
-                        logoPath = baseUrl + '/assets/logos/youtube-music.png';
-                    } else if (platformName === 'amazon') {
-                        logoPath = baseUrl + '/assets/logos/amazon-music.png';
-                    } else if (platformName === 'tidal') {
-                        logoPath = baseUrl + '/assets/logos/tidal.jpg';
-                    } else if (platformName === 'soundcloud') {
-                        logoPath = baseUrl + '/assets/logos/soundcloud.png';
-                    } else if (platformName === 'bandcamp') {
-                        logoPath = baseUrl + '/assets/logos/bandcamp.png';
+                    const platformName = platform.name.toLowerCase();
+                    if (platformName.includes('spotify')) {
+                        logoPath = 'assets/logos/spotify.png';
+                    } else if (platformName.includes('apple')) {
+                        logoPath = 'assets/logos/apple-music.png';
+                    } else if (platformName.includes('deezer')) {
+                        logoPath = 'assets/logos/deezer.jpg';
+                    } else if (platformName.includes('youtube')) {
+                        logoPath = 'assets/logos/youtube-music.png';
+                    } else if (platformName.includes('amazon')) {
+                        logoPath = 'assets/logos/amazon-music.png';
+                    } else if (platformName.includes('tidal')) {
+                        logoPath = 'assets/logos/tidal.jpg';
                     } else {
-                        logoPath = baseUrl + '/assets/logos/default.png';
+                        logoPath = 'assets/logos/default.png';
                     }
                     %>
-                    <img src="<%= logoPath %>" alt="<%= platform.displayName %>" class="platform-logo" loading="lazy">
+                    <img src="<%= logoPath %>" alt="<%= platform.name %>" class="platform-logo">
                     <span class="platform-name">PLAY</span>
                     <i data-lucide="play" class="platform-arrow"></i>
                 </a>
@@ -889,50 +879,22 @@
         let audioTimer = null;
         
         playButton.addEventListener('click', function() {
-            if (audioPlayer && audioPlayer.src) {
-                // Vrai lecteur audio si preview disponible
-                if (!isPlaying) {
-                    audioPlayer.play().then(() => {
-                        playButton.classList.add('playing');
-                        playIcon.setAttribute('data-lucide', 'pause');
-                        lucide.createIcons();
-                        isPlaying = true;
-                        
-                        // Arrêt automatique après 3 secondes
-                        audioTimer = setTimeout(() => {
-                            stopPlayback();
-                        }, 3000);
-                    }).catch(e => {
-                        console.log('Erreur de lecture audio:', e);
-                        simulatePlayback();
-                    });
-                } else {
-                    audioPlayer.pause();
-                    stopPlayback();
-                }
-                
-                audioPlayer.addEventListener('ended', stopPlayback);
-            } else {
-                // Simulation si pas de preview
-                simulatePlayback();
-            }
-        });
-        
-        function simulatePlayback() {
             if (!isPlaying) {
+                // Simuler la lecture (pas de vrai fichier audio)
                 playButton.classList.add('playing');
                 playIcon.setAttribute('data-lucide', 'pause');
                 lucide.createIcons();
                 isPlaying = true;
                 
                 // Arrêter après 3 secondes (simulation)
-                audioTimer = setTimeout(() => {
+                setTimeout(() => {
                     stopPlayback();
                 }, 3000);
             } else {
                 stopPlayback();
             }
-        }
+        });
+        
         
         function stopPlayback() {
             playButton.classList.remove('playing');
@@ -946,49 +908,18 @@
             }
         }
         
-        // Analytics de tracking
+        // Analytics de tracking (simulation)
         document.querySelectorAll('.platform-link').forEach(link => {
             link.addEventListener('click', function(e) {
-                const platform = this.getAttribute('data-platform');
-                const artistName = this.getAttribute('data-artist-name');
-                const trackTitle = this.getAttribute('data-track-title');
+                const platform = this.classList[1]; // spotify, apple-music, etc.
+                console.log(`Clic sur ${platform} pour "<%= track.title %>" de <%= artist.name %>`);
                 
-                // Google Analytics
-                <% if (analyticsEnabled && gaId) { %>
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'platform_click', {
-                        event_category: 'SmartLink',
-                        event_label: artistName + ' - ' + trackTitle,
-                        platform: platform,
-                        artist_name: artistName,
-                        track_title: trackTitle
-                    });
-                }
-                <% } %>
-                
-                // Meta Pixel
-                <% if (analyticsEnabled && metaPixelId) { %>
-                if (typeof fbq !== 'undefined') {
-                    fbq('track', 'Lead', {
-                        content_name: trackTitle,
-                        content_category: 'SmartLink',
-                        platform: platform
-                    });
-                }
-                <% } %>
-                
-                // TikTok Pixel
-                <% if (analyticsEnabled && tiktokPixelId) { %>
-                if (typeof ttq !== 'undefined') {
-                    ttq.track('ClickButton', {
-                        content_name: trackTitle,
-                        content_category: 'SmartLink',
-                        platform: platform
-                    });
-                }
-                <% } %>
-                
-                console.log(`Clic sur ${platform} pour "${trackTitle}" de ${artistName}`);
+                // Ici vous pourriez ajouter votre code de tracking réel
+                // gtag('event', 'platform_click', {
+                //     platform: platform,
+                //     artist: '<%= artist.name %>',
+                //     track: '<%= track.title %>'
+                // });
             });
         });
         
