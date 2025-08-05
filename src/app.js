@@ -45,6 +45,10 @@ if (process.env.NODE_ENV === 'production') {
 app.use(express.json({ limit: process.env.MAX_FILE_SIZE || '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: process.env.MAX_FILE_SIZE || '10mb' }));
 
+// --- Configuration du moteur de template EJS ---
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../views'));
+
 // --- Servir les fichiers statiques ---
 app.use(express.static(path.join(__dirname, '../public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
@@ -61,8 +65,8 @@ const apiRoutes = require('../routes/api');
 app.use('/api', apiRoutes);
 
 // --- Dashboard Routes ---
-const dashboardRoutes = require('../routes/dashboard_new');
-app.use('/', dashboardRoutes);
+const dashboardRoutes = require('../routes/dashboard');
+app.use('/dashboard', dashboardRoutes);
 
 // --- Health Check ---
 app.get('/health', (req, res) => {
