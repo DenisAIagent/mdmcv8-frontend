@@ -14,7 +14,10 @@ const odesliService = new OdesliService();
 // Configuration multer pour upload audio
 const audioStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../public/audio/'));
+    const audioDir = path.join(__dirname, '../public/audio/');
+    // Créer le dossier s'il n'existe pas
+    require('fs').mkdirSync(audioDir, { recursive: true });
+    cb(null, audioDir);
   },
   filename: function (req, file, cb) {
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;

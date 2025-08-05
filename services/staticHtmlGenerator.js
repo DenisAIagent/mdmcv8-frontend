@@ -328,7 +328,7 @@ class StaticHtmlGenerator {
    * @returns {string} - URL publique
    */
   getPublicUrl(artistSlug, trackSlug) {
-    return `${this.baseUrl}/smartlinks/${artistSlug}/${trackSlug}`;
+    return `${this.baseUrl}/${artistSlug}/${trackSlug}`;
   }
 
   /**
