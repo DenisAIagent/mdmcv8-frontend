@@ -199,7 +199,7 @@ class StaticHtmlGenerator {
       title: `${trackTitle} - ${artistName}`,
       description: smartlinkData.description || `Écoutez "${trackTitle}" de ${artistName} sur toutes les plateformes de streaming`,
       image: smartlinkData.coverImageUrl || `${this.baseUrl}/assets/images/default-cover.jpg`,
-      url: `${this.baseUrl}/smartlinks/${smartlinkData.artist.slug}/${smartlinkData.slug}`,
+      url: `${this.baseUrl}/${smartlinkData.artist.slug}/${smartlinkData.slug}`,
       
       // Données du SmartLink
       artist: {

@@ -796,7 +796,7 @@
                 </button>
                 <% if (track && track.audioUrl) { %>
                 <audio class="audio-player" id="audioPlayer" preload="none">
-                    <source src="<%= track.audioUrl %>" type="audio/mpeg">
+                    <source src="<%= track.audioUrl.startsWith('http') ? track.audioUrl : baseUrl + track.audioUrl %>" type="audio/mpeg">
                 </audio>
                 <% } %>
             </div>
@@ -831,19 +831,21 @@
                     let logoPath = '';
                     const platformName = platform.name.toLowerCase();
                     if (platformName.includes('spotify')) {
-                        logoPath = 'assets/logos/spotify.png';
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg';
                     } else if (platformName.includes('apple')) {
-                        logoPath = 'assets/logos/apple-music.png';
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg';
                     } else if (platformName.includes('deezer')) {
-                        logoPath = 'assets/logos/deezer.jpg';
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/3/32/Deezer_logo.svg';
                     } else if (platformName.includes('youtube')) {
-                        logoPath = 'assets/logos/youtube-music.png';
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg';
                     } else if (platformName.includes('amazon')) {
-                        logoPath = 'assets/logos/amazon-music.png';
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/7/77/Amazon_Music_logo.svg';
                     } else if (platformName.includes('tidal')) {
-                        logoPath = 'assets/logos/tidal.jpg';
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/0/05/Tidal_logo_black.svg';
+                    } else if (platformName.includes('soundcloud')) {
+                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Antu_soundcloud.svg';
                     } else {
-                        logoPath = 'assets/logos/default.png';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzMzMzMyIvPgo8cGF0aCBkPSJNMTIgMTZIMTZWMjRIMTJWMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjAgMTJIMjRWMjhIMjBWMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjggMTZIMzJWMjRIMjhWMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K';
                     }
                     %>
                     <img src="<%= logoPath %>" alt="<%= platform.name %>" class="platform-logo">
