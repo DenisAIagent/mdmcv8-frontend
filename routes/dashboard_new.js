@@ -673,7 +673,10 @@ router.get('/dashboard', (req, res) => {
                 <div class="loading-spinner" style="display: none;"></div>
               </button>
             </div>
-            <div class="help-text">Saisissez un code ISRC, UPC ou collez une URL de plateforme musicale</div>
+            <div class="help-text">
+              Saisissez un code ISRC, UPC ou collez une URL de plateforme musicale
+              <br><button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('sourceUrl').value='https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh'" style="margin-top: 4px;">Test avec Rick Astley</button>
+            </div>
           </div>
 
           <!-- États de recherche -->
@@ -905,6 +908,9 @@ router.get('/dashboard', (req, res) => {
         console.log('Données reçues:', result);
 
         if (response.ok) {
+          console.log('✅ Recherche réussie. Données complètes:', result);
+          console.log('📊 Plateformes reçues:', result.platforms?.length || 0, result.platforms);
+          
           state.searchData = result;
           setSearchState('success');
           updateTrackCard(result.trackInfo);
@@ -955,6 +961,15 @@ router.get('/dashboard', (req, res) => {
 
     // Affichage de l'étape plateformes
     function showPlatformsStep(platforms) {
+      console.log('🔧 showPlatformsStep appelée avec:', platforms);
+      
+      // Vérification des plateformes
+      if (!platforms || !Array.isArray(platforms) || platforms.length === 0) {
+        console.error('❌ Aucune plateforme reçue ou format invalide:', platforms);
+        elements.platformsGrid.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 20px;">Aucune plateforme trouvée. Essayez avec une autre URL.</p>';
+        return;
+      }
+
       // Génération de la grille
       elements.platformsGrid.innerHTML = '';
       state.selectedPlatforms = [];

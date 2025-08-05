@@ -55,6 +55,22 @@ function createSlug(text) {
     .replace(/^-|-$/g, '');
 }
 
+function getPlatformDisplayName(platform) {
+  const names = {
+    spotify: 'Spotify',
+    apple: 'Apple Music',
+    youtube: 'YouTube Music',
+    deezer: 'Deezer',
+    tidal: 'TIDAL',
+    amazon: 'Amazon Music',
+    soundcloud: 'SoundCloud',
+    bandcamp: 'Bandcamp',
+    pandora: 'Pandora',
+    napster: 'Napster'
+  };
+  return names[platform] || platform.charAt(0).toUpperCase() + platform.slice(1);
+}
+
 // Fonction utilitaire pour extraire le domaine
 function getDomainFromUrl(url) {
   try {
@@ -601,11 +617,25 @@ router.post('/search-platforms', async (req, res) => {
     }
     
     if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
+      console.error('❌ Données Odesli invalides:', odesliData);
       return res.status(400).json({
         error: 'Musique non trouvée',
-        message: 'Vérifiez que l\'URL/ISRC/UPC est valide et que la musique est disponible publiquement'
+        message: 'Vérifiez que l\'URL/ISRC/UPC est valide et que la musique est disponible publiquement',
+        debug: {
+          hasOdesliData: !!odesliData,
+          hasTrackTitle: !!odesliData?.trackTitle,
+          hasArtist: !!odesliData?.artist?.name,
+          platformLinksCount: odesliData?.platformLinks?.length || 0
+        }
       });
     }
+
+    console.log('📊 Odesli transformé:', {
+      trackTitle: odesliData.trackTitle,
+      artistName: odesliData.artist.name,
+      platformLinksCount: odesliData.platformLinks?.length || 0,
+      platformLinks: odesliData.platformLinks?.map(p => ({ platform: p.platform, url: p.url }))
+    });
 
     // Retour des plateformes sans génération de SmartLink
     res.json({
@@ -620,7 +650,7 @@ router.post('/search-platforms', async (req, res) => {
       },
       platforms: odesliData.platformLinks.map(platform => ({
         id: platform.platform,
-        name: platform.displayName || platform.name,
+        name: getPlatformDisplayName(platform.platform),
         url: platform.url,
         platform: platform.platform,
         available: true
