@@ -9,7 +9,7 @@ const OdesliService = require('./odesliService');
 class StaticHtmlGenerator {
   constructor() {
     this.templatePath = path.join(__dirname, '../templates/smartlink.ejs');
-    this.publicDir = path.join(__dirname, '../public/smartlinks');
+    this.publicDir = path.join(__dirname, '../public');
     this.baseUrl = process.env.BASE_URL || 'https://smartlink.mdmcmusicads.com';
     this.odesliService = new OdesliService();
   }
@@ -393,24 +393,40 @@ class StaticHtmlGenerator {
         lastGenerated: null
       };
 
-      const artists = await fs.readdir(this.publicDir);
+      const items = await fs.readdir(this.publicDir);
+      const artists = [];
+      
+      // Filtrer seulement les dossiers d'artistes (pas les fichiers comme favicon.png, etc.)
+      for (const item of items) {
+        const itemPath = path.join(this.publicDir, item);
+        const stat = await fs.stat(itemPath);
+        if (stat.isDirectory() && !['assets', 'audio', 'images', 'smartlinks'].includes(item)) {
+          artists.push(item);
+        }
+      }
+      
       stats.totalArtists = artists.length;
 
       for (const artist of artists) {
-        const artistDir = path.join(this.publicDir, artist);
-        const files = await fs.readdir(artistDir);
-        
-        for (const file of files) {
-          if (file.endsWith('.html')) {
-            stats.totalFiles++;
-            const filePath = path.join(artistDir, file);
-            const stat = await fs.stat(filePath);
-            stats.totalSize += stat.size;
-            
-            if (!stats.lastGenerated || stat.mtime > stats.lastGenerated) {
-              stats.lastGenerated = stat.mtime;
+        try {
+          const artistDir = path.join(this.publicDir, artist);
+          const files = await fs.readdir(artistDir);
+          
+          for (const file of files) {
+            if (file.endsWith('.html')) {
+              stats.totalFiles++;
+              const filePath = path.join(artistDir, file);
+              const stat = await fs.stat(filePath);
+              stats.totalSize += stat.size;
+              
+              if (!stats.lastGenerated || stat.mtime > stats.lastGenerated) {
+                stats.lastGenerated = stat.mtime;
+              }
             }
           }
+        } catch (error) {
+          // Ignorer les dossiers qui ne peuvent pas être lus
+          console.log(`⚠️ Impossible de lire le dossier artiste: ${artist}`);
         }
       }
 
