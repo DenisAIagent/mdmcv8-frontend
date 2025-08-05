@@ -246,7 +246,8 @@
             background-repeat: no-repeat;
             filter: var(--blur-xl);
             transform: scale(1.1);
-            opacity: 0.3;
+            opacity: 0.4;
+            will-change: transform;
         }
         
         .background-overlay {
@@ -540,21 +541,12 @@
             transform: translateY(-1px) scale(1.01);
         }
         
-        /* Platform logos */
-        .platform-logo {
-            max-width: 40px;
-            height: auto;
-            margin-right: var(--space-4);
-            flex-shrink: 0;
+        /* Platform icons */
+        .platform-icon {
             transition: var(--transition-base);
-            border-radius: var(--radius-sm);
-            object-fit: contain;
-            object-position: center;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
         }
         
-        .platform-link:hover .platform-logo {
+        .platform-link:hover .platform-icon {
             transform: scale(1.1) rotate(5deg);
             animation: iconBounce 0.6s ease-in-out;
         }
@@ -569,7 +561,6 @@
             font-weight: 700;
             font-size: var(--font-size-lg);
             letter-spacing: 0.5px;
-            text-transform: uppercase;
         }
         
         .platform-arrow {
@@ -831,25 +822,87 @@
                     let logoPath = '';
                     const platformName = platform.name.toLowerCase();
                     if (platformName.includes('spotify')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiMxREI5NTQiLz4KPHBhdGggZD0iTTI5IDEyLjVDMjcuNSAxMS41IDI1LjUgMTEgMjMuNSAxMUMyMS41IDExIDEzLjUgMTEgMTEgMTNNMjggMTZDMjYuNSAxNS4yIDI0LjggMTQuOCAyMyAxNC44QzIxLjIgMTQuOCAxNS41IDE0LjggMTMgMTZNMjcgMTkuNUM5LjUgMTQgMTQgMTkuNSAxNCAxOS41UzE5LjUgMjAgMjQgMjBTMjcgMTkuNSAyNyAxOS41WiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K';
                     } else if (platformName.includes('apple')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Apple_Music_icon.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiNGQTI0M0MiLz4KPHBhdGggZD0iTTIwIDEyVjE4SDE0QzE0IDE1IDE2LjUgMTIgMjAgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjAgMTguNVYyNkg5QzEwIDIwIDEzIDI0IDIwIDE4LjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjAuNSAxOC41SDI3QzI3IDIxLjUgMjUgMjQgMjAuNSAyNFYxOC41WiIgZmlsbD0id2hpdGUiLz4KPGNpcmNsZSBjeD0iMjIiIGN5PSIxNCIgcj0iMiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==';
                     } else if (platformName.includes('deezer')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/3/32/Deezer_logo.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiNGRkFCMDAiLz4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxNiIgeT0iMTAiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjIyIiB5PSIxMCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMjgiIHk9IjEwIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxMCIgeT0iMTYiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMjIiIHk9IjE2IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIyOCIgeT0iMTYiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjEwIiB5PSIyMiIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMTYiIHk9IjIyIiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIyMiIgeT0iMjIiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjI4IiB5PSIyMiIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMTAiIHk9IjI4IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxNiIgeT0iMjgiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IndoaXRlIi8+CjxyZWN0IHg9IjIyIiB5PSIyOCIgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMjgiIHk9IjI4IiB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K';
                     } else if (platformName.includes('youtube')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiNGRjAwMDAiLz4KPHBhdGggZD0iTTMyIDE5QzMyIDEzLjUgMjguNSAxMCAyMyAxMEgxN0MxMS41IDEwIDggMTMuNSA4IDE5VjIxQzggMjYuNSAxMS41IDMwIDE3IDMwSDIzQzI4LjUgMzAgMzIgMjYuNSAzMiAyMVYxOVoiIGZpbGw9IndoaXRlIi8+Cjxwb2x5Z29uIHBvaW50cz0iMTgsMTQgMjYsMjAgMTgsMjYiIGZpbGw9IiNGRjAwMDAiLz4KPC9zdmc+Cg==';
                     } else if (platformName.includes('amazon')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/7/77/Amazon_Music_logo.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiMwMEE4RTEiLz4KPHBhdGggZD0iTTEyIDEzSDI4QzI5LjEgMTMgMzAgMTMuOSAzMCAxNVYyNUMzMCAyNi4xIDI5LjEgMjcgMjggMjdIMTJDMTAuOSAyNyAxMCAyNi4xIDEwIDI1VjE1QzEwIDEzLjkgMTAuOSAxMyAxMiAxM1oiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCAxNlYyNE0xNiAxOEwyNCAxOE0xNiAyMkwyNCAyMiIgc3Ryb2tlPSIjMDBBOEUxIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjxwb2x5Z29uIHBvaW50cz0iMTQsMjkgMjYsMjkgMjMsMzIgMTcsMzIiIGZpbGw9IndoaXRlIi8+CjwvdGV+';
                     } else if (platformName.includes('tidal')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/0/05/Tidal_logo_black.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiMwMDAwMDAiLz4KPHBhdGggZD0iTTEzLjUgMTRMMjAgMjAuNUwyNi41IDE0TDMwIDE3LjVMMjMuNSAyNEwzMCAzMC41TDI2LjUgMzRMMjAgMjcuNUwxMy41IDM0TDEwIDMwLjVMMTYuNSAyNEwxMCAxNy41TDEzLjUgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K';
                     } else if (platformName.includes('soundcloud')) {
-                        logoPath = 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Antu_soundcloud.svg';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiNGRjMzMDAiLz4KPHBhdGggZD0iTTEyIDE4VjI0TTE0IDE2VjI2TTE2IDE1VjI3TTE4IDE0VjI4SDI4QzI5LjEgMjggMzAgMjcuMSAzMCAyNlYyMkMzMCAyMC45IDI5LjEgMjAgMjggMjBINy4yTTI4IDIwQzI2LjIgMTcuMyAyMy4zIDE2IDIwIDE4IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=';
                     } else {
-                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzMzMzMzMyIvPgo8cGF0aCBkPSJNMTIgMTZIMTZWMjRIMTJWMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjAgMTJIMjRWMjhIMjBWMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjggMTZIMzJWMjRIMjhWMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K';
+                        logoPath = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9IiM2NjY2NjYiLz4KPHBhdGggZD0iTTIwIDEwVjMwTTEwIDIwSDMwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSI2IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz4KPC9zdmc+Cg==';
                     }
                     %>
-                    <img src="<%= logoPath %>" alt="<%= platform.name %>" class="platform-logo">
-                    <span class="platform-name">PLAY</span>
+                    <% 
+                    // Couleurs authentiques des plateformes avec icônes SVG
+                    let brandColor = '#666666';
+                    let brandName = platform.displayName || platform.name;
+                    
+                    if (platformName.includes('spotify')) {
+                        brandColor = '#1DB954';
+                        brandName = 'Spotify';
+                    } else if (platformName.includes('apple')) {
+                        brandColor = '#FA243C';
+                        brandName = 'Apple Music';
+                    } else if (platformName.includes('deezer')) {
+                        brandColor = '#A238FF';
+                        brandName = 'Deezer';
+                    } else if (platformName.includes('youtube')) {
+                        brandColor = '#FF0000';
+                        brandName = 'YouTube Music';
+                    } else if (platformName.includes('amazon')) {
+                        brandColor = '#00A8E1';
+                        brandName = 'Amazon Music';
+                    } else if (platformName.includes('tidal')) {
+                        brandColor = '#000000';
+                        brandName = 'TIDAL';
+                    } else if (platformName.includes('soundcloud')) {
+                        brandColor = '#FF3300';
+                        brandName = 'SoundCloud';
+                    }
+                    %>
+                    <div class="platform-icon" style="background-color: <%= brandColor %>; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 16px; flex-shrink: 0;">
+                        <% if (platformName.includes('spotify')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.64 14.4c-.17.29-.47.46-.8.46-.16 0-.32-.04-.46-.14-1.14-.69-2.69-1.02-4.65-1.02-1.38 0-2.7.18-3.16.27-.14.03-.29.04-.43.04-.49 0-.88-.4-.88-.89 0-.4.27-.74.65-.84.63-.17 2.11-.35 3.82-.35 2.31 0 4.2.39 5.61 1.18.4.22.54.72.3 1.11v.18zm1.14-2.84c-.21.35-.58.57-.96.57-.19 0-.38-.05-.56-.16-1.36-.83-3.22-1.25-5.52-1.25-1.67 0-3.22.22-3.82.33-.17.03-.35.05-.52.05-.58 0-1.05-.47-1.05-1.05 0-.48.32-.89.77-1.01.75-.2 2.58-.42 4.62-.42 2.8 0 5.02.47 6.64 1.4.48.27.65.86.4 1.32v.22z"/>
+                            </svg>
+                        <% } else if (platformName.includes('apple')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M18.71 19.5c-.83-1.24-1.71-2.45-3.27-2.45-1.27 0-1.74.61-3.24.61s-2.1-.61-3.24-.61c-1.44 0-2.52 1.21-3.27 2.45C4.24 22.94 5.5 27.5 7.7 27.5c.83 0 1.18-.61 2.27-.61s1.44.61 2.27.61c2.2 0 3.46-4.56 1.99-7.5-.83-1.66-1.71-3.24-3.27-3.24zm-6.54-.5c.24-.73.39-1.48.39-2.26 0-2.74-1.15-5.41-3.24-6.14C8.15 9.13 7 7.65 7 5.5c0-.83.15-1.66.39-2.45C9.54 3.78 12 6.09 12 9.5c0 .78-.15 1.53-.39 2.26-.24.73-.61 1.42-1.15 1.97s-1.24.91-1.97 1.15c-.73.24-1.48.39-2.26.39-3.41 0-5.72-2.46-6.45-4.61z"/>
+                            </svg>
+                        <% } else if (platformName.includes('youtube')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        <% } else if (platformName.includes('amazon')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M.045 18.02c.072-.116.187-.18.295-.18.107 0 .214.045.295.136l.99 1.057c.045.045.072.107.072.17 0 .063-.027.134-.072.18-.287.313-.648.546-1.062.692-.414.147-.864.22-1.35.22-.648 0-1.235-.116-1.762-.35-.527-.233-.972-.548-1.33-.944-.36-.396-.633-.864-.82-1.404C-4.948 16.93-5 16.336-5 15.694c0-.675.072-1.296.216-1.863.144-.567.36-1.062.648-1.485.288-.423.648-.747 1.08-.972.432-.225.936-.337 1.512-.337.432 0 .828.072 1.188.216.36.144.666.36.918.648.252.288.441.648.567 1.08.126.432.189.936.189 1.512v.432c0 .18-.063.315-.189.405-.126.09-.315.135-.567.135h-3.294c.036.54.18.954.432 1.242.252.288.612.432 1.08.432.288 0 .54-.045.756-.135.216-.09.378-.207.486-.351l.99 1.161z"/>
+                            </svg>
+                        <% } else if (platformName.includes('deezer')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M17.68 5.74h-1.368v1.368h1.368V5.74zm-2.31 0h-1.368v1.368h1.368V5.74zm-2.31 0H11.69v1.368h1.368V5.74zm-2.31 0H9.38v1.368h1.368V5.74zm-2.31 0H7.07v1.368h1.368V5.74zm10.76 2.31h-1.368v1.368h1.368V8.05zm-2.31 0h-1.368v1.368h1.368V8.05zm-2.31 0H11.69v1.368h1.368V8.05zm-2.31 0H9.38v1.368h1.368V8.05zm-2.31 0H7.07v1.368h1.368V8.05zm10.76 2.31h-1.368v1.368h1.368v-1.368zm-2.31 0h-1.368v1.368h1.368v-1.368zm-2.31 0H11.69v1.368h1.368v-1.368zm-2.31 0H9.38v1.368h1.368v-1.368zm-2.31 0H7.07v1.368h1.368v-1.368zm10.76 2.31h-1.368v1.368h1.368v-1.368zm-2.31 0h-1.368v1.368h1.368v-1.368zm-2.31 0H11.69v1.368h1.368v-1.368zm-2.31 0H9.38v1.368h1.368v-1.368zm-2.31 0H7.07v1.368h1.368v-1.368z"/>
+                            </svg>
+                        <% } else if (platformName.includes('tidal')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M12.012 3.992L8.008 8.004 4.008 4.004 8.008 0l4.004 3.992zm4.004 4.004L12.012 12 8.008 8.004l4.004-3.996 4.004 3.996zm4.004 4.004L16.016 16 12.012 12l4.004-3.996L20.02 12zm-4.004 4.004L12.012 20l-4.004-4.004 4.004-3.996 4.004 3.996zm-4.004-4.004L8.008 16l-4-4.004L8.008 8.004 12.012 12z"/>
+                            </svg>
+                        <% } else if (platformName.includes('soundcloud')) { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M2.373 11.012c-.088 0-.16.068-.177.158l-.462 1.83.462 1.83c.017.09.089.158.177.158s.16-.068.177-.158l.462-1.83-.462-1.83c-.017-.09-.089-.158-.177-.158zm1.15-.355c-.106 0-.195.084-.212.194l-.462 2.149.462 2.148c.017.11.106.194.212.194s.195-.084.212-.194l.462-2.148-.462-2.149c-.017-.11-.106-.194-.212-.194zm1.168-.53c-.124 0-.23.102-.248.23l-.462 2.643.462 2.642c.018.128.124.23.248.23s.23-.102.248-.23l.543-2.642-.543-2.643c-.018-.128-.124-.23-.248-.23zm1.204-.708c-.142 0-.265.119-.283.265l-.462 3.351.462 3.35c.018.146.141.265.283.265s.265-.119.283-.265l.566-3.35-.566-3.351c-.018-.146-.141-.265-.283-.265zm1.24-.885c-.159 0-.299.137-.318.3l-.462 4.236.462 4.235c.019.163.159.3.318.3s.299-.137.318-.3l.59-4.235-.59-4.236c-.019-.163-.159.3-.318-.3z"/>
+                            </svg>
+                        <% } else { %>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                            </svg>
+                        <% } %>
+                    </div>
+                    <span class="platform-name" style="color: <%= brandColor %>; font-weight: 700; font-size: 1.1rem;"><%= brandName %></span>
                     <i data-lucide="play" class="platform-arrow"></i>
                 </a>
                 <% }); %>
