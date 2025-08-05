@@ -302,19 +302,16 @@ router.get('/dashboard', (req, res) => {
     .search-state.loading {
       background: var(--primary-light);
       border: 1px solid var(--primary);
-      display: block;
     }
 
     .search-state.success {
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid var(--success);
-      display: block;
     }
 
     .search-state.error {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid var(--error);
-      display: block;
     }
 
     /* Track Info Card */
@@ -680,19 +677,19 @@ router.get('/dashboard', (req, res) => {
           </div>
 
           <!-- États de recherche -->
-          <div id="searchLoading" class="search-state loading">
+          <div id="searchLoading" class="search-state" style="display: none;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <div class="loading-spinner"></div>
               Recherche en cours...
             </div>
           </div>
 
-          <div id="searchError" class="search-state error">
+          <div id="searchError" class="search-state" style="display: none;">
             <strong>Erreur de recherche</strong>
             <p id="searchErrorMessage">Impossible de trouver cette musique</p>
           </div>
 
-          <div id="searchSuccess" class="search-state success">
+          <div id="searchSuccess" class="search-state" style="display: none;">
             <strong>Musique trouvée !</strong>
             <div id="trackCard" class="track-card">
               <img id="trackArtwork" class="track-artwork" src="" alt="">
@@ -927,7 +924,10 @@ router.get('/dashboard', (req, res) => {
 
     // États de recherche
     function setSearchState(state, message = '') {
-      // Reset tous les états
+      // Reset tous les états - supprimer les classes et cacher
+      elements.searchLoading.className = 'search-state';
+      elements.searchError.className = 'search-state';
+      elements.searchSuccess.className = 'search-state';
       elements.searchLoading.style.display = 'none';
       elements.searchError.style.display = 'none';
       elements.searchSuccess.style.display = 'none';
@@ -937,6 +937,7 @@ router.get('/dashboard', (req, res) => {
         elements.searchText.style.display = 'none';
         elements.searchSpinner.style.display = 'block';
         elements.searchBtn.disabled = true;
+        elements.searchLoading.className = 'search-state loading';
         elements.searchLoading.style.display = 'block';
       } else {
         elements.searchText.style.display = 'block';
@@ -944,8 +945,10 @@ router.get('/dashboard', (req, res) => {
         elements.searchBtn.disabled = false;
         
         if (state === 'success') {
+          elements.searchSuccess.className = 'search-state success';
           elements.searchSuccess.style.display = 'block';
         } else if (state === 'error') {
+          elements.searchError.className = 'search-state error';
           elements.searchError.style.display = 'block';
           elements.searchErrorMessage.textContent = message;
         }
