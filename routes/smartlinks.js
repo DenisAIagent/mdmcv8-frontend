@@ -372,7 +372,8 @@ router.get('/', (req, res) => {
   `);
 });
 
-// Route dashboard : interface de création SmartLinks moderne (sécurisée)
+// Route dashboard : interface de création SmartLinks (ancienne version - désactivée)
+/*
 router.get('/dashboard', (req, res) => {
   res.send(`
 <!DOCTYPE html>
@@ -1437,6 +1438,7 @@ router.get('/dashboard', (req, res) => {
     </html>
   `);
 });
+*/
 
 // Route d'édition SmartLink : interface complète post-génération
 router.get('/edit/:artistSlug/:trackSlug', async (req, res) => {
