@@ -1053,7 +1053,7 @@ router.get('/dashboard', (req, res) => {
           if (logoutBtn) logoutBtn.addEventListener('click', logout);
         });
         
-        // Variables globales pour les données de recherche
+        // Variables globales pour les données de recherche - syntax clean
         let searchData = null;
         let selectedPlatforms = [];
 
