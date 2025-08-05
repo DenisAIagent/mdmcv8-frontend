@@ -60,6 +60,10 @@ app.use('/', smartlinkRoutes);
 const apiRoutes = require('../routes/api');
 app.use('/api', apiRoutes);
 
+// --- Dashboard Routes ---
+const dashboardRoutes = require('../routes/dashboard_new');
+app.use('/', dashboardRoutes);
+
 // --- Health Check ---
 app.get('/health', (req, res) => {
   res.status(200).json({
