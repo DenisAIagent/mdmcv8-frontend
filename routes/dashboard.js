@@ -1,8 +1,19 @@
 const express = require('express');
 const router = express.Router();
 
-// Route principale du dashboard - Création de SmartLinks
-router.get('/', (req, res) => {
+// Route principale du dashboard - VOTRE CODE HTML EXACT
+router.get('/', async (req, res) => {
+  try {
+    // Cette route utilise le template EJS avec le vrai code HTML que vous avez fourni
+    res.render('dashboard');
+  } catch (error) {
+    console.error('❌ Erreur dashboard:', error);
+    res.status(500).send('Erreur chargement dashboard');
+  }
+});
+
+// Route de création de SmartLinks
+router.get('/create', (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html lang="fr">
@@ -21,10 +32,10 @@ router.get('/', (req, res) => {
     </head>
     <body>
       <div class="container">
-        <h1>Dashboard MDMC SmartLinks</h1>
+        <h1>Créer SmartLink</h1>
         <p>Interface de création de SmartLinks</p>
         <p>Cette page sera bientôt implémentée avec l'interface de création complète.</p>
-        <a href="/dashboard/manage" class="nav-link">📱 Gérer mes SmartLinks</a>
+        <a href="/dashboard" class="nav-link">📱 Mes SmartLinks</a>
         <a href="/dashboard/analytics" class="nav-link">📊 Analytics</a>
       </div>
     </body>
@@ -32,15 +43,9 @@ router.get('/', (req, res) => {
   `);
 });
 
-// Route de gestion des SmartLinks
-router.get('/manage', async (req, res) => {
-  try {
-    // Cette route utilise le template EJS avec le vrai code HTML
-    res.render('dashboard');
-  } catch (error) {
-    console.error('❌ Erreur dashboard manage:', error);
-    res.status(500).send('Erreur chargement dashboard');
-  }
+// Route de gestion des SmartLinks - Redirection vers la route principale
+router.get('/manage', (req, res) => {
+  res.redirect('/dashboard');
 });
 
 // Route Analytics

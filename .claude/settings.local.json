@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git remote get-url:*)",
+      "Bash(ls:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:hugeicons.com)",
+      "Bash(node:*)",
+      "WebFetch(domain:developer.spotify.com)",
+      "WebFetch(domain:www.apple.com)",
+      "WebFetch(domain:marketing.services.apple)",
+      "WebFetch(domain:developers.deezer.com)",
+      "WebFetch(domain:developer.tidal.com)",
+      "WebFetch(domain:simpleicons.org)",
+      "Bash(npm install:*)"
+    ],
+    "deny": []
+  }
+}
