@@ -28,7 +28,10 @@
       "Bash(git fetch:*)",
       "Bash(railway variables set:*)",
       "Bash(railway variables:*)",
-      "Bash(railway link:*)"
+      "Bash(railway link:*)",
+      "Bash(mkdir:*)",
+      "Bash(git restore:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

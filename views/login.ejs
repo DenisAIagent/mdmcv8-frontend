@@ -344,7 +344,7 @@
           required
           minlength="3"
           maxlength="30"
-          pattern="^[a-zA-Z0-9_.-]{3,30}$"
+          pattern="^[a-zA-Z0-9_.\-]{3,30}$"
           title="3-30 caractères : lettres, chiffres, tiret, underscore et point uniquement"
           autocomplete="username"
           aria-describedby="username-error"
@@ -608,7 +608,7 @@
         this.setState('loading');
         
         try {
-          const response = await fetch('/api/auth/login', {
+          const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
