@@ -24,7 +24,11 @@
       "Bash(# Test direct du service Odesli pour voir les données\ncurl -X POST http://localhost:3001/api/odesli/fetch \\\n  -H \"\"Content-Type: application/json\"\" \\\n  -d ''{\"\"url\"\": \"\"https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh\"\"}'' \\\n  -s | jq ''.data.platformLinks[0]'')",
       "Bash(grep:*)",
       "Bash(sed:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(git fetch:*)",
+      "Bash(railway variables set:*)",
+      "Bash(railway variables:*)",
+      "Bash(railway link:*)"
     ],
     "deny": []
   }
