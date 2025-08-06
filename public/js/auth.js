@@ -64,8 +64,7 @@ class AuthManager {
     sessionStorage.removeItem('mdmc_user');
     
     // CORRECTION: Supprimer aussi le cookie
-    const isSecure = location.protocol === 'https:' ? '; secure' : '';
-    document.cookie = `mdmc_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${isSecure}; samesite=strict`;
+    document.cookie = 'mdmc_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=lax';
     
     this.token = null;
     this.user = null;

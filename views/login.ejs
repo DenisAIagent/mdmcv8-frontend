@@ -535,9 +535,9 @@
             localStorage.setItem('mdmc_user', JSON.stringify(result.user));
             
             // CORRECTION: Stocker aussi dans un cookie pour les navigations de page  
-            const maxAge = 24 * 60 * 60; // 24 heures par défaut
-            const isSecure = location.protocol === 'https:' ? '; secure' : '';
-            document.cookie = `mdmc_token=${result.token}; path=/; max-age=${maxAge}${isSecure}; samesite=strict`;
+            // Cookie simplifié pour éviter les problèmes SameSite/Secure
+            document.cookie = `mdmc_token=${result.token}; path=/; max-age=86400; samesite=lax`;
+            console.log('🍪 Cookie créé:', document.cookie.includes('mdmc_token'));
             
             console.log('✅ Token stocké en localStorage et cookie');
             
