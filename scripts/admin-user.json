@@ -1,0 +1,16 @@
+{
+  "_id": "mdmc_admin_001",
+  "username": "mdmc_admin",
+  "password": "$2b$10$1jbx7FMEzCURQuBsQdX77OygmmwmKF7O/qOM6W1Y250k/4ZzJxpoi",
+  "role": "admin",
+  "permissions": [
+    "create",
+    "edit",
+    "delete",
+    "analytics",
+    "admin"
+  ],
+  "createdAt": "2025-08-06T01:26:47.218Z",
+  "lastLogin": null,
+  "isActive": true
+}

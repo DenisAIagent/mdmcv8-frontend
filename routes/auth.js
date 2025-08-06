@@ -3,25 +3,40 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-// Configuration des utilisateurs (en dur pour le prototype, à migrer vers DB)
+// Utilisateurs générés par le script setup-admin.js
 const USERS = [
   {
-    id: '1',
-    username: 'admin',
-    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: 'mdmc2025'
+    id: 'mdmc_admin_001',
+    username: 'mdmc_admin',
+    password: '$2b$10$1jbx7FMEzCURQuBsQdX77OygmmwmKF7O/qOM6W1Y250k/4ZzJxpoi', // password: 'MDMC2025!'
     role: 'admin',
     name: 'Administrateur MDMC',
     email: 'admin@mdmcmusicads.com',
-    createdAt: new Date('2025-01-01')
+    permissions: ['create', 'edit', 'delete', 'analytics', 'admin'],
+    createdAt: new Date('2025-08-06'),
+    isActive: true
   },
   {
-    id: '2',
-    username: 'manager',
-    password: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: 'mdmc2025'
-    role: 'manager',
-    name: 'Manager MDMC',
-    email: 'manager@mdmcmusicads.com',
-    createdAt: new Date('2025-01-01')
+    id: 'mdmc_client_001',
+    username: 'mdmc_client',
+    password: '$2b$10$CWq9uOeONM1HOdXDNARKfO/5/mUDugfMSO4qrFLBBQF7IDB6bhL4W', // password: 'Client2025!'
+    role: 'client',
+    name: 'Client MDMC',
+    email: 'client@mdmcmusicads.com',
+    permissions: ['create', 'edit', 'analytics'],
+    createdAt: new Date('2025-08-06'),
+    isActive: true
+  },
+  {
+    id: 'mdmc_demo_001',
+    username: 'mdmc_demo',
+    password: '$2b$10$KnBdoVVCCiNd8d8jyR.V1ekwASG.GPwROrdlmLhIfXH.LB4CbPdyG', // password: 'Demo2025!'
+    role: 'client',
+    name: 'Utilisateur Démo',
+    email: 'demo@mdmcmusicads.com',
+    permissions: ['create', 'edit', 'analytics'],
+    createdAt: new Date('2025-08-06'),
+    isActive: true
   }
 ];
 

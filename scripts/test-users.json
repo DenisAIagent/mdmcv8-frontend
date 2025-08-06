@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "_id": "mdmc_client_001",
+      "username": "mdmc_client",
+      "password": "$2b$10$CWq9uOeONM1HOdXDNARKfO/5/mUDugfMSO4qrFLBBQF7IDB6bhL4W",
+      "role": "client",
+      "permissions": [
+        "create",
+        "edit",
+        "analytics"
+      ],
+      "createdAt": "2025-08-06T01:26:47.277Z",
+      "lastLogin": null,
+      "isActive": true
+    },
+    {
+      "_id": "mdmc_demo_001",
+      "username": "mdmc_demo",
+      "password": "$2b$10$KnBdoVVCCiNd8d8jyR.V1ekwASG.GPwROrdlmLhIfXH.LB4CbPdyG",
+      "role": "client",
+      "permissions": [
+        "create",
+        "edit",
+        "analytics"
+      ],
+      "createdAt": "2025-08-06T01:26:47.333Z",
+      "lastLogin": null,
+      "isActive": true
+    }
+  ],
+  "credentials": [
+    {
+      "username": "mdmc_client",
+      "password": "Client2025!",
+      "role": "client"
+    },
+    {
+      "username": "mdmc_demo",
+      "password": "Demo2025!",
+      "role": "client"
+    }
+  ]
+}
