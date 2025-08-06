@@ -4,12 +4,20 @@ const router = express.Router();
 
 // Middleware pour vérifier l'authentification sur les pages (pas API)
 function requireAuthPage(req, res, next) {
+  // Debug: Logs pour identifier le problème
+  console.log('🔍 DEBUG AUTH - URL:', req.originalUrl);
+  console.log('🔍 DEBUG AUTH - Cookies:', req.cookies);
+  console.log('🔍 DEBUG AUTH - Headers:', req.headers);
+  
   // Pour les pages, on redirige vers /login au lieu de retourner 401
   const token = req.cookies?.mdmc_token || 
                 req.session?.mdmc_token || 
                 req.headers.authorization?.replace('Bearer ', '');
   
+  console.log('🔍 DEBUG AUTH - Token trouvé:', !!token);
+  
   if (!token) {
+    console.log('❌ DEBUG AUTH - Aucun token, redirection vers login');
     return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
   
@@ -18,9 +26,11 @@ function requireAuthPage(req, res, next) {
     const jwt = require('jsonwebtoken');
     const JWT_SECRET = process.env.JWT_SECRET || 'mdmc_smartlinks_secret_key_2025';
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log('✅ DEBUG AUTH - Token valide pour utilisateur:', decoded.username);
     req.user = decoded;
     next();
   } catch (error) {
+    console.log('❌ DEBUG AUTH - Token invalide:', error.message);
     return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
 }

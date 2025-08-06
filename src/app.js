@@ -72,6 +72,10 @@ app.use('/api/auth', authRoutes);
 const dashboardRoutes = require('../routes/dashboard');
 app.use('/dashboard', dashboardRoutes);
 
+// --- Debug Routes (temporaire) ---
+const debugRoutes = require('../routes/debug');
+app.use(debugRoutes);
+
 // --- Login Page Route ---
 app.get('/login', (req, res) => {
   res.render('login');
