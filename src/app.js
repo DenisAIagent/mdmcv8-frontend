@@ -41,6 +41,10 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
+// --- Support des cookies pour l'authentification ---
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 // --- Middleware de base ---
 app.use(express.json({ limit: process.env.MAX_FILE_SIZE || '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: process.env.MAX_FILE_SIZE || '10mb' }));
@@ -56,17 +60,26 @@ app.use(express.static(path.join(__dirname, '../public'), {
   lastModified: true
 }));
 
-// --- Routes pour SmartLinks HTML statiques ---
-const smartlinkRoutes = require('../routes/smartlinks');
-app.use('/', smartlinkRoutes);
-
-// --- API Routes ---
+// --- API Routes (AVANT les routes SmartLinks génériques) ---
 const apiRoutes = require('../routes/api');
 app.use('/api', apiRoutes);
+
+// --- Authentication Routes ---
+const { router: authRoutes } = require('../routes/auth');
+app.use('/api/auth', authRoutes);
 
 // --- Dashboard Routes ---
 const dashboardRoutes = require('../routes/dashboard');
 app.use('/dashboard', dashboardRoutes);
+
+// --- Login Page Route ---
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// --- Routes pour SmartLinks HTML statiques (EN DERNIER car catch-all) ---
+const smartlinkRoutes = require('../routes/smartlinks');
+app.use('/', smartlinkRoutes);
 
 // --- Health Check ---
 app.get('/health', (req, res) => {

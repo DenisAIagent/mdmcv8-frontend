@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion | MDMC Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0U1MDkxNCIvPgo8cGF0aCBkPSJNOCAxMkgxNlYyMEg4VjEyWiIgZmlsbD0id2hpdGUiLz4KPHA+dGggZT0iTTIwIDhIMjhWMTZIMjBWOFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCAyMEgyOFYyOEgyMFYyMFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #E50914;
+      --primary-hover: #cc271a;
+      --primary-light: rgba(229, 9, 20, 0.1);
+      --background: #0a0a0a;
+      --surface: #111111;
+      --surface-light: #161616;
+      --surface-hover: #1a1a1a;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.16);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --gradient: linear-gradient(135deg, var(--primary) 0%, #cc271a 100%);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.6;
+      font-size: 14px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(229, 9, 20, 0.05) 0%, transparent 50%);
+    }
+
+    /* Container principal */
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 24px;
+    }
+
+    /* Logo header */
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      height: 48px;
+      width: auto;
+      margin-bottom: 16px;
+    }
+
+    .login-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .login-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Card de connexion avec glassmorphism */
+    .login-card {
+      background: rgba(17, 17, 17, 0.8);
+      backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    }
+
+    /* Formulaire */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+      background: var(--surface);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Bouton de connexion */
+    .login-btn {
+      width: 100%;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .login-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-btn .btn-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .loading-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Messages d'erreur */
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--error);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-top: 16px;
+      color: var(--error);
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: var(--transition);
+    }
+
+    .error-message.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Messages de succès */
+    .success-message {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-top: 16px;
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: var(--transition);
+    }
+
+    .success-message.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* Options de connexion */
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      border-radius: 3px;
+    }
+
+    .remember-me label {
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.95); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+
+    /* États responsive */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 16px;
+      }
+      
+      .login-card {
+        padding: 24px;
+      }
+      
+      .login-title {
+        font-size: 20px;
+      }
+    }
+
+    /* Détails visuels */
+    .login-card:hover {
+      border-color: var(--border-hover);
+    }
+
+    .form-input:hover {
+      border-color: var(--border-hover);
+    }
+
+    /* Accessibility */
+    .form-input:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .login-btn:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container fade-in">
+    
+    <!-- Header avec logo -->
+    <div class="login-header">
+      <img src="/images/MDMC_logo_blanc fond transparent.png" alt="MDMC" class="logo">
+      <h1 class="login-title">Connexion Dashboard</h1>
+      <p class="login-subtitle">Accédez à votre espace SmartLinks</p>
+    </div>
+
+    <!-- Card de connexion -->
+    <form id="loginForm" class="login-card">
+      
+      <div class="form-group">
+        <label class="form-label" for="username">Nom d'utilisateur</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username"
+          class="form-input" 
+          placeholder="Votre nom d'utilisateur"
+          required
+          minlength="3"
+          maxlength="30"
+          pattern="^[a-zA-Z0-9_.-]{3,30}$"
+          title="3-30 caractères : lettres, chiffres, tiret, underscore et point uniquement"
+          autocomplete="username"
+          aria-describedby="username-error"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Mot de passe</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          class="form-input" 
+          placeholder="Votre mot de passe"
+          required
+          minlength="6"
+          maxlength="128"
+          autocomplete="current-password"
+          aria-describedby="password-error"
+        >
+      </div>
+
+      <div class="remember-me">
+        <input type="checkbox" id="rememberMe" name="rememberMe">
+        <label for="rememberMe">Se souvenir de moi</label>
+      </div>
+
+      <button type="submit" id="loginBtn" class="login-btn">
+        <span class="btn-content">
+          <span class="btn-text">Se connecter</span>
+          <div class="loading-spinner"></div>
+        </span>
+      </button>
+
+      <!-- Messages d'état -->
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>MDMC Music Ads • SmartLinks Dashboard</p>
+    </div>
+
+  </div>
+
+  <script>
+    // JavaScript pur pour l'authentification
+    class LoginManager {
+      constructor() {
+        this.form = document.getElementById('loginForm');
+        this.usernameInput = document.getElementById('username');
+        this.passwordInput = document.getElementById('password');
+        this.rememberMeInput = document.getElementById('rememberMe');
+        this.loginBtn = document.getElementById('loginBtn');
+        this.btnText = document.querySelector('.btn-text');
+        this.spinner = document.querySelector('.loading-spinner');
+        this.errorMessage = document.getElementById('errorMessage');
+        this.successMessage = document.getElementById('successMessage');
+        
+        this.init();
+      }
+      
+      init() {
+        // Vérifier si déjà connecté
+        this.checkExistingAuth();
+        
+        // Event listeners
+        this.form.addEventListener('submit', (e) => this.handleLogin(e));
+        
+        // Auto-focus sur le champ username
+        this.usernameInput.focus();
+        
+        // Gestion des touches
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !this.loginBtn.disabled) {
+            this.form.dispatchEvent(new Event('submit'));
+          }
+        });
+      }
+      
+      checkExistingAuth() {
+        const token = localStorage.getItem('mdmc_token');
+        if (token && this.isTokenValid(token)) {
+          this.showSuccess('Connexion en cours...');
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 1000);
+        }
+      }
+      
+      isTokenValid(token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.exp > Date.now() / 1000;
+        } catch {
+          return false;
+        }
+      }
+      
+      validateForm() {
+        // Messages d'erreur personnalisés HTML5
+        const customMessages = {
+          username: {
+            valueMissing: 'Le nom d\'utilisateur est requis',
+            tooShort: 'Le nom d\'utilisateur doit contenir au moins 3 caractères',
+            tooLong: 'Le nom d\'utilisateur ne peut pas dépasser 30 caractères',
+            patternMismatch: 'Format invalide : utilisez uniquement des lettres, chiffres et .-_'
+          },
+          password: {
+            valueMissing: 'Le mot de passe est requis',
+            tooShort: 'Le mot de passe doit contenir au moins 6 caractères',
+            tooLong: 'Le mot de passe ne peut pas dépasser 128 caractères'
+          }
+        };
+        
+        // Validation des champs individuels
+        const fields = [this.usernameInput, this.passwordInput];
+        let isValid = true;
+        
+        fields.forEach(field => {
+          const fieldName = field.name;
+          if (!field.checkValidity()) {
+            isValid = false;
+            let message = 'Champ invalide';
+            
+            // Messages personnalisés basés sur le type d'erreur
+            const validity = field.validity;
+            if (validity.valueMissing && customMessages[fieldName]?.valueMissing) {
+              message = customMessages[fieldName].valueMissing;
+            } else if (validity.tooShort && customMessages[fieldName]?.tooShort) {
+              message = customMessages[fieldName].tooShort;
+            } else if (validity.tooLong && customMessages[fieldName]?.tooLong) {
+              message = customMessages[fieldName].tooLong;
+            } else if (validity.patternMismatch && customMessages[fieldName]?.patternMismatch) {
+              message = customMessages[fieldName].patternMismatch;
+            }
+            
+            this.showError(message);
+            field.focus();
+            return; // Stopper à la première erreur
+          }
+        });
+        
+        return isValid;
+      }
+      
+      async handleLogin(e) {
+        e.preventDefault();
+        
+        // Validation HTML5 personnalisée
+        if (!this.validateForm()) {
+          return;
+        }
+        
+        const credentials = {
+          username: this.usernameInput.value.trim(),
+          password: this.passwordInput.value.trim(),
+          rememberMe: this.rememberMeInput.checked
+        };
+        
+        // Validation côté client supplémentaire
+        if (!credentials.username || !credentials.password) {
+          this.showError('Veuillez remplir tous les champs');
+          return;
+        }
+        
+        this.setState('loading');
+        
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(credentials)
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok && result.success) {
+            // Stockage sécurisé du token
+            if (credentials.rememberMe) {
+              localStorage.setItem('mdmc_token', result.token);
+              localStorage.setItem('mdmc_user', JSON.stringify(result.user));
+            } else {
+              sessionStorage.setItem('mdmc_token', result.token);
+              sessionStorage.setItem('mdmc_user', JSON.stringify(result.user));
+            }
+            
+            this.showSuccess('Connexion réussie ! Redirection...');
+            
+            // Redirection après un délai
+            setTimeout(() => {
+              const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
+              window.location.href = redirectUrl;
+            }, 1500);
+            
+          } else {
+            this.showError(result.message || 'Identifiants incorrects');
+            this.setState('idle');
+          }
+          
+        } catch (error) {
+          console.error('Erreur de connexion:', error);
+          this.showError('Erreur de connexion au serveur. Veuillez réessayer.');
+          this.setState('idle');
+        }
+      }
+      
+      setState(state) {
+        switch (state) {
+          case 'loading':
+            this.loginBtn.disabled = true;
+            this.btnText.style.display = 'none';
+            this.spinner.style.display = 'block';
+            break;
+          case 'idle':
+          default:
+            this.loginBtn.disabled = false;
+            this.btnText.style.display = 'block';
+            this.spinner.style.display = 'none';
+            break;
+        }
+      }
+      
+      showError(message) {
+        this.hideMessages();
+        this.errorMessage.textContent = message;
+        this.errorMessage.classList.add('visible');
+        
+        // Auto-hide après 5 secondes
+        setTimeout(() => {
+          this.errorMessage.classList.remove('visible');
+        }, 5000);
+      }
+      
+      showSuccess(message) {
+        this.hideMessages();
+        this.successMessage.textContent = message;
+        this.successMessage.classList.add('visible');
+      }
+      
+      hideMessages() {
+        this.errorMessage.classList.remove('visible');
+        this.successMessage.classList.remove('visible');
+      }
+    }
+    
+    // Initialisation dès que le DOM est chargé
+    document.addEventListener('DOMContentLoaded', () => {
+      new LoginManager();
+    });
+    
+    // Gestion des erreurs globales
+    window.addEventListener('error', (e) => {
+      console.error('Erreur JavaScript:', e.error);
+    });
+    
+    // Support pour les navigateurs sans fetch
+    if (!window.fetch) {
+      console.error('Ce navigateur ne supporte pas fetch. Veuillez utiliser un navigateur moderne.');
+    }
+  </script>
+</body>
+</html>

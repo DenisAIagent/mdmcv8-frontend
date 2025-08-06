@@ -9,6 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
+  <!-- Auth.js pour gestion authentification -->
+  <script src="/js/auth.js"></script>
+  
   <style>
     :root {
       --primary: #E50914;
@@ -368,6 +371,21 @@
       object-fit: cover;
       background: var(--surface-light);
       border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .lazy-image {
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+
+    .lazy-image.loaded {
+      opacity: 1;
+      filter: none;
+    }
+
+    .lazy-image.loading {
+      opacity: 0.8;
     }
 
     /* Info principale */
@@ -728,6 +746,30 @@
       background: rgba(245, 158, 11, 0.2);
       color: var(--warning);
     }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Focus improvements */
+    .action-btn:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .search-input:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 
@@ -744,7 +786,7 @@
         </nav>
       </div>
       <div class="header-right">
-        <div class="user-info">Dashboard SmartLinks</div>
+        <div class="user-info" data-welcome>Dashboard SmartLinks</div>
         <button class="logout-btn" id="logoutBtn">Déconnexion</button>
       </div>
     </div>
@@ -808,7 +850,10 @@
           class="search-input" 
           placeholder="Rechercher par titre, artiste ou URL..."
           id="searchInput"
+          aria-label="Rechercher dans vos SmartLinks"
+          aria-describedby="search-help"
         >
+        <div id="search-help" class="sr-only">Utilisez Ctrl+K pour accéder rapidement à la recherche</div>
         <select class="filter-select" id="statusFilter">
           <option value="">Tous les statuts</option>
           <option value="active">Actifs</option>
@@ -834,11 +879,22 @@
     </div>
 
     <!-- Liste des SmartLinks -->
-    <div class="smartlinks-list" id="smartlinksList">
+    <div 
+      class="smartlinks-list" 
+      id="smartlinksList"
+      role="region"
+      aria-label="Liste de vos SmartLinks"
+      aria-live="polite"
+    >
       
       <!-- SmartLink 1 -->
       <div class="smartlink-item fade-in">
-        <img src="https://i.scdn.co/image/ab67616d0000b27349de1b4acdde02e84c6023b7" alt="Wait and Bleed" class="smartlink-artwork">
+        <img 
+          data-src="https://i.scdn.co/image/ab67616d0000b27349de1b4acdde02e84c6023b7" 
+          alt="Wait and Bleed" 
+          class="smartlink-artwork lazy-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iNCIgZmlsbD0iIzE2MTYxNiIvPgo8cGF0aCBkPSJNMjQgMTZMMjQgMzIiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTYgMjRMMzIgMjQiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K"
+        >
         <div class="smartlink-info">
           <div class="smartlink-title">Wait and Bleed</div>
           <div class="smartlink-artist">Slipknot</div>
@@ -863,16 +919,40 @@
           </div>
         </div>
         <div class="smartlink-actions">
-          <button class="action-btn" onclick="openStats('slipknot-wait-and-bleed')" title="Voir les statistiques">
+          <button 
+            class="action-btn" 
+            onclick="openStats('slipknot-wait-and-bleed')" 
+            title="Voir les statistiques"
+            aria-label="Voir les statistiques de Wait and Bleed par Slipknot"
+            tabindex="0"
+          >
             📊
           </button>
-          <button class="action-btn primary" onclick="openLink('https://smartlink.mdmcmusicads.com/slipknot/wait-and-bleed')" title="Ouvrir le SmartLink">
+          <button 
+            class="action-btn primary" 
+            onclick="openLink('https://smartlink.mdmcmusicads.com/slipknot/wait-and-bleed')" 
+            title="Ouvrir le SmartLink"
+            aria-label="Ouvrir le SmartLink de Wait and Bleed dans un nouvel onglet"
+            tabindex="0"
+          >
             🔗
           </button>
-          <button class="action-btn" onclick="editSmartLink('slipknot-wait-and-bleed')" title="Modifier">
+          <button 
+            class="action-btn" 
+            onclick="editSmartLink('slipknot-wait-and-bleed')" 
+            title="Modifier"
+            aria-label="Modifier le SmartLink Wait and Bleed"
+            tabindex="0"
+          >
             ✏️
           </button>
-          <button class="action-btn danger" onclick="deleteSmartLink('slipknot-wait-and-bleed')" title="Supprimer">
+          <button 
+            class="action-btn danger" 
+            onclick="deleteSmartLink('slipknot-wait-and-bleed')" 
+            title="Supprimer"
+            aria-label="Supprimer définitivement le SmartLink Wait and Bleed"
+            tabindex="0"
+          >
             🗑️
           </button>
         </div>
@@ -880,7 +960,12 @@
 
       <!-- SmartLink 2 -->
       <div class="smartlink-item fade-in">
-        <img src="https://i.scdn.co/image/ab67616d0000b273b8b7f85671a0dd5ea957ec6d" alt="Master of Puppets" class="smartlink-artwork">
+        <img 
+          data-src="https://i.scdn.co/image/ab67616d0000b273b8b7f85671a0dd5ea957ec6d" 
+          alt="Master of Puppets" 
+          class="smartlink-artwork lazy-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iNCIgZmlsbD0iIzE2MTYxNiIvPgo8cGF0aCBkPSJNMjQgMTZMMjQgMzIiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTYgMjRMMzIgMjQiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K"
+        >
         <div class="smartlink-info">
           <div class="smartlink-title">Master of Puppets</div>
           <div class="smartlink-artist">Metallica</div>
@@ -922,7 +1007,12 @@
 
       <!-- SmartLink 3 -->
       <div class="smartlink-item fade-in">
-        <img src="https://i.scdn.co/image/ab67616d0000b273d60776e0b24ad39e71fe8732" alt="One More Time" class="smartlink-artwork">
+        <img 
+          data-src="https://i.scdn.co/image/ab67616d0000b273d60776e0b24ad39e71fe8732" 
+          alt="One More Time" 
+          class="smartlink-artwork lazy-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iNCIgZmlsbD0iIzE2MTYxNiIvPgo8cGF0aCBkPSJNMjQgMTZMMjQgMzIiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTYgMjRMMzIgMjQiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K"
+        >
         <div class="smartlink-info">
           <div class="smartlink-title">One More Time</div>
           <div class="smartlink-artist">Daft Punk</div>
@@ -964,7 +1054,12 @@
 
       <!-- SmartLink 4 -->
       <div class="smartlink-item fade-in">
-        <img src="https://i.scdn.co/image/ab67616d0000b273e17c0aa1714a03d3b78a6978" alt="Bohemian Rhapsody" class="smartlink-artwork">
+        <img 
+          data-src="https://i.scdn.co/image/ab67616d0000b273e17c0aa1714a03d3b78a6978" 
+          alt="Bohemian Rhapsody" 
+          class="smartlink-artwork lazy-image"
+          src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iNCIgZmlsbD0iIzE2MTYxNiIvPgo8cGF0aCBkPSJNMjQgMTZMMjQgMzIiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTYgMjRMMzIgMjQiIHN0cm9rZT0iIzY2NjY2NiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K"
+        >
         <div class="smartlink-info">
           <div class="smartlink-title">Bohemian Rhapsody</div>
           <div class="smartlink-artist">Queen</div>
@@ -1060,6 +1155,17 @@
   </div>
 
   <script>
+    // Vérification de l'authentification au chargement
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!auth.isAuthenticated()) {
+        auth.redirectToLogin();
+        return;
+      }
+      
+      // Initialisation du dashboard
+      initDashboard();
+    });
+
     // État de l'application
     const appState = {
       smartlinks: [
@@ -1149,8 +1255,162 @@
       logoutBtn: document.getElementById('logoutBtn')
     };
 
-    // Initialisation
-    appState.filteredSmartlinks = [...appState.smartlinks];
+    // Fonction d'initialisation du dashboard
+    function initDashboard() {
+      // Initialisation de l'état
+      appState.filteredSmartlinks = [...appState.smartlinks];
+      
+      // Chargement des données depuis l'API
+      loadDashboardData();
+      
+      // Configuration des event listeners
+      setupEventListeners();
+      
+      // Initialisation du lazy loading
+      initLazyLoading();
+    }
+    
+    // Chargement des données via API authentifiées
+    async function loadDashboardData() {
+      try {
+        // Chargement des SmartLinks de l'utilisateur
+        const response = await auth.makeAuthenticatedRequest('/api/smartlinks');
+        if (response && response.ok) {
+          const result = await response.json();
+          if (result.success && result.smartlinks) {
+            // Mise à jour avec les vraies données
+            appState.smartlinks = result.smartlinks;
+            appState.filteredSmartlinks = [...result.smartlinks];
+            updateSmartLinksDisplay();
+          }
+        }
+        
+        // Chargement des statistiques
+        const statsResponse = await auth.makeAuthenticatedRequest('/api/dashboard/stats');
+        if (statsResponse && statsResponse.ok) {
+          const statsResult = await statsResponse.json();
+          if (statsResult.success) {
+            updateDashboardStats(statsResult.stats);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur chargement dashboard:', error);
+        showToast('Erreur lors du chargement des données', 'error');
+      }
+    }
+    
+    // Mise à jour de l'affichage des SmartLinks
+    function updateSmartLinksDisplay() {
+      const container = document.getElementById('smartlinksList');
+      
+      if (appState.filteredSmartlinks.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>Aucun SmartLink trouvé</h3>
+            <p>Essayez de modifier vos filtres ou créez votre premier SmartLink</p>
+            <a href="/dashboard/create" class="btn btn-primary">+ Créer un SmartLink</a>
+          </div>
+        `;
+        return;
+      }
+      
+      // Reconstruction de la liste (optimisée en production)
+      renderSmartLinksList();
+    }
+    
+    // Configuration des event listeners
+    function setupEventListeners() {
+      // Event listeners pour les filtres
+      elements.searchInput.addEventListener('input', (e) => {
+        appState.searchTerm = e.target.value;
+        filterSmartLinks();
+        updateSmartLinksDisplay();
+      });
+
+      elements.statusFilter.addEventListener('change', (e) => {
+        appState.statusFilter = e.target.value;
+        filterSmartLinks();
+        updateSmartLinksDisplay();
+      });
+
+      elements.dateFilter.addEventListener('change', (e) => {
+        appState.dateFilter = e.target.value;
+        filterSmartLinks();
+        updateSmartLinksDisplay();
+      });
+
+      elements.refreshBtn.addEventListener('click', () => {
+        refreshDashboard();
+      });
+
+      // Fermeture du modal en cliquant sur l'overlay
+      elements.statsModal.addEventListener('click', (e) => {
+        if (e.target === elements.statsModal) {
+          closeStatsModal();
+        }
+      });
+
+      // Navigation au clavier
+      document.addEventListener('keydown', (e) => {
+        // Fermeture du modal avec Escape
+        if (e.key === 'Escape' && elements.statsModal.classList.contains('visible')) {
+          closeStatsModal();
+        }
+        
+        // Navigation avec Tab et Enter sur les boutons d'action
+        if (e.target.classList.contains('action-btn')) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.target.click();
+          }
+        }
+        
+        // Raccourcis clavier
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key) {
+            case 'k': // Ctrl/Cmd + K pour focus recherche
+              e.preventDefault();
+              elements.searchInput.focus();
+              elements.searchInput.select();
+              break;
+            case 'r': // Ctrl/Cmd + R pour refresh
+              e.preventDefault();
+              refreshDashboard();
+              break;
+            case 'n': // Ctrl/Cmd + N pour nouveau SmartLink
+              e.preventDefault();
+              window.location.href = '/dashboard/create';
+              break;
+          }
+        }
+      });
+    }
+    
+    // Mise à jour des statistiques du dashboard
+    function updateDashboardStats(stats) {
+      // Cette fonction sera implémentée pour mettre à jour les cartes de stats
+      console.log('Stats reçues:', stats);
+    }
+    
+    // Refresh du dashboard
+    async function refreshDashboard() {
+      elements.refreshBtn.innerHTML = '<div class="loading-spinner"></div> Actualisation...';
+      
+      try {
+        await loadDashboardData();
+        showToast('Données actualisées', 'success');
+      } catch (error) {
+        showToast('Erreur lors de l\'actualisation', 'error');
+      } finally {
+        elements.refreshBtn.innerHTML = '<span>🔄</span> Actualiser';
+      }
+    }
+    
+    // Rendu de la liste des SmartLinks
+    function renderSmartLinksList() {
+      // Cette fonction sera optimisée pour le rendu de la liste
+      console.log(`Affichage de ${appState.filteredSmartlinks.length} SmartLinks`);
+    }
 
     // Fonctions des actions
     window.openStats = function(smartlinkId) {
@@ -1186,24 +1446,33 @@
       window.location.href = `/dashboard/edit/${smartlinkId}`;
     };
 
-    window.deleteSmartLink = function(smartlinkId) {
+    window.deleteSmartLink = async function(smartlinkId) {
       const smartlink = appState.smartlinks.find(s => s.id === smartlinkId);
       if (!smartlink) return;
 
       if (confirm(`Êtes-vous sûr de vouloir supprimer le SmartLink "${smartlink.title}" de ${smartlink.artist} ?\n\nCette action est irréversible.`)) {
-        // Simulation de suppression
-        console.log(`Suppression du SmartLink: ${smartlinkId}`);
-        
-        // Retrait de la liste (simulation)
-        const index = appState.smartlinks.findIndex(s => s.id === smartlinkId);
-        if (index > -1) {
-          appState.smartlinks.splice(index, 1);
-          filterSmartLinks();
-          renderSmartLinks();
+        try {
+          const response = await auth.makeAuthenticatedRequest(`/api/smartlinks/${smartlinkId}`, {
+            method: 'DELETE'
+          });
+          
+          if (response && response.ok) {
+            // Retrait de la liste locale
+            const index = appState.smartlinks.findIndex(s => s.id === smartlinkId);
+            if (index > -1) {
+              appState.smartlinks.splice(index, 1);
+              filterSmartLinks();
+              updateSmartLinksDisplay();
+            }
+            
+            showToast('SmartLink supprimé avec succès', 'success');
+          } else {
+            throw new Error('Erreur lors de la suppression');
+          }
+        } catch (error) {
+          console.error('Erreur suppression:', error);
+          showToast('Erreur lors de la suppression', 'error');
         }
-        
-        // Toast de confirmation
-        showToast('SmartLink supprimé avec succès', 'success');
       }
     };
 
@@ -1233,72 +1502,6 @@
 
       appState.filteredSmartlinks = filtered;
     }
-
-    function renderSmartLinks() {
-      if (appState.filteredSmartlinks.length === 0) {
-        elements.smartlinksList.innerHTML = `
-          <div class="empty-state">
-            <h3>Aucun SmartLink trouvé</h3>
-            <p>Essayez de modifier vos filtres ou créez votre premier SmartLink</p>
-            <a href="/dashboard/create" class="btn btn-primary">+ Créer un SmartLink</a>
-          </div>
-        `;
-        return;
-      }
-
-      // Re-render de la liste (simulation - en vrai, on ferait un DOM update plus optimisé)
-      console.log(`Affichage de ${appState.filteredSmartlinks.length} SmartLinks`);
-    }
-
-    // Event listeners
-    elements.searchInput.addEventListener('input', (e) => {
-      appState.searchTerm = e.target.value;
-      filterSmartLinks();
-      renderSmartLinks();
-    });
-
-    elements.statusFilter.addEventListener('change', (e) => {
-      appState.statusFilter = e.target.value;
-      filterSmartLinks();
-      renderSmartLinks();
-    });
-
-    elements.dateFilter.addEventListener('change', (e) => {
-      appState.dateFilter = e.target.value;
-      filterSmartLinks();
-      renderSmartLinks();
-    });
-
-    elements.refreshBtn.addEventListener('click', () => {
-      // Simulation de refresh
-      elements.refreshBtn.innerHTML = '<div class="loading-spinner"></div> Actualisation...';
-      
-      setTimeout(() => {
-        elements.refreshBtn.innerHTML = '<span>🔄</span> Actualiser';
-        showToast('Données actualisées', 'success');
-      }, 1000);
-    });
-
-    // Fermeture du modal en cliquant sur l'overlay
-    elements.statsModal.addEventListener('click', (e) => {
-      if (e.target === elements.statsModal) {
-        closeStatsModal();
-      }
-    });
-
-    // Fermeture du modal avec Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && elements.statsModal.classList.contains('visible')) {
-        closeStatsModal();
-      }
-    });
-
-    // Déconnexion
-    elements.logoutBtn.addEventListener('click', () => {
-      if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-        window.location.href = '/';
-      }
-    });
 
     // Toast notifications (simple)
     function showToast(message, type = 'info') {
@@ -1346,6 +1549,94 @@
       }
     `;
     document.head.appendChild(style);
+
+    // --- Lazy Loading avec IntersectionObserver ---
+    let imageObserver = null;
+    
+    function initLazyLoading() {
+      // Support du IntersectionObserver
+      if ('IntersectionObserver' in window) {
+        imageObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              loadImage(img);
+              imageObserver.unobserve(img);
+            }
+          });
+        }, {
+          rootMargin: '50px 0px', // Charger 50px avant d'être visible
+          threshold: 0.1
+        });
+        
+        // Observer toutes les images lazy existantes
+        observeLazyImages();
+      } else {
+        // Fallback pour navigateurs anciens
+        loadAllImages();
+      }
+    }
+    
+    function observeLazyImages() {
+      const lazyImages = document.querySelectorAll('.lazy-image:not(.loaded):not(.loading)');
+      lazyImages.forEach(img => {
+        if (imageObserver) {
+          imageObserver.observe(img);
+        }
+      });
+    }
+    
+    function loadImage(img) {
+      if (img.classList.contains('loaded') || img.classList.contains('loading')) {
+        return;
+      }
+      
+      img.classList.add('loading');
+      
+      const actualSrc = img.dataset.src;
+      if (!actualSrc) return;
+      
+      // Création d'une nouvelle image pour précharger
+      const tempImg = new Image();
+      
+      tempImg.onload = () => {
+        // Image chargée avec succès
+        img.src = actualSrc;
+        img.classList.remove('loading');
+        img.classList.add('loaded');
+        
+        // Animation d'apparition douce
+        requestAnimationFrame(() => {
+          img.style.transform = 'scale(1.02)';
+          setTimeout(() => {
+            img.style.transform = 'scale(1)';
+          }, 200);
+        });
+      };
+      
+      tempImg.onerror = () => {
+        // Erreur de chargement - garder l'image placeholder
+        img.classList.remove('loading');
+        img.style.opacity = '0.3';
+        console.warn('Erreur chargement image:', actualSrc);
+      };
+      
+      // Commencer le chargement
+      tempImg.src = actualSrc;
+    }
+    
+    function loadAllImages() {
+      // Fallback : charger toutes les images immédiatement
+      const lazyImages = document.querySelectorAll('.lazy-image');
+      lazyImages.forEach(loadImage);
+    }
+    
+    // Fonction utilitaire pour les nouvelles images ajoutées dynamiquement
+    window.observeNewLazyImages = function() {
+      if (imageObserver) {
+        observeLazyImages();
+      }
+    };
 
     console.log('Dashboard SmartLinks Management chargé avec succès');
   </script>

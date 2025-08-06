@@ -258,12 +258,20 @@ class StaticHtmlGenerator {
 
     return platformLinks
       .filter(link => link.url && link.platform)
-      .map(link => ({
-        ...link,
-        ...platformConfig[link.platform],
-        displayName: platformConfig[link.platform]?.name || link.platform,
-        url: this.addUtmParameters(link.url, link.platform, utmParams)
-      }))
+      .map(link => {
+        const config = platformConfig[link.platform] || { 
+          name: link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
+          color: '#666666', 
+          priority: 99 
+        };
+        return {
+          ...link,
+          ...config,
+          name: config.name, // Assurer que name est toujours défini
+          displayName: config.name || link.platform,
+          url: this.addUtmParameters(link.url, link.platform, utmParams)
+        };
+      })
       .sort((a, b) => (a.priority || 99) - (b.priority || 99));
   }
 

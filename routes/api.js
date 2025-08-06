@@ -6,6 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const StaticHtmlGenerator = require('../services/staticHtmlGenerator');
 const OdesliService = require('../services/odesliService');
+const { verifyToken, requireRole } = require('./auth');
 
 const router = express.Router();
 const htmlGenerator = new StaticHtmlGenerator();
@@ -825,6 +826,282 @@ router.post('/upload-audio', uploadAudio.single('audioFile'), async (req, res) =
     res.status(500).json({
       error: 'Erreur lors de l\'upload du fichier audio',
       message: error.message
+    });
+  }
+});
+
+// --- ROUTES AUTHENTIFIÉES POUR LE DASHBOARD ---
+
+// GET /api/smartlinks - Liste des SmartLinks de l'utilisateur
+router.get('/smartlinks', verifyToken, async (req, res) => {
+  try {
+    // Pour le moment, on retourne des données de test
+    // En production, on récupèrerait depuis une base de données
+    const mockSmartlinks = [
+      {
+        id: 'slipknot-wait-and-bleed',
+        title: 'Wait and Bleed',
+        artist: 'Slipknot',
+        artwork: 'https://i.scdn.co/image/ab67616d0000b27349de1b4acdde02e84c6023b7',
+        url: 'https://smartlink.mdmcmusicads.com/slipknot/wait-and-bleed',
+        status: 'active',
+        platforms: 8,
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        createdBy: req.user.userId,
+        stats: {
+          totalClicks: 1200,
+          todayClicks: 89,
+          conversionRate: 12.3,
+          uniqueVisitors: 987,
+          topPlatform: 'Spotify'
+        }
+      },
+      {
+        id: 'metallica-master-of-puppets',
+        title: 'Master of Puppets',
+        artist: 'Metallica',
+        artwork: 'https://i.scdn.co/image/ab67616d0000b273b8b7f85671a0dd5ea957ec6d',
+        url: 'https://smartlink.mdmcmusicads.com/metallica/master-of-puppets',
+        status: 'active',
+        platforms: 10,
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        createdBy: req.user.userId,
+        stats: {
+          totalClicks: 2800,
+          todayClicks: 156,
+          conversionRate: 18.7,
+          uniqueVisitors: 2100,
+          topPlatform: 'Apple Music'
+        }
+      },
+      {
+        id: 'daft-punk-one-more-time',
+        title: 'One More Time',
+        artist: 'Daft Punk',
+        artwork: 'https://i.scdn.co/image/ab67616d0000b273d60776e0b24ad39e71fe8732',
+        url: 'https://smartlink.mdmcmusicads.com/daft-punk/one-more-time',
+        status: 'draft',
+        platforms: 6,
+        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+        createdBy: req.user.userId,
+        stats: {
+          totalClicks: 0,
+          todayClicks: 0,
+          conversionRate: 0,
+          uniqueVisitors: 0,
+          topPlatform: null
+        }
+      }
+    ];
+
+    res.json({
+      success: true,
+      smartlinks: mockSmartlinks,
+      total: mockSmartlinks.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Erreur récupération SmartLinks:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des SmartLinks'
+    });
+  }
+});
+
+// GET /api/dashboard/stats - Statistiques du dashboard utilisateur
+router.get('/dashboard/stats', verifyToken, async (req, res) => {
+  try {
+    // Statistiques de test pour le dashboard
+    const stats = {
+      totalSmartlinks: 24,
+      activeSmartlinks: 21,
+      totalClicks: 12400,
+      monthlyClicks: 3200,
+      conversionRate: 8.7,
+      totalPlatforms: 47,
+      topPlatforms: [
+        { name: 'Spotify', clicks: 4200, percentage: 33.9 },
+        { name: 'Apple Music', clicks: 3100, percentage: 25.0 },
+        { name: 'YouTube Music', clicks: 2400, percentage: 19.4 },
+        { name: 'Deezer', clicks: 1200, percentage: 9.7 },
+        { name: 'Others', clicks: 1500, percentage: 12.0 }
+      ],
+      recentActivity: [
+        { action: 'SmartLink créé', item: 'Daft Punk - One More Time', timestamp: new Date().toISOString() },
+        { action: 'Clics reçus', item: 'Slipknot - Wait and Bleed', count: 89, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() }
+      ],
+      growth: {
+        smartlinks: { value: 3, percentage: 14.3, trend: 'up' },
+        clicks: { value: 580, percentage: 18.1, trend: 'up' },
+        conversion: { value: -0.3, percentage: -3.3, trend: 'down' }
+      }
+    };
+
+    res.json({
+      success: true,
+      stats,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Erreur statistiques dashboard:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des statistiques'
+    });
+  }
+});
+
+// DELETE /api/smartlinks/:id - Supprimer un SmartLink
+router.delete('/smartlinks/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    console.log(`🗑️ Suppression SmartLink demandée: ${id} par ${req.user.username}`);
+    
+    // En production, vérifier que l'utilisateur est propriétaire du SmartLink
+    // et supprimer de la base de données + fichier HTML
+    
+    // Pour le moment, simulation de succès
+    res.json({
+      success: true,
+      message: `SmartLink ${id} supprimé avec succès`,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Erreur suppression SmartLink:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression du SmartLink'
+    });
+  }
+});
+
+// POST /api/smartlinks - Créer un nouveau SmartLink (version authentifiée)
+router.post('/smartlinks', verifyToken, async (req, res) => {
+  try {
+    const { sourceUrl, customData } = req.body;
+    
+    if (!sourceUrl) {
+      return res.status(400).json({
+        success: false,
+        message: 'URL source requise'
+      });
+    }
+    
+    console.log(`🎵 Création SmartLink authentifiée par ${req.user.username}: ${sourceUrl}`);
+    
+    // Récupération des données via Odesli
+    const odesliData = await odesliService.fetchPlatformLinks(sourceUrl, 'FR');
+    
+    if (!odesliData || !odesliData.trackTitle || !odesliData.artist?.name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Impossible de récupérer les données musicales depuis cette URL'
+      });
+    }
+    
+    // Transformation des platformLinks pour le template EJS
+    const platforms = (odesliData.platformLinks || []).map(platform => ({
+      name: getPlatformDisplayName(platform.platform),
+      url: platform.url,
+      platform: platform.platform,
+      nativeAppUriDesktop: platform.nativeAppUriDesktop || platform.url
+    }));
+
+    // Ajout des métadonnées utilisateur
+    const smartlinkData = {
+      ...odesliData,
+      platforms, // Ajout des platforms formatés pour le template
+      createdBy: req.user.userId,
+      createdByUsername: req.user.username,
+      createdAt: new Date().toISOString(),
+      status: 'active',
+      customData: customData || {}
+    };
+    
+    // Génération du fichier HTML
+    const htmlPath = await htmlGenerator.generateSmartLinkHtml(smartlinkData);
+    const publicUrl = htmlGenerator.getPublicUrl(odesliData.artist.slug, odesliData.slug);
+    
+    console.log(`✅ SmartLink créé par ${req.user.username}: ${publicUrl}`);
+    
+    res.status(201).json({
+      success: true,
+      message: 'SmartLink créé avec succès',
+      smartlink: {
+        id: `${odesliData.artist.slug}-${odesliData.slug}`,
+        title: odesliData.trackTitle,
+        artist: odesliData.artist.name,
+        artwork: odesliData.coverImageUrl,
+        url: publicUrl,
+        status: 'active',
+        platforms: odesliData.platformLinks?.length || 0,
+        createdAt: smartlinkData.createdAt,
+        createdBy: req.user.userId
+      },
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('❌ Erreur création SmartLink authentifiée:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création du SmartLink',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// GET /api/smartlinks/:id - Détails d'un SmartLink spécifique
+router.get('/smartlinks/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Simulation des détails d'un SmartLink
+    // En production, récupérer depuis la base de données
+    const smartlinkDetails = {
+      id,
+      title: 'Wait and Bleed',
+      artist: 'Slipknot',
+      artwork: 'https://i.scdn.co/image/ab67616d0000b27349de1b4acdde02e84c6023b7',
+      url: `https://smartlink.mdmcmusicads.com/slipknot/${id}`,
+      status: 'active',
+      platforms: 8,
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      createdBy: req.user.userId,
+      detailedStats: {
+        totalClicks: 1200,
+        uniqueVisitors: 987,
+        conversionRate: 12.3,
+        clicksByPlatform: [
+          { platform: 'Spotify', clicks: 420, percentage: 35 },
+          { platform: 'Apple Music', clicks: 300, percentage: 25 },
+          { platform: 'YouTube Music', clicks: 240, percentage: 20 },
+          { platform: 'Deezer', clicks: 120, percentage: 10 },
+          { platform: 'Others', clicks: 120, percentage: 10 }
+        ],
+        clicksByDay: [
+          { date: '2025-08-01', clicks: 45 },
+          { date: '2025-08-02', clicks: 67 },
+          { date: '2025-08-03', clicks: 89 },
+          { date: '2025-08-04', clicks: 123 },
+          { date: '2025-08-05', clicks: 98 },
+          { date: '2025-08-06', clicks: 89 }
+        ]
+      }
+    };
+    
+    res.json({
+      success: true,
+      smartlink: smartlinkDetails,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Erreur récupération détails SmartLink:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des détails'
     });
   }
 });

@@ -1,56 +1,16 @@
-const express = require('express');
-const { verifyToken, requireRole } = require('./auth');
-const router = express.Router();
-
-// Middleware pour vérifier l'authentification sur les pages (pas API)
-function requireAuthPage(req, res, next) {
-  // Pour les pages, on redirige vers /login au lieu de retourner 401
-  const token = req.cookies?.mdmc_token || 
-                req.session?.mdmc_token || 
-                req.headers.authorization?.replace('Bearer ', '');
-  
-  if (!token) {
-    return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
-  }
-  
-  // Vérification du token avec le même système que l'API
-  try {
-    const jwt = require('jsonwebtoken');
-    const JWT_SECRET = process.env.JWT_SECRET || 'mdmc_smartlinks_secret_key_2025';
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
-  }
-}
-
-// Route principale du dashboard - PROTÉGÉE PAR AUTHENTIFICATION
-router.get('/', requireAuthPage, async (req, res) => {
-  try {
-    // Passage des données utilisateur au template
-    res.render('dashboard', {
-      user: req.user,
-      pageTitle: 'Mes SmartLinks | MDMC Dashboard'
-    });
-  } catch (error) {
-    console.error('❌ Erreur dashboard:', error);
-    res.status(500).send('Erreur chargement dashboard');
-  }
-});
-
-// Route de création de SmartLinks - PROTÉGÉE PAR AUTHENTIFICATION
-router.get('/create', requireAuthPage, (req, res) => {
-  res.send(`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | MDMC SmartLinks</title>
+  <title>Créer un SmartLink | MDMC Dashboard</title>
   <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0U1MDkxNCIvPgo8cGF0aCBkPSJNOCAxMkgxNlYyMEg4VjEyWiIgZmlsbD0id2hpdGUiLz4KPHA+dGggZD0iTTIwIDhIMjhWMTZIMjBWOFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMCAyMEgyOFYyOEgyMFYyMFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Auth.js pour gestion authentification -->
+  <script src="/js/auth.js"></script>
   
   <style>
     :root {
@@ -671,7 +631,7 @@ router.get('/create', requireAuthPage, (req, res) => {
   <header class="header">
     <img src="/images/MDMC_logo_blanc fond transparent.png" alt="MDMC" class="logo">
     <div class="header-info">
-      <span>Dashboard SmartLinks</span>
+      <span data-welcome>Créer SmartLink</span>
       <button class="logout-btn" id="logoutBtn">Déconnexion</button>
     </div>
   </header>
@@ -855,6 +815,17 @@ router.get('/create', requireAuthPage, (req, res) => {
   </div>
 
   <script>
+    // Vérification de l'authentification au chargement
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!auth.isAuthenticated()) {
+        auth.redirectToLogin();
+        return;
+      }
+      
+      // Initialisation de la page de création
+      initCreatePage();
+    });
+
     // État global de l'application
     const state = {
       searchData: null,
@@ -920,8 +891,31 @@ router.get('/create', requireAuthPage, (req, res) => {
       audioStatus: document.getElementById('audioStatus')
     };
 
+    // Initialisation de la page
+    function initCreatePage() {
+      setupEventListeners();
+      elements.sourceUrl.focus();
+    }
+
+    // Configuration des event listeners
+    function setupEventListeners() {
+      // Gestion de la recherche
+      elements.searchForm.addEventListener('submit', handleSearch);
+      
+      // Boutons sélection/désélection
+      elements.selectAllBtn.addEventListener('click', selectAllPlatforms);
+      elements.deselectAllBtn.addEventListener('click', deselectAllPlatforms);
+      
+      // Gestion de l'upload audio
+      elements.uploadZone.addEventListener('click', () => elements.audioFile.click());
+      elements.audioFile.addEventListener('change', handleAudioUpload);
+      
+      // Génération du SmartLink
+      elements.generateBtn.addEventListener('click', handleGeneration);
+    }
+
     // Gestion de la recherche
-    elements.searchForm.addEventListener('submit', async (e) => {
+    async function handleSearch(e) {
       e.preventDefault();
       
       const sourceUrl = elements.sourceUrl.value.trim();
@@ -930,15 +924,14 @@ router.get('/create', requireAuthPage, (req, res) => {
       setSearchState('loading');
 
       try {
-        const response = await fetch('/api/search-platforms', {
+        const response = await auth.makeAuthenticatedRequest('/api/search-platforms', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sourceUrl })
         });
 
         const result = await response.json();
 
-        if (response.ok) {
+        if (response.ok && result.success) {
           state.searchData = result;
           setSearchState('success');
           updateTrackCard(result.trackInfo);
@@ -948,9 +941,10 @@ router.get('/create', requireAuthPage, (req, res) => {
           throw new Error(result.error || 'Erreur de recherche');
         }
       } catch (error) {
+        console.error('Erreur de recherche:', error);
         setSearchState('error', error.message);
       }
-    });
+    }
 
     // États de recherche
     function setSearchState(state, message = '') {
@@ -981,7 +975,7 @@ router.get('/create', requireAuthPage, (req, res) => {
 
     // Mise à jour de la track card
     function updateTrackCard(trackInfo) {
-      elements.trackArtwork.src = trackInfo.artwork || '/assets/images/default-cover.jpg';
+      elements.trackArtwork.src = trackInfo.artwork || '/images/default-cover.jpg';
       elements.trackTitle.textContent = trackInfo.title;
       elements.trackArtist.textContent = trackInfo.artist;
     }
@@ -995,10 +989,10 @@ router.get('/create', requireAuthPage, (req, res) => {
       platforms.forEach(platform => {
         const div = document.createElement('div');
         div.className = 'platform-item selected';
-        div.innerHTML = \`
-          <input type="checkbox" class="platform-checkbox" checked value="\${platform.id}">
-          <span class="platform-name">\${platform.name}</span>
-        \`;
+        div.innerHTML = `
+          <input type="checkbox" class="platform-checkbox" checked value="${platform.id}">
+          <span class="platform-name">${platform.name}</span>
+        `;
 
         const checkbox = div.querySelector('.platform-checkbox');
         checkbox.addEventListener('change', () => {
@@ -1031,23 +1025,23 @@ router.get('/create', requireAuthPage, (req, res) => {
     }
 
     // Boutons sélection/désélection
-    elements.selectAllBtn.addEventListener('click', () => {
+    function selectAllPlatforms() {
       document.querySelectorAll('.platform-checkbox').forEach(cb => {
         if (!cb.checked) {
           cb.checked = true;
           cb.dispatchEvent(new Event('change'));
         }
       });
-    });
+    }
 
-    elements.deselectAllBtn.addEventListener('click', () => {
+    function deselectAllPlatforms() {
       document.querySelectorAll('.platform-checkbox').forEach(cb => {
         if (cb.checked) {
           cb.checked = false;
           cb.dispatchEvent(new Event('change'));
         }
       });
-    });
+    }
 
     // Mise à jour du compteur
     function updateSelectedCount() {
@@ -1055,21 +1049,17 @@ router.get('/create', requireAuthPage, (req, res) => {
     }
 
     // Gestion de l'upload audio
-    elements.uploadZone.addEventListener('click', () => {
-      elements.audioFile.click();
-    });
-
-    elements.audioFile.addEventListener('change', (e) => {
+    function handleAudioUpload(e) {
       const file = e.target.files[0];
       if (file) {
         elements.uploadPlaceholder.style.display = 'none';
         elements.uploadSuccess.style.display = 'block';
         elements.uploadZone.classList.add('has-file');
-        elements.audioInfo.textContent = \`\${file.name} (\${(file.size / 1024 / 1024).toFixed(2)}MB)\`;
+        elements.audioInfo.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
         state.hasAudio = true;
         updatePreview();
       }
-    });
+    }
 
     // Mise à jour de la prévisualisation
     function updatePreview() {
@@ -1088,7 +1078,7 @@ router.get('/create', requireAuthPage, (req, res) => {
       elements.smartlinkPreview.className = 'smartlink-preview';
       
       const trackInfo = state.searchData.trackInfo;
-      elements.previewArtwork.src = trackInfo.artwork || '/assets/images/default-cover.jpg';
+      elements.previewArtwork.src = trackInfo.artwork || '/images/default-cover.jpg';
       elements.previewTitle.textContent = trackInfo.title;
       elements.previewArtist.textContent = trackInfo.artist;
 
@@ -1104,13 +1094,13 @@ router.get('/create', requireAuthPage, (req, res) => {
       if (state.selectedPlatforms.length > 5) {
         const div = document.createElement('div');
         div.className = 'preview-platform';
-        div.textContent = \`+\${state.selectedPlatforms.length - 5} autres plateformes\`;
+        div.textContent = `+${state.selectedPlatforms.length - 5} autres plateformes`;
         div.style.opacity = '0.7';
         elements.previewPlatforms.appendChild(div);
       }
 
       // Stats
-      elements.platformsCount.textContent = \`\${state.selectedPlatforms.length} plateformes\`;
+      elements.platformsCount.textContent = `${state.selectedPlatforms.length} plateformes`;
       elements.audioStatus.textContent = state.hasAudio ? 'Avec audio' : 'Sans audio';
 
       // Status
@@ -1127,7 +1117,7 @@ router.get('/create', requireAuthPage, (req, res) => {
     }
 
     // Génération du SmartLink
-    elements.generateBtn.addEventListener('click', async () => {
+    async function handleGeneration() {
       if (!state.isReady) return;
 
       elements.generateText.style.display = 'none';
@@ -1135,212 +1125,67 @@ router.get('/create', requireAuthPage, (req, res) => {
       elements.generateBtn.disabled = true;
 
       try {
-        // Simulation de génération
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Création via API authentifiée
+        const response = await auth.makeAuthenticatedRequest('/api/smartlinks', {
+          method: 'POST',
+          body: JSON.stringify({
+            trackInfo: state.searchData.trackInfo,
+            selectedPlatforms: state.selectedPlatforms,
+            hasAudio: state.hasAudio,
+            analytics: {
+              ga4Id: document.getElementById('ga4Id').value,
+              metaPixelId: document.getElementById('metaPixelId').value,
+              tiktokPixelId: document.getElementById('tiktokPixelId').value
+            }
+          })
+        });
         
-        const url = \`https://smartlink.mdmcmusicads.com/\${state.searchData.trackInfo.artistSlug}/\${state.searchData.trackInfo.slug}\`;
+        const result = await response.json();
         
-        alert(\`SmartLink généré avec succès !\\n\\nURL: \${url}\\n\\nLe lien a été copié dans votre presse-papier.\`);
-        
-        // Copie dans le presse-papier
-        navigator.clipboard.writeText(url).catch(() => {});
+        if (response.ok && result.success) {
+          const url = result.smartlinkUrl || `https://smartlink.mdmcmusicads.com/${result.artist?.slug}/${result.slug}`;
+          
+          // Notification de succès
+          showNotification(`SmartLink généré avec succès ! URL: ${url}`, 'success');
+          
+          // Copie dans le presse-papier
+          try {
+            await navigator.clipboard.writeText(url);
+            showNotification('URL copiée dans le presse-papier', 'info');
+          } catch (e) {
+            console.log('Impossible de copier automatiquement');
+          }
+          
+          // Redirection vers dashboard après délai
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 3000);
+          
+        } else {
+          throw new Error(result.message || 'Erreur de génération');
+        }
         
       } catch (error) {
-        alert('Erreur lors de la génération : ' + error.message);
+        console.error('Erreur génération:', error);
+        showNotification('Erreur lors de la génération : ' + error.message, 'error');
       } finally {
         elements.generateText.style.display = 'block';
         elements.generateSpinner.style.display = 'none';
         elements.generateBtn.disabled = false;
       }
-    });
+    }
 
-    // Déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-        window.location.href = '/';
+    // Notification système (utilise celle de auth.js)
+    function showNotification(message, type = 'info') {
+      if (typeof window.showNotification === 'function') {
+        window.showNotification(message, type);
+      } else {
+        // Fallback simple
+        alert(message);
       }
-    });
+    }
+
+    console.log('✅ Page de création SmartLinks chargée avec authentification');
   </script>
 </body>
-</html>`);
-});
-
-// Route de gestion des SmartLinks - Redirection vers la route principale
-router.get('/manage', (req, res) => {
-  res.redirect('/dashboard');
-});
-
-// Route Analytics
-router.get('/analytics', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Analytics | MDMC Dashboard</title>
-      <style>
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; text-align: center; padding: 50px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        h1 { color: #E50914; margin-bottom: 20px; }
-        p { color: #a0a0a0; margin-bottom: 30px; }
-        .nav-link { display: inline-block; margin: 10px; padding: 12px 24px; background: #E50914; color: white; text-decoration: none; border-radius: 8px; }
-        .nav-link:hover { background: #cc271a; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>Analytics SmartLinks</h1>
-        <p>Statistiques détaillées de vos SmartLinks</p>
-        <p>Cette page sera bientôt implémentée avec des graphiques et métriques avancées.</p>
-        <a href="/dashboard" class="nav-link">➕ Créer SmartLink</a>
-        <a href="/dashboard/manage" class="nav-link">📱 Gérer SmartLinks</a>
-      </div>
-    </body>
-    </html>
-  `);
-});
-
-// Route d'édition d'un SmartLink
-router.get('/edit/:smartlinkId', (req, res) => {
-  const { smartlinkId } = req.params;
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Éditer SmartLink | MDMC Dashboard</title>
-      <style>
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; text-align: center; padding: 50px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        h1 { color: #E50914; margin-bottom: 20px; }
-        p { color: #a0a0a0; margin-bottom: 30px; }
-        .nav-link { display: inline-block; margin: 10px; padding: 12px 24px; background: #E50914; color: white; text-decoration: none; border-radius: 8px; }
-        .nav-link:hover { background: #cc271a; }
-        .smartlink-id { color: #666; font-family: monospace; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>Éditer SmartLink</h1>
-        <p class="smartlink-id">ID: ${smartlinkId}</p>
-        <p>Interface d'édition du SmartLink</p>
-        <p>Cette page sera bientôt implémentée avec l'éditeur complet.</p>
-        <a href="/dashboard/manage" class="nav-link">← Retour à la liste</a>
-      </div>
-    </body>
-    </html>
-  `);
-});
-
-// API: Recherche de titres
-router.post('/api/search', async (req, res) => {
-  try {
-    const { query } = req.body;
-    
-    if (!query || query.length < 2) {
-      return res.json({ success: false, message: 'Requête trop courte' });
-    }
-    
-    // TODO: Implémenter la recherche via l'API Spotify/Odesli
-    // Pour l'instant, on simule une réponse
-    const results = [
-      {
-        id: 'test-track-1',
-        name: 'Exemple de titre',
-        artists: [{ name: 'Artiste Exemple' }],
-        album: {
-          images: [{ url: 'https://via.placeholder.com/300x300' }]
-        }
-      }
-    ];
-    
-    res.json({ success: true, results });
-  } catch (error) {
-    console.error('❌ Erreur recherche:', error);
-    res.json({ success: false, message: 'Erreur de recherche' });
-  }
-});
-
-// API: Création d'un SmartLink
-router.post('/api/smartlink/create', async (req, res) => {
-  try {
-    const { trackId, title, artist, image, customSlug } = req.body;
-    
-    if (!trackId || !title || !artist) {
-      return res.json({ success: false, message: 'Données manquantes' });
-    }
-    
-    // TODO: Implémenter la création réelle du SmartLink
-    // Pour l'instant, on simule une réponse
-    const smartlinkId = Date.now().toString();
-    const slug = customSlug || `${artist.toLowerCase().replace(/\s+/g, '-')}-${title.toLowerCase().replace(/\s+/g, '-')}`;
-    const smartlinkUrl = `${req.protocol}://${req.get('host')}/smartlink/${slug}`;
-    
-    console.log(`✅ SmartLink créé: ${smartlinkUrl}`);
-    
-    res.json({ 
-      success: true, 
-      smartlinkId,
-      smartlinkUrl,
-      message: 'SmartLink créé avec succès'
-    });
-  } catch (error) {
-    console.error('❌ Erreur création SmartLink:', error);
-    res.json({ success: false, message: 'Erreur lors de la création' });
-  }
-});
-
-// API: Statistiques d'un SmartLink
-router.get('/api/smartlink/:id/stats', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    // TODO: Récupérer les vraies statistiques depuis la DB
-    // Pour l'instant, on simule des données
-    const stats = {
-      id,
-      title: 'Titre exemple',
-      artist: 'Artiste exemple',
-      views: Math.floor(Math.random() * 1000),
-      clicks: Math.floor(Math.random() * 500),
-      created_at: new Date().toISOString()
-    };
-    
-    res.json({ success: true, stats });
-  } catch (error) {
-    console.error('❌ Erreur statistiques:', error);
-    res.json({ success: false, message: 'Erreur chargement statistiques' });
-  }
-});
-
-// API: Suppression d'un SmartLink
-router.delete('/api/smartlink/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    // TODO: Implémenter la suppression réelle
-    console.log(`🗑️ Suppression SmartLink: ${id}`);
-    
-    res.json({ success: true, message: 'SmartLink supprimé' });
-  } catch (error) {
-    console.error('❌ Erreur suppression:', error);
-    res.json({ success: false, message: 'Erreur lors de la suppression' });
-  }
-});
-
-// API: Liste des SmartLinks
-router.get('/api/smartlinks', async (req, res) => {
-  try {
-    // TODO: Récupérer la liste depuis la DB
-    const smartlinks = [];
-    
-    res.json({ success: true, smartlinks });
-  } catch (error) {
-    console.error('❌ Erreur liste SmartLinks:', error);
-    res.json({ success: false, message: 'Erreur chargement liste' });
-  }
-});
-
-module.exports = router;
+</html>
