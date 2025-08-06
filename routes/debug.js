@@ -1,6 +1,47 @@
 const express = require('express');
 const router = express.Router();
 
+// Route de debug pour tracer le flux d'authentification
+router.get('/debug/auth', (req, res) => {
+  const token = req.cookies?.mdmc_token || req.query?.token;
+  let tokenInfo = { valid: false, decoded: null, error: null };
+  
+  if (token) {
+    try {
+      const jwt = require('jsonwebtoken');
+      const JWT_SECRET = process.env.JWT_SECRET || 'mdmc_smartlinks_secret_key_2025';
+      const decoded = jwt.verify(token, JWT_SECRET);
+      tokenInfo = { valid: true, decoded, error: null };
+    } catch (error) {
+      tokenInfo = { valid: false, decoded: null, error: error.message };
+    }
+  }
+  
+  res.json({
+    timestamp: new Date().toISOString(),
+    request: {
+      url: req.originalUrl,
+      method: req.method,
+      userAgent: req.get('User-Agent'),
+      ip: req.ip
+    },
+    cookies: {
+      all: req.cookies,
+      mdmc_token: req.cookies?.mdmc_token ? 'Présent (' + req.cookies.mdmc_token.substring(0, 20) + '...)' : 'Absent'
+    },
+    query: req.query,
+    headers: {
+      authorization: req.headers.authorization || 'Absent'
+    },
+    token: {
+      source: token ? (req.cookies?.mdmc_token ? 'cookie' : 'query') : 'aucune',
+      present: !!token,
+      preview: token ? token.substring(0, 50) + '...' : null,
+      validation: tokenInfo
+    }
+  });
+});
+
 // Route de debug temporaire pour éviter la boucle
 router.get('/dashboard-temp', (req, res) => {
   res.send(`

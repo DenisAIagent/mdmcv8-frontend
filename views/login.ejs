@@ -410,6 +410,9 @@
       }
       
       init() {
+        // Nettoyer d'abord les tokens invalides si nécessaire
+        this.cleanupInvalidTokens();
+        
         // Vérifier si déjà connecté
         this.checkExistingAuth();
         
@@ -427,21 +430,96 @@
         });
       }
       
+      cleanupInvalidTokens() {
+        const tokenSources = [
+          { name: 'localStorage', value: localStorage.getItem('mdmc_token') },
+          { name: 'cookie', value: this.getCookie('mdmc_token') }
+        ];
+        
+        let cleanupNeeded = false;
+        
+        tokenSources.forEach(source => {
+          if (source.value && !this.isTokenValid(source.value)) {
+            cleanupNeeded = true;
+            if (source.name === 'localStorage') {
+              localStorage.removeItem('mdmc_token');
+              localStorage.removeItem('mdmc_user');
+            } else if (source.name === 'cookie') {
+              // Demander au serveur de supprimer le cookie
+              document.cookie = 'mdmc_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=lax';
+            }
+          }
+        });
+        
+        if (cleanupNeeded) {
+          console.log('🧹 Nettoyage des tokens invalides effectué');
+        }
+      }
+      
       checkExistingAuth() {
-        const token = localStorage.getItem('mdmc_token');
-        if (token && this.isTokenValid(token)) {
+        // Rechercher le token dans plusieurs sources
+        const sources = [
+          { name: 'localStorage', value: localStorage.getItem('mdmc_token') },
+          { name: 'cookie', value: this.getCookie('mdmc_token') },
+          { name: 'url', value: new URLSearchParams(window.location.search).get('token') }
+        ];
+        
+        let token = null;
+        let tokenSource = 'aucune';
+        
+        for (const source of sources) {
+          if (source.value && this.isTokenValid(source.value)) {
+            token = source.value;
+            tokenSource = source.name;
+            break;
+          }
+        }
+        
+        if (token) {
+          console.log(`🔄 Token valide trouvé en ${tokenSource}, redirection automatique`);
           this.showSuccess('Connexion en cours...');
           setTimeout(() => {
             window.location.href = '/dashboard';
           }, 1000);
+        } else {
+          // Nettoyer les tokens invalides
+          localStorage.removeItem('mdmc_token');
+          localStorage.removeItem('mdmc_user');
+          console.log('🧹 Tokens invalides nettoyés');
         }
       }
       
+      getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+      
       isTokenValid(token) {
+        if (!token || typeof token !== 'string') return false;
+        
         try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          return payload.exp > Date.now() / 1000;
-        } catch {
+          // Vérifier que le token a le bon format JWT (3 parties séparées par des points)
+          const parts = token.split('.');
+          if (parts.length !== 3) return false;
+          
+          // Décoder le payload
+          const payload = JSON.parse(atob(parts[1]));
+          
+          // Vérifier la présence des champs obligatoires
+          if (!payload.userId || !payload.username || !payload.exp || !payload.iat) {
+            return false;
+          }
+          
+          // Vérifier que le token n'est pas expiré (avec une marge de 5 minutes)
+          const expirationTime = payload.exp * 1000; // Conversion en millisecondes
+          const currentTime = Date.now();
+          const margin = 5 * 60 * 1000; // 5 minutes en millisecondes
+          
+          return expirationTime > (currentTime + margin);
+        } catch (error) {
+          console.log('⚠️ Erreur validation token:', error.message);
           return false;
         }
       }
@@ -530,23 +608,59 @@
           if (response.ok && result.success) {
             console.log('🎉 Connexion réussie, token reçu:', !!result.token);
             
-            // CORRECTION: Toujours stocker le token (par défaut en localStorage)
+            // SOLUTION 1: Toujours stocker en localStorage (fiable)
             localStorage.setItem('mdmc_token', result.token);
             localStorage.setItem('mdmc_user', JSON.stringify(result.user));
+            console.log('✅ Token stocké en localStorage');
             
-            // CORRECTION: Stocker aussi dans un cookie pour les navigations de page  
-            // Cookie simplifié pour éviter les problèmes SameSite/Secure
-            document.cookie = `mdmc_token=${result.token}; path=/; max-age=86400; samesite=lax`;
-            console.log('🍪 Cookie créé:', document.cookie.includes('mdmc_token'));
+            // SOLUTION 2: Tentative de création cookie côté client (fallback)
+            console.log('🔍 Avant création cookie:', {
+              domain: window.location.hostname,
+              protocol: window.location.protocol,
+              cookies: document.cookie
+            });
             
-            console.log('✅ Token stocké en localStorage et cookie');
+            // Plusieurs tentatives de création cookie
+            const cookieAttempts = [
+              `mdmc_token=${result.token}; path=/; max-age=86400; samesite=lax`,
+              `mdmc_token=${result.token}; path=/; max-age=86400`,
+              `mdmc_token=${result.token}; path=/`
+            ];
+            
+            let cookieCreated = false;
+            for (let i = 0; i < cookieAttempts.length; i++) {
+              document.cookie = cookieAttempts[i];
+              if (document.cookie.includes('mdmc_token')) {
+                cookieCreated = true;
+                console.log(`✅ Cookie créé (tentative ${i + 1}):`, cookieAttempts[i]);
+                break;
+              }
+            }
+            
+            if (!cookieCreated) {
+              console.log('⚠️ Cookie client échoué, utilisation fallback URL');
+            }
+            
+            console.log('🔍 Après création cookie:', {
+              cookiePresent: document.cookie.includes('mdmc_token'),
+              allCookies: document.cookie
+            });
             
             this.showSuccess('Connexion réussie ! Redirection...');
             
-            // Redirection après un délai
+            // SOLUTION 3: Redirection avec token en URL si cookie échoué (garantit l'accès)
             setTimeout(() => {
               const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
-              window.location.href = redirectUrl;
+              
+              if (cookieCreated || document.cookie.includes('mdmc_token')) {
+                // Cookie OK, redirection normale
+                window.location.href = redirectUrl;
+              } else {
+                // Cookie échoué, token en URL comme fallback
+                const separator = redirectUrl.includes('?') ? '&' : '?';
+                window.location.href = `${redirectUrl}${separator}token=${encodeURIComponent(result.token)}`;
+                console.log('🔄 Redirection avec token URL (fallback)');
+              }
             }, 1500);
             
           } else {

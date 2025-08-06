@@ -76,8 +76,34 @@ app.use('/dashboard', dashboardRoutes);
 const debugRoutes = require('../routes/debug');
 app.use(debugRoutes);
 
-// --- Login Page Route ---
+// --- Login Page Route avec vérification d'authentification ---
 app.get('/login', (req, res) => {
+  // Vérifier d'abord si l'utilisateur est déjà connecté
+  const token = req.cookies?.mdmc_token || req.query?.token;
+  
+  if (token) {
+    try {
+      const jwt = require('jsonwebtoken');
+      const JWT_SECRET = process.env.JWT_SECRET || 'mdmc_smartlinks_secret_key_2025';
+      const decoded = jwt.verify(token, JWT_SECRET);
+      
+      // Token valide, rediriger vers le dashboard
+      console.log('🔄 Utilisateur déjà connecté, redirection depuis /login vers /dashboard');
+      const redirectUrl = req.query.redirect || '/dashboard';
+      return res.redirect(redirectUrl);
+    } catch (error) {
+      // Token invalide, supprimer le cookie et continuer vers login
+      console.log('🗑️ Token invalide détecté, suppression du cookie');
+      res.clearCookie('mdmc_token', {
+        path: '/',
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+      });
+    }
+  }
+  
+  // Pas de token ou token invalide, afficher la page de login
   res.render('login');
 });
 

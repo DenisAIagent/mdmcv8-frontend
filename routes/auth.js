@@ -121,6 +121,22 @@ router.post('/login', async (req, res) => {
     // Log de connexion réussie
     console.log(`✅ Connexion réussie: ${user.username} (${user.role}) - IP: ${req.ip}`);
     
+    // SOLUTION: Créer le cookie côté SERVEUR (plus fiable)
+    const cookieOptions = {
+      httpOnly: false, // Permettre accès JavaScript côté client
+      secure: process.env.NODE_ENV === 'production', // HTTPS en production
+      sameSite: 'lax', // Protection CSRF mais allow navigation
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 30j ou 24h en ms
+      path: '/' // Disponible sur tout le site
+    };
+    
+    res.cookie('mdmc_token', token, cookieOptions);
+    
+    // Debug optionnel
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🍪 Cookie côté serveur créé avec options:', cookieOptions);
+    }
+    
     res.json({
       success: true,
       message: 'Connexion réussie',
@@ -144,6 +160,15 @@ router.post('/logout', verifyToken, (req, res) => {
     // Log de déconnexion
     console.log(`📤 Déconnexion: ${req.user.username} - IP: ${req.ip}`);
     
+    // Supprimer le cookie côté serveur
+    res.clearCookie('mdmc_token', {
+      path: '/',
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+    console.log('🍪 Cookie supprimé côté serveur');
+    
     res.json({
       success: true,
       message: 'Déconnexion réussie'
@@ -155,6 +180,20 @@ router.post('/logout', verifyToken, (req, res) => {
       message: 'Erreur lors de la déconnexion'
     });
   }
+});
+
+// --- Route de déconnexion simple (GET pour liens directs) ---
+router.get('/logout', (req, res) => {
+  // Supprimer le cookie
+  res.clearCookie('mdmc_token', {
+    path: '/',
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+  
+  console.log('📤 Déconnexion via GET, redirection vers login');
+  res.redirect('/login?message=disconnected');
 });
 
 // --- Route de vérification du token ---

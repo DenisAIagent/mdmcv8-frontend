@@ -4,20 +4,33 @@ const router = express.Router();
 
 // Middleware pour vérifier l'authentification sur les pages (pas API)
 function requireAuthPage(req, res, next) {
-  // Debug: Logs pour identifier le problème
-  console.log('🔍 DEBUG AUTH - URL:', req.originalUrl);
-  console.log('🔍 DEBUG AUTH - Cookies:', req.cookies);
-  console.log('🔍 DEBUG AUTH - Headers:', req.headers);
+  // SOLUTION: Recherche du token dans plusieurs sources avec priorité améliorée
+  const tokenSources = [
+    { name: 'cookie', value: req.cookies?.mdmc_token },
+    { name: 'query', value: req.query?.token }, // Support token en URL (fallback)
+    { name: 'session', value: req.session?.mdmc_token },
+    { name: 'header', value: req.headers.authorization?.replace('Bearer ', '') }
+  ];
   
-  // Pour les pages, on redirige vers /login au lieu de retourner 401
-  const token = req.cookies?.mdmc_token || 
-                req.session?.mdmc_token || 
-                req.headers.authorization?.replace('Bearer ', '');
+  let token = null;
+  let tokenSource = 'aucune';
   
-  console.log('🔍 DEBUG AUTH - Token trouvé:', !!token);
+  for (const source of tokenSources) {
+    if (source.value && source.value.trim()) {
+      token = source.value.trim();
+      tokenSource = source.name;
+      break;
+    }
+  }
+  
+  // Debug optionnel pour développement uniquement
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`🔍 DEBUG AUTH - URL: ${req.originalUrl}, Token source: ${tokenSource}`);
+    console.log(`🔍 Token trouvé: ${token ? 'OUI (' + token.substring(0, 20) + '...)' : 'NON'}`);
+  }
   
   if (!token) {
-    console.log('❌ DEBUG AUTH - Aucun token, redirection vers login');
+    console.log(`❌ Aucun token trouvé pour ${req.originalUrl}, redirection vers login`);
     return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
   
@@ -26,11 +39,37 @@ function requireAuthPage(req, res, next) {
     const jwt = require('jsonwebtoken');
     const JWT_SECRET = process.env.JWT_SECRET || 'mdmc_smartlinks_secret_key_2025';
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log('✅ DEBUG AUTH - Token valide pour utilisateur:', decoded.username);
     req.user = decoded;
+    
+    console.log(`✅ Authentification réussie pour ${decoded.username} sur ${req.originalUrl}`);
+    
+    // Si le token vient de l'URL, le sauvegarder en cookie pour la prochaine fois
+    if (tokenSource === 'query') {
+      res.cookie('mdmc_token', token, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 24h
+        path: '/'
+      });
+      console.log('🍪 Token URL sauvegardé en cookie');
+    }
+    
     next();
   } catch (error) {
-    console.log('❌ DEBUG AUTH - Token invalide:', error.message);
+    console.log(`❌ Token invalide (source: ${tokenSource}) pour ${req.originalUrl}:`, error.message);
+    
+    // Supprimer les cookies invalides
+    if (tokenSource === 'cookie') {
+      res.clearCookie('mdmc_token', {
+        path: '/',
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+      });
+      console.log('🗑️ Cookie invalide supprimé');
+    }
+    
     return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
 }
