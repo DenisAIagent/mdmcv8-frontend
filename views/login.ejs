@@ -666,13 +666,8 @@
             setTimeout(() => {
               const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
               
-              // Vérifier le circuit breaker avant toute redirection
-              if (!this.circuitBreaker.attemptRedirect(redirectUrl)) {
-                console.log('🛑 Redirection bloquée par circuit breaker après connexion');
-                this.showError('Connexion réussie mais problème de redirection. Veuillez cliquer sur le bouton ci-dessous.');
-                this.createManualRedirectButton(redirectUrl);
-                return;
-              }
+              // Après connexion réussie, on autorise la redirection (bypass circuit breaker)
+              this.circuitBreaker.allowSuccessfulLoginRedirect(redirectUrl);
               
               if (cookieCreated || document.cookie.includes('mdmc_token')) {
                 // Cookie OK, redirection normale
@@ -826,6 +821,14 @@
         this.saveAttempts();
         
         console.log(`🔄 Circuit breaker: Tentative ${this.attempts.length}/${this.maxAttempts} vers ${url}`);
+        return true;
+      }
+      
+      // Redirection après connexion réussie - bypass circuit breaker
+      allowSuccessfulLoginRedirect(url) {
+        console.log('🎉 Circuit breaker: Redirection après connexion réussie autorisée vers', url);
+        // Reset des tentatives car connexion réussie = fin des problèmes
+        this.reset();
         return true;
       }
       
