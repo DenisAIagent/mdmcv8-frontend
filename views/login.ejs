@@ -537,6 +537,11 @@
               sessionStorage.setItem('mdmc_user', JSON.stringify(result.user));
             }
             
+            // CORRECTION: Stocker aussi dans un cookie pour les navigations de page
+            const maxAge = credentials.rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60; // 30j ou 24h
+            const isSecure = location.protocol === 'https:' ? '; secure' : '';
+            document.cookie = `mdmc_token=${result.token}; path=/; max-age=${maxAge}${isSecure}; samesite=strict`;
+            
             this.showSuccess('Connexion réussie ! Redirection...');
             
             // Redirection après un délai
