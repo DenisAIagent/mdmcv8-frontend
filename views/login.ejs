@@ -528,19 +528,18 @@
           const result = await response.json();
           
           if (response.ok && result.success) {
-            // Stockage sécurisé du token
-            if (credentials.rememberMe) {
-              localStorage.setItem('mdmc_token', result.token);
-              localStorage.setItem('mdmc_user', JSON.stringify(result.user));
-            } else {
-              sessionStorage.setItem('mdmc_token', result.token);
-              sessionStorage.setItem('mdmc_user', JSON.stringify(result.user));
-            }
+            console.log('🎉 Connexion réussie, token reçu:', !!result.token);
             
-            // CORRECTION: Stocker aussi dans un cookie pour les navigations de page
-            const maxAge = credentials.rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60; // 30j ou 24h
+            // CORRECTION: Toujours stocker le token (par défaut en localStorage)
+            localStorage.setItem('mdmc_token', result.token);
+            localStorage.setItem('mdmc_user', JSON.stringify(result.user));
+            
+            // CORRECTION: Stocker aussi dans un cookie pour les navigations de page  
+            const maxAge = 24 * 60 * 60; // 24 heures par défaut
             const isSecure = location.protocol === 'https:' ? '; secure' : '';
             document.cookie = `mdmc_token=${result.token}; path=/; max-age=${maxAge}${isSecure}; samesite=strict`;
+            
+            console.log('✅ Token stocké en localStorage et cookie');
             
             this.showSuccess('Connexion réussie ! Redirection...');
             
