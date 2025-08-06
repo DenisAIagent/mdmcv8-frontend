@@ -406,6 +406,9 @@
         this.errorMessage = document.getElementById('errorMessage');
         this.successMessage = document.getElementById('successMessage');
         
+        // Circuit breaker pour éviter les boucles de redirection
+        this.circuitBreaker = new RedirectCircuitBreaker();
+        
         this.init();
       }
       
@@ -413,8 +416,12 @@
         // Nettoyer d'abord les tokens invalides si nécessaire
         this.cleanupInvalidTokens();
         
-        // Vérifier si déjà connecté
-        this.checkExistingAuth();
+        // Vérifier si déjà connecté SEULEMENT si le circuit breaker l'autorise
+        if (this.circuitBreaker.canRedirect()) {
+          this.checkExistingAuth();
+        } else {
+          console.log('🛑 Circuit breaker activé - Redirection automatique désactivée');
+        }
         
         // Event listeners
         this.form.addEventListener('submit', (e) => this.handleLogin(e));
@@ -477,10 +484,17 @@
         
         if (token) {
           console.log(`🔄 Token valide trouvé en ${tokenSource}, redirection automatique`);
-          this.showSuccess('Connexion en cours...');
-          setTimeout(() => {
-            window.location.href = '/dashboard';
-          }, 1000);
+          
+          // Vérifier le circuit breaker avant la redirection
+          if (this.circuitBreaker.attemptRedirect('/dashboard')) {
+            this.showSuccess('Connexion en cours...');
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 1000);
+          } else {
+            console.log('🛑 Redirection bloquée par circuit breaker - trop de tentatives récentes');
+            this.showError('Problème de connexion détecté. Veuillez vous connecter manuellement.');
+          }
         } else {
           // Nettoyer les tokens invalides
           localStorage.removeItem('mdmc_token');
@@ -652,6 +666,14 @@
             setTimeout(() => {
               const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
               
+              // Vérifier le circuit breaker avant toute redirection
+              if (!this.circuitBreaker.attemptRedirect(redirectUrl)) {
+                console.log('🛑 Redirection bloquée par circuit breaker après connexion');
+                this.showError('Connexion réussie mais problème de redirection. Veuillez cliquer sur le bouton ci-dessous.');
+                this.createManualRedirectButton(redirectUrl);
+                return;
+              }
+              
               if (cookieCreated || document.cookie.includes('mdmc_token')) {
                 // Cookie OK, redirection normale
                 window.location.href = redirectUrl;
@@ -711,6 +733,116 @@
       hideMessages() {
         this.errorMessage.classList.remove('visible');
         this.successMessage.classList.remove('visible');
+      }
+      
+      // Créer un bouton de redirection manuelle si le circuit breaker bloque
+      createManualRedirectButton(redirectUrl) {
+        const existingBtn = document.getElementById('manualRedirectBtn');
+        if (existingBtn) existingBtn.remove();
+        
+        const button = document.createElement('button');
+        button.id = 'manualRedirectBtn';
+        button.className = 'login-btn';
+        button.style.marginTop = '16px';
+        button.innerHTML = '<span class="btn-content">🚀 Accéder au Dashboard</span>';
+        
+        button.addEventListener('click', () => {
+          // Forcer la redirection en contournant le circuit breaker
+          this.circuitBreaker.reset();
+          window.location.href = redirectUrl;
+        });
+        
+        this.form.appendChild(button);
+      }
+    }
+    
+    // Circuit Breaker pour prévenir les boucles de redirection
+    class RedirectCircuitBreaker {
+      constructor() {
+        this.maxAttempts = 3; // Limite d'tentatives
+        this.timeWindow = 30000; // Fenêtre de 30 secondes
+        this.cooldownPeriod = 60000; // Période de refroidissement de 1 minute
+        this.storageKey = 'mdmc_redirect_attempts';
+        
+        this.loadAttempts();
+      }
+      
+      loadAttempts() {
+        try {
+          const stored = sessionStorage.getItem(this.storageKey);
+          this.attempts = stored ? JSON.parse(stored) : [];
+          this.cleanOldAttempts();
+        } catch {
+          this.attempts = [];
+        }
+      }
+      
+      saveAttempts() {
+        try {
+          sessionStorage.setItem(this.storageKey, JSON.stringify(this.attempts));
+        } catch {
+          // Ignore storage errors
+        }
+      }
+      
+      cleanOldAttempts() {
+        const now = Date.now();
+        this.attempts = this.attempts.filter(attempt => 
+          now - attempt.timestamp < this.timeWindow
+        );
+      }
+      
+      canRedirect() {
+        this.cleanOldAttempts();
+        
+        // Vérifier si on est en période de refroidissement
+        const lastAttempt = this.attempts[this.attempts.length - 1];
+        if (lastAttempt && this.attempts.length >= this.maxAttempts) {
+          const timeSinceLastAttempt = Date.now() - lastAttempt.timestamp;
+          if (timeSinceLastAttempt < this.cooldownPeriod) {
+            console.log(`🛑 Circuit breaker: En refroidissement pour ${Math.ceil((this.cooldownPeriod - timeSinceLastAttempt) / 1000)}s`);
+            return false;
+          }
+        }
+        
+        return this.attempts.length < this.maxAttempts;
+      }
+      
+      attemptRedirect(url) {
+        this.cleanOldAttempts();
+        
+        if (!this.canRedirect()) {
+          console.log('🛑 Circuit breaker: Redirection bloquée - trop de tentatives');
+          return false;
+        }
+        
+        // Enregistrer la tentative
+        this.attempts.push({
+          timestamp: Date.now(),
+          url: url,
+          userAgent: navigator.userAgent.substring(0, 100)
+        });
+        
+        this.saveAttempts();
+        
+        console.log(`🔄 Circuit breaker: Tentative ${this.attempts.length}/${this.maxAttempts} vers ${url}`);
+        return true;
+      }
+      
+      reset() {
+        this.attempts = [];
+        this.saveAttempts();
+        console.log('🔄 Circuit breaker: Reset forcé');
+      }
+      
+      getStatus() {
+        this.cleanOldAttempts();
+        return {
+          attempts: this.attempts.length,
+          maxAttempts: this.maxAttempts,
+          canRedirect: this.canRedirect(),
+          lastAttempt: this.attempts[this.attempts.length - 1]
+        };
       }
     }
     

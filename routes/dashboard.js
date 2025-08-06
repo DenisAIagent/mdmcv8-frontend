@@ -2,8 +2,71 @@ const express = require('express');
 const { verifyToken, requireRole } = require('./auth');
 const router = express.Router();
 
+// Circuit breaker côté serveur pour éviter les boucles de redirection
+const redirectAttempts = new Map();
+function checkRedirectLoop(req, res) {
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.get('User-Agent') || 'unknown';
+  const fingerprint = `${clientIp}-${userAgent.substring(0, 50)}`;
+  
+  const now = Date.now();
+  const attempts = redirectAttempts.get(fingerprint) || [];
+  
+  // Nettoyer les anciennes tentatives (plus de 2 minutes)
+  const recentAttempts = attempts.filter(attempt => now - attempt < 120000);
+  
+  // Si plus de 5 tentatives en 2 minutes, bloquer temporairement
+  if (recentAttempts.length >= 5) {
+    console.log(`🛡️ Circuit breaker serveur: Trop de tentatives de redirection pour ${fingerprint}`);
+    return false;
+  }
+  
+  // Enregistrer cette tentative
+  recentAttempts.push(now);
+  redirectAttempts.set(fingerprint, recentAttempts);
+  
+  return true;
+}
+
 // Middleware pour vérifier l'authentification sur les pages (pas API)
 function requireAuthPage(req, res, next) {
+  // Vérifier d'abord le circuit breaker côté serveur
+  if (!checkRedirectLoop(req, res)) {
+    return res.status(429).send(`
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Trop de tentatives | MDMC Dashboard</title>
+        <style>
+          body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; text-align: center; padding: 50px; }
+          .container { max-width: 600px; margin: 0 auto; }
+          h1 { color: #E50914; margin-bottom: 20px; }
+          p { color: #a0a0a0; margin-bottom: 20px; }
+          .retry-btn { display: inline-block; margin-top: 20px; padding: 12px 24px; background: #E50914; color: white; text-decoration: none; border-radius: 8px; }
+          .retry-btn:hover { background: #cc271a; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>🛡️ Protection Anti-Boucle</h1>
+          <p>Trop de tentatives de redirection détectées.</p>
+          <p>Veuillez patienter quelques instants avant de réessayer.</p>
+          <p><small>Cette protection évite les boucles infinies qui peuvent survenir lors de problèmes de connexion.</small></p>
+          <a href="/login" class="retry-btn" onclick="setTimeout(() => window.location.reload(), 2000)">🔄 Réessayer dans 2s</a>
+        </div>
+        <script>
+          // Auto-refresh après 2 minutes
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 120000);
+        </script>
+      </body>
+      </html>
+    `);
+  }
+  
   // SOLUTION: Recherche du token dans plusieurs sources avec priorité améliorée
   const tokenSources = [
     { name: 'cookie', value: req.cookies?.mdmc_token },
@@ -31,6 +94,39 @@ function requireAuthPage(req, res, next) {
   
   if (!token) {
     console.log(`❌ Aucun token trouvé pour ${req.originalUrl}, redirection vers login`);
+    
+    // Éviter les redirections en boucle si on vient déjà de login
+    const referer = req.get('Referer') || '';
+    if (referer.includes('/login')) {
+      console.log('🛡️ Redirection depuis /login détectée, éviter la boucle');
+      return res.status(401).send(`
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Erreur d'authentification | MDMC Dashboard</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; text-align: center; padding: 50px; }
+            .container { max-width: 600px; margin: 0 auto; }
+            h1 { color: #E50914; margin-bottom: 20px; }
+            p { color: #a0a0a0; margin-bottom: 20px; }
+            .login-btn { display: inline-block; margin-top: 20px; padding: 12px 24px; background: #E50914; color: white; text-decoration: none; border-radius: 8px; }
+            .login-btn:hover { background: #cc271a; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>🔐 Problème d'authentification</h1>
+            <p>Votre session semble avoir expiré ou être invalide.</p>
+            <p>Veuillez vous reconnecter avec vos identifiants.</p>
+            <a href="/login" class="login-btn">🔑 Se connecter</a>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+    
     return res.redirect(`/login?redirect=${encodeURIComponent(req.originalUrl)}`);
   }
   

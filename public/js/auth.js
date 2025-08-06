@@ -301,9 +301,23 @@ class AuthManager {
     const currentPath = window.location.pathname;
     
     if (protectedPages.some(page => currentPath.startsWith(page))) {
+      // Vérifier si on ne vient pas déjà de la page de login (circuit breaker)
+      const fromLogin = document.referrer && document.referrer.includes('/login');
+      const redirectAttempts = parseInt(sessionStorage.getItem('mdmc_redirect_attempts') || '0');
+      
+      if (fromLogin && redirectAttempts > 2) {
+        console.log('🛡️ Protection: Trop de redirections depuis /login, arrêt automatique');
+        this.showAuthError('Problème de connexion détecté. Veuillez vous reconnecter manuellement.');
+        return;
+      }
+      
       if (!this.isAuthenticated()) {
+        // Incrémenter le compteur de tentatives
+        sessionStorage.setItem('mdmc_redirect_attempts', (redirectAttempts + 1).toString());
         this.redirectToLogin();
       } else {
+        // Réinitialiser le compteur en cas de succès
+        sessionStorage.removeItem('mdmc_redirect_attempts');
         // Vérification périodique de l'authentification
         this.verifyAuth();
       }
@@ -323,6 +337,16 @@ class AuthManager {
   handleAuthFailure() {
     this.clearAuth();
     
+    // Vérifier le nombre de tentatives pour éviter les boucles
+    const attempts = parseInt(sessionStorage.getItem('mdmc_auth_failures') || '0');
+    if (attempts > 3) {
+      console.log('🛡️ Trop d\'erreurs d\'authentification, arrêt automatique');
+      this.showAuthError('Multiples erreurs d\'authentification. Rechargez la page ou contactez le support.');
+      return;
+    }
+    
+    sessionStorage.setItem('mdmc_auth_failures', (attempts + 1).toString());
+    
     // Afficher une notification si possible
     if (typeof showNotification === 'function') {
       showNotification('Votre session a expiré. Veuillez vous reconnecter.', 'warning');
@@ -335,6 +359,56 @@ class AuthManager {
   }
   
   // --- Utilitaires ---
+  showAuthError(message) {
+    // Créer une notification d'erreur persistante
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #dc2626;
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      z-index: 10001;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+    `;
+    
+    errorDiv.innerHTML = `
+      <div style="margin-bottom: 16px;">🛡️</div>
+      <div style="margin-bottom: 16px;">${message}</div>
+      <button onclick="window.location.href='/login'" style="
+        background: white;
+        color: #dc2626;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+      ">Retour à la connexion</button>
+    `;
+    
+    // Ajouter un overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+    `;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(errorDiv);
+  }
+  
   formatRole(role) {
     const roles = {
       'admin': 'Administrateur',
