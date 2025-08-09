@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,8 +37,27 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// Route pour servir l'application React (SPA routing)
+// Route pour servir les pages statiques SmartLinks
+app.get('/sl/:shortId.html', (req, res) => {
+  const { shortId } = req.params;
+  const staticPagePath = path.join(__dirname, 'dist', 'sl', `${shortId}.html`);
+  
+  console.log(`📄 Serving static SmartLink page: /sl/${shortId}.html`);
+  
+  // Vérifier si la page statique existe
+  if (fs.existsSync(staticPagePath)) {
+    console.log(`✅ Static page found: ${staticPagePath}`);
+    res.sendFile(staticPagePath);
+  } else {
+    console.log(`❌ Static page not found: ${staticPagePath}`);
+    // Fallback vers l'application React
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  }
+});
+
+// Route catch-all pour l'application React (SPA routing)
 app.get('*', (req, res) => {
+  console.log(`📄 Serving React app for: ${req.path}`);
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
@@ -52,15 +72,14 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 Health check: http://localhost:${PORT}/health`);
+  console.log(`📄 Static SmartLinks: /sl/{shortId}.html`);
+  console.log(`🔍 React app: /#/smartlinks/artist/track`);
 });
 
 // Gestion gracieuse de l'arrêt
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
+  console.log('💤 Server shutting down gracefully...');
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully');
-  process.exit(0);
-});
+export default app;

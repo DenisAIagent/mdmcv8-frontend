@@ -87,7 +87,7 @@ const getPlatformConfig = (platform) => {
   return platformConfig[key] || { 
     color: '#666666', 
     name: platform || 'Plateforme',
-    logo: 'https://via.placeholder.com/40x40/666666/ffffff?text=?'
+    logo: null // AUCUN FALLBACK - si logo manquant, ne pas afficher
   };
 };
 
@@ -515,21 +515,30 @@ const SmartLinkPageDoubleTracking = () => {
           gtag('config', 'G-098G18MJ7M');`}
         </script>
         
-        {/* Open Graph */}
-        <meta property="og:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
-        <meta property="og:description" content={`Écouter sur toutes les plateformes de streaming`} />
-        <meta property="og:image" content={smartlinkData.artworkUrl} />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1024" />
-        <meta property="og:image:height" content="1024" />
-        <meta property="og:type" content="music.song" />
-        <meta property="music:musician" content={smartlinkData.artistName} />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
-        <meta name="twitter:description" content="Écouter sur toutes les plateformes de streaming" />
-        <meta name="twitter:image" content={smartlinkData.artworkUrl} />
+        {/* Meta tags sociaux SEULEMENT si toutes les données réelles sont présentes */}
+        {smartlinkData.coverImageUrl && smartlinkData.trackTitle && smartlinkData.artistName && (
+          <>
+            {/* Open Graph - VRAIES DONNÉES UNIQUEMENT */}
+            <meta property="og:type" content="music.song" />
+            <meta property="og:url" content={window.location.href} />
+            <meta property="og:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
+            <meta property="og:description" content={`Écouter "${smartlinkData.trackTitle}" de ${smartlinkData.artistName} sur toutes les plateformes de streaming`} />
+            <meta property="og:image" content={smartlinkData.coverImageUrl} />
+            <meta property="og:image:secure_url" content={smartlinkData.coverImageUrl} />
+            <meta property="og:image:type" content="image/jpeg" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="1200" />
+            <meta property="og:site_name" content="MDMC Music Ads" />
+            <meta property="music:musician" content={smartlinkData.artistName} />
+            
+            {/* Twitter Card - VRAIES DONNÉES UNIQUEMENT */}
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={`${smartlinkData.trackTitle} - ${smartlinkData.artistName}`} />
+            <meta name="twitter:description" content={`Écouter "${smartlinkData.trackTitle}" de ${smartlinkData.artistName} sur toutes les plateformes de streaming`} />
+            <meta name="twitter:image" content={smartlinkData.coverImageUrl} />
+            <meta name="twitter:image:alt" content={`Couverture de ${smartlinkData.trackTitle} par ${smartlinkData.artistName}`} />
+          </>
+        )}
         
         {/* Structured Data */}
         <script type="application/ld+json">
@@ -541,7 +550,7 @@ const SmartLinkPageDoubleTracking = () => {
               "@type": "MusicGroup",
               "name": smartlinkData.artistName
             },
-            "image": smartlinkData.artworkUrl,
+            "image": smartlinkData.coverImageUrl,
             "url": window.location.href
           })}
         </script>
@@ -557,9 +566,9 @@ const SmartLinkPageDoubleTracking = () => {
         <SmartLinkCard>
           {/* Artwork */}
           <ArtworkContainer>
-            {smartlinkData.artworkUrl ? (
+            {smartlinkData.coverImageUrl ? (
               <img 
-                src={smartlinkData.artworkUrl} 
+                src={smartlinkData.coverImageUrl} 
                 alt={`${smartlinkData.trackTitle} artwork`}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => {
@@ -612,13 +621,15 @@ const SmartLinkPageDoubleTracking = () => {
                     onClick={() => handleServiceClick(platform)}
                     disabled={isTracking}
                   >
-                    <PlatformLogo 
-                      src={config.logo} 
-                      alt={`${config.name} logo`}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
+                    {config.logo && (
+                      <PlatformLogo 
+                        src={config.logo} 
+                        alt={`${config.name} logo`}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    )}
                     {isTracking ? (
                       <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
                     ) : null}

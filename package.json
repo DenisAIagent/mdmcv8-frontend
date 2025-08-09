@@ -7,7 +7,9 @@
     "scripts": {
         "dev": "vite",
         "build": "rm -rf dist && rm -f dist/index.html && vite build",
+        "build:complete": "npm run build && node -e \"import('./simple-smartlink-solution.js').then(m => m.buildStaticSmartlinks())\"",
         "start": "node server.js",
+        "start:simple": "node -e \"import('./simple-smartlink-solution.js').then(m => m.createSimpleServer())\"",
         "serve": "npx serve -s dist -l $PORT"
     },
     "dependencies": {
@@ -25,6 +27,8 @@
         "@react-oauth/google": "^0.12.2",
         "@tanstack/react-query": "^5.84.1",
         "@tanstack/react-query-devtools": "^5.84.1",
+        "axios": "^1.11.0",
+        "cheerio": "^1.1.2",
         "colorthief": "^2.6.0",
         "date-fns": "^2.29.3",
         "express": "^4.18.2",

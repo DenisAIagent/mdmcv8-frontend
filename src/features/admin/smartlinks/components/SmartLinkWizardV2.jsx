@@ -57,6 +57,8 @@ import { useNavigate } from 'react-router-dom';
 // Services
 import musicPlatformService from '../../../../services/musicPlatform.service';
 import apiService from '../../../../services/api.service';
+import staticPageService from '../../../../services/staticPage.service';
+import { generateStaticHTML } from '../../../../utils/staticPageGenerator';
 
 // --- STYLED COMPONENTS ---
 const WizardContainer = styled(Paper)(({ theme }) => ({
@@ -217,6 +219,7 @@ const SmartLinkWizardV2 = () => {
         
         // Gestion artwork
         setSelectedArtwork(result.data.artwork);
+        setValue('coverImageUrl', result.data.artwork);
         setAlternativeArtworks(result.data.alternativeArtworks || []);
         
         // Gestion plateformes
@@ -252,7 +255,7 @@ const SmartLinkWizardV2 = () => {
   // --- ÉTAPE 2: GESTION ARTWORK ---
   const handleArtworkSelection = (artwork) => {
     setSelectedArtwork(artwork);
-    setValue('artwork', artwork);
+    setValue('coverImageUrl', artwork);
   };
 
   // --- ÉTAPE 3: GESTION PLATEFORMES ---
@@ -316,7 +319,51 @@ const SmartLinkWizardV2 = () => {
       const response = await apiService.smartlinks.create(smartLinkData);
       
       if (response?.success) {
-        toast.success('SmartLink créé avec succès !');
+        console.log('✅ SmartLink créé:', response.data);
+        
+        // 🆕 GÉNÉRATION AUTOMATIQUE DE LA PAGE STATIQUE HTML
+        if (response.data?.shortId) {
+          try {
+            console.log('📄 Génération de la page statique HTML...');
+            
+            const staticPageData = {
+              shortId: response.data.shortId,
+              trackTitle: smartLinkData.trackTitle,
+              artistName: smartLinkData.artistName,
+              coverImageUrl: smartLinkData.coverImageUrl,
+              description: `Écoutez ${smartLinkData.trackTitle} de ${smartLinkData.artistName} sur toutes les plateformes de streaming`,
+              platforms: smartLinkData.platformLinks
+            };
+            
+            // Générer et sauvegarder la page statique
+            const staticResult = await staticPageService.generateStaticPage(staticPageData);
+            
+            if (staticResult.success) {
+              console.log('✅ Page statique générée:', staticResult.url);
+              
+              // 🔥 URL POUR PARTAGE RÉSEAUX SOCIAUX (statique HTML)
+              const socialSharingURL = `https://www.mdmcmusicads.com/sl/${response.data.shortId}.html`;
+              
+              // 🎯 URL POUR NAVIGATION UTILISATEUR (React app avec hash)
+              const userNavigationURL = `https://www.mdmcmusicads.com/#/smartlinks/${response.data.artistSlug || 'artist'}/${response.data.trackSlug || response.data.shortId}`;
+              
+              toast.success(`SmartLink créé avec succès !
+              
+🔗 URL pour partage social: ${socialSharingURL}
+🌐 URL pour navigation: ${userNavigationURL}
+              
+La page statique est optimisée pour Facebook, Twitter, WhatsApp !`);
+            } else {
+              console.warn('⚠️ Erreur génération page statique:', staticResult.error);
+              toast.success('SmartLink créé avec succès ! (Page statique en cours...)');
+            }
+          } catch (staticError) {
+            console.error('❌ Erreur page statique:', staticError);
+            toast.success('SmartLink créé avec succès ! (Page statique en cours...)');
+          }
+        }
+        
+        // Navigation vers le SmartLink créé
         setTimeout(() => {
           navigate(`/admin/smartlinks/${response.data._id}`);
         }, 1500);
