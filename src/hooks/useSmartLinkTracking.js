@@ -208,31 +208,59 @@ const useSmartLinkTracking = (smartLinkData, options = {}) => {
   }, []);
 
   /**
-   * Extrait la configuration de tracking du SmartLink
+   * Extrait la configuration de tracking du SmartLink en utilisant le nouveau schéma
    */
   const extractTrackingConfig = (smartLinkData) => {
-    const trackingIds = smartLinkData?.trackingIds || {};
-    
+    const customTracking = smartLinkData?.analytics?.customTracking;
+    const mode = customTracking?.trackingMode || 'global';
+
     // Configuration tracking global MDMC (fallback)
     const globalConfig = {
-      ga4: 'G-098G18MJ7M', // GA4 global MDMC
-      gtm: 'GTM-572GXWPP', // GTM global MDMC
-      metaPixel: process.env.REACT_APP_META_PIXEL_ID || null, // Meta global MDMC
-      tiktokPixel: process.env.REACT_APP_TIKTOK_PIXEL_ID || null // TikTok global MDMC
+      ga4: 'G-098G18MJ7M',
+      gtm: 'GTM-572GXWPP',
+      metaPixel: process.env.REACT_APP_META_PIXEL_ID || null,
+      tiktokPixel: process.env.REACT_APP_TIKTOK_PIXEL_ID || null,
     };
 
     // Configuration tracking individuel (prioritaire)
-    const individualConfig = {
-      ga4: trackingIds.googleAnalytics || null,
-      gtm: trackingIds.googleTagManager || null,
-      metaPixel: trackingIds.metaPixel || null,
-      tiktokPixel: trackingIds.tiktokPixel || null
+    let individualConfig = {
+      ga4: null,
+      gtm: null,
+      metaPixel: null,
+      tiktokPixel: null,
     };
 
+    if (customTracking) {
+      if (customTracking.ga4Override?.enabled) {
+        individualConfig.ga4 = customTracking.ga4Override.measurementId;
+      }
+      if (customTracking.gtmOverride?.enabled) {
+        individualConfig.gtm = customTracking.gtmOverride.containerId;
+      }
+      if (customTracking.metaPixelOverride?.enabled) {
+        individualConfig.metaPixel = customTracking.metaPixelOverride.pixelId;
+      }
+      if (customTracking.tiktokPixelOverride?.enabled) {
+        individualConfig.tiktokPixel = customTracking.tiktokPixelOverride.pixelId;
+      }
+    }
+
+    // En mode 'custom', on ne veut pas de fallback global.
+    // La logique d'injection plus haut gère déjà la priorité, mais on peut être explicite.
+    if (mode === 'custom') {
+        return {
+            global: {}, // Pas de fallback global
+            individual: individualConfig,
+            mode: mode,
+        }
+    }
+
+    // Pour 'global' et 'hybrid', on fournit les deux configurations.
+    // La logique d'injection priorisera l'individuel si 'enableFallback' est vrai.
     return {
       global: globalConfig,
       individual: individualConfig,
-      mode: trackingIds.mode || 'hybrid' // global, individual, hybrid
+      mode: mode,
     };
   };
 

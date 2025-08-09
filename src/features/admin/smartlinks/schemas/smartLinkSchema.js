@@ -6,14 +6,37 @@ const platformLinkSchema = z.object({
   url: z.string().trim().url({ message: "URL invalide." })
 });
 
-// Schéma pour les IDs de suivi
-const trackingIdsSchema = z.object({
-  ga4Id: z.string().trim().optional().or(z.literal('')), // Google Analytics 4
-  gtmId: z.string().trim().optional().or(z.literal('')), // Google Tag Manager
-  metaPixelId: z.string().trim().optional().or(z.literal('')), // Meta (Facebook) Pixel
-  tiktokPixelId: z.string().trim().optional().or(z.literal('')), // TikTok Pixel
-  googleAdsId: z.string().trim().optional().or(z.literal('')) // Google Ads Tag ID
+// Schéma pour les overrides de tracking individuels
+const overrideSchema = (idFieldName) => z.object({
+  enabled: z.boolean().optional(),
+  [idFieldName]: z.string().trim().optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+  if (data.enabled && !data[idFieldName]) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: [idFieldName],
+      message: "L'ID est requis lorsque le suivi est activé.",
+    });
+  }
+});
+
+// Schéma pour la section de tracking personnalisé
+const customTrackingSchema = z.object({
+  trackingMode: z.enum(['global', 'custom', 'hybrid']).default('global'),
+  clientName: z.string().trim().optional().or(z.literal('')),
+  campaignName: z.string().trim().optional().or(z.literal('')),
+  ga4Override: overrideSchema('measurementId'),
+  gtmOverride: overrideSchema('containerId'),
+  metaPixelOverride: overrideSchema('pixelId'),
+  tiktokPixelOverride: overrideSchema('pixelId'),
 }).optional();
+
+
+// Schéma pour l'objet analytics complet
+const analyticsSchema = z.object({
+  customTracking: customTrackingSchema,
+}).optional();
+
 
 // Schéma principal pour le formulaire SmartLink
 export const smartLinkSchema = z.object({
@@ -54,7 +77,7 @@ export const smartLinkSchema = z.object({
   useDescriptionAsSubtitle: z.boolean().optional().default(false), 
   platformLinks: z.array(platformLinkSchema)
     .min(1, { message: "Au moins un lien de plateforme est requis." }), 
-  trackingIds: trackingIdsSchema,
+  analytics: analyticsSchema,
   isPublished: z.boolean().optional().default(false),
   slug: z.string().trim().optional().or(z.literal('')), // Ajout du slug ici, car il est dans le formulaire
   utmSource: z.string().trim().max(100, { message: "utm_source trop long." }).optional().or(z.literal('')), 
