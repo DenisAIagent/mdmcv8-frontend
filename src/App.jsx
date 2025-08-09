@@ -66,6 +66,8 @@ import MetaAdsArtistes from './pages/services/MetaAdsArtistes';
 import TikTokPromotionMusicale from './pages/services/TikTokPromotionMusicale';
 
 import AdminLogin from './components/admin/AdminLogin';
+import ForgotPasswordPage from './components/admin/ForgotPasswordPage';
+import ResetPasswordPage from './components/admin/ResetPasswordPage';
 import AdminPanel from './components/admin/AdminPanel';
 import AdminLayout from './components/admin/AdminLayout';
 import ArtistListPage from './pages/admin/artists/ArtistListPage';
@@ -236,7 +238,11 @@ function App() {
         <Route path="/ressources/conditions-generales" element={<ConditionsGenerales />} />
         <Route path="/ressources/cookies" element={<Cookies />} />
         
+        {/* Auth Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:resettoken" element={<ResetPasswordPage />} />
+
         <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminPanel />} />
