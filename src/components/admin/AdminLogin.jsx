@@ -1,7 +1,7 @@
 // src/components/admin/AdminLogin.jsx
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import apiService from '../../services/api.service'; // Assure-toi que ce chemin est correct
 import '../../assets/styles/admin-login.css'; // Garde ton chemin de style s'il existe et est utilisé
 
@@ -102,8 +102,6 @@ const AdminLogin = () => {
         <div className="admin-login-footer">
           {/* Lien pour retourner à la page d'accueil publique */}
           <a href="/">{t('footer.nav_home', "Retour à l'accueil")}</a>
-          <span className="footer-separator">|</span>
-          <Link to="/forgot-password">{t('admin.forgot_password', 'Mot de passe oublié ?')}</Link>
         </div>
       </div>
     </div>

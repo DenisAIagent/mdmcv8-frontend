@@ -2,14 +2,14 @@
 # Build optimisé pour la production avec Nginx
 
 # Étape 1: Build de l'application React
-# Utilisation de Node.js 20 LTS pour la compatibilité avec les dépendances récentes
 FROM node:20-alpine AS build
 
 WORKDIR /app
 
 # Copier les fichiers de dépendances
 COPY package*.json ./
-RUN npm ci --only=production
+# Utiliser npm install au lieu de ci car ci ne fonctionnait pas
+RUN npm install
 
 # Copier le code source
 COPY . .

@@ -152,32 +152,6 @@ class ApiService {
         console.warn('🔐 Auth: Déconnexion locale forcée');
         return { success: true };
       }
-    },
-
-    forgotPassword: async (email) => {
-      try {
-        console.log(`🔐 Auth: Demande de réinitialisation pour ${email}...`);
-        return await this.request('/auth/forgotpassword', {
-          method: 'POST',
-          body: JSON.stringify({ email })
-        });
-      } catch (error) {
-        console.error('🔐 Auth: Erreur lors de la demande de réinitialisation', error);
-        throw error;
-      }
-    },
-
-    resetPassword: async (token, password) => {
-      try {
-        console.log(`🔐 Auth: Tentative de réinitialisation avec token...`);
-        return await this.request(`/auth/resetpassword/${token}`, {
-          method: 'PUT',
-          body: JSON.stringify({ password })
-        });
-      } catch (error) {
-        console.error('🔐 Auth: Erreur lors de la réinitialisation du mot de passe', error);
-        throw error;
-      }
     }
   };
 

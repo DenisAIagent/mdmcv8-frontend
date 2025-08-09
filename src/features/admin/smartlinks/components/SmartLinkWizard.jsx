@@ -174,8 +174,14 @@ const SmartLinkWizard = () => {
             url: link.url
           })),
         
-        // Outils de tracking (format backend - utilise le nouveau schéma 'analytics')
-        analytics: data.analytics,
+        // Outils de tracking (format backend)
+        trackingIds: {
+          ga4Id: data.gaId || null,
+          gtmId: data.gtmId || null,
+          googleAdsId: data.adsId || null,
+          metaPixelId: data.metaPixelId || null,
+          tiktokPixelId: data.tiktokPixelId || null
+        },
         
         // Description (pour le backend)
         description: data.description || `SmartLink pour ${data.trackTitle}`,
