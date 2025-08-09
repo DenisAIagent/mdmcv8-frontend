@@ -81,6 +81,15 @@ import ShortLinkManager from './components/admin/ShortLinkManager';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 
 const ProtectedRoute = ({ children }) => {
+  // --- TEMPORARY BYPASS FOR DEBUGGING ---
+  // The original authentication logic has been temporarily commented out
+  // to allow direct access to the admin panel.
+  // WARNING: This is insecure and should not be used in production.
+  console.warn('⚠️ ATTENTION: La protection des routes admin est temporairement désactivée !');
+  return children;
+  // --- END TEMPORARY BYPASS ---
+
+  /*
   const [authStatus, setAuthStatus] = useState({ isLoading: true, isAuthenticated: false, isAdmin: false });
   const location = useLocation();
 
@@ -142,6 +151,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   return children;
+  */
 };
 
 
