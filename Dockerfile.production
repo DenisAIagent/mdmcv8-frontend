@@ -2,7 +2,8 @@
 # Build optimisé pour la production avec Nginx
 
 # Étape 1: Build de l'application React
-FROM node:18-alpine AS build
+# Utilisation de Node.js 20 LTS pour la compatibilité avec les dépendances récentes
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
