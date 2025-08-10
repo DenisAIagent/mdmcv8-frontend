@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import ForgotPasswordModal from '../auth/ForgotPasswordModal';
 import apiService from '../../services/api.service'; // Assure-toi que ce chemin est correct
 import '../../assets/styles/admin-login.css'; // Garde ton chemin de style s'il existe et est utilisé
 
@@ -18,6 +19,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // Pour afficher les messages d'erreur du login
   const [loading, setLoading] = useState(false); // Pour l'état de chargement du bouton
+  const [forgotOpen, setForgotOpen] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Empêche le rechargement de la page par le formulaire
@@ -103,9 +105,18 @@ const AdminLogin = () => {
           {/* Lien pour retourner à la page d'accueil publique */}
           <a href="/">{t('footer.nav_home', "Retour à l'accueil")}</a>
           <span className="footer-separator">|</span>
-          <Link to="/forgot-password">{t('admin.forgot_password', 'Mot de passe oublié ?')}</Link>
+          <button
+            type="button"
+            className="link-like"
+            onClick={() => setForgotOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={forgotOpen}
+          >
+            {t('admin.forgot_password', 'Mot de passe oublié ?')}
+          </button>
         </div>
       </div>
+      <ForgotPasswordModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </div>
   );
 };

@@ -18,15 +18,11 @@ const ForgotPasswordPage = () => {
     setMessage('');
 
     try {
-      await apiService.auth.forgotPassword(email);
-      setMessage(t('admin.forgot_password_success', 'Si un compte correspondant à cet email existe, un lien de réinitialisation a été envoyé.'));
+      await apiService.auth.postForgotPassword(email);
+      setMessage('Si cette adresse email est associée à un compte, vous recevrez un lien de réinitialisation.');
     } catch (err) {
-      // Even on error, we might not want to reveal if an email exists or not
-      // For better security, we can show the same message.
-      // However, for debugging/internal tool, showing an error might be fine.
-      setError(err.message || t('admin.forgot_password_error', 'Une erreur est survenue.'));
-      // For better security, you might want to always show the success message.
-      // setMessage(t('admin.forgot_password_success', 'Si un compte correspondant à cet email existe, un lien de réinitialisation a été envoyé.'));
+      // Sécurité: toujours succès générique
+      setMessage('Si cette adresse email est associée à un compte, vous recevrez un lien de réinitialisation.');
     } finally {
       setLoading(false);
     }
@@ -40,8 +36,7 @@ const ForgotPasswordPage = () => {
           <p>{t('admin.forgot_password_subtitle', 'Entrez votre email pour recevoir un lien de réinitialisation.')}</p>
         </div>
 
-        {message && <div className="admin-login-success" style={{ color: 'green', marginBottom: '1rem' }}>{message}</div>}
-        {error && <div className="admin-login-error" style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+        {message && <div aria-live="polite" className="admin-login-success" style={{ color: 'green', marginBottom: '1rem' }}>{message}</div>}
 
         {!message && (
           <form onSubmit={handleSubmit} className="admin-login-form">

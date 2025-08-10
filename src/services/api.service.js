@@ -154,30 +154,58 @@ class ApiService {
       }
     },
 
-    forgotPassword: async (email) => {
+    /** Nouveau contrat API générique (préserve compat endpoints existants) */
+    postForgotPassword: async (email) => {
+      console.log('🔐 Auth: POST /api/forgot-password (fallback /auth/forgotpassword)');
+      // Essai contrat nouveau
       try {
-        console.log(`🔐 Auth: Demande de réinitialisation pour ${email}...`);
+        return await this.request('/forgot-password', {
+          method: 'POST',
+          body: JSON.stringify({ email })
+        });
+      } catch (primaryError) {
+        // Fallback ancien endpoint projet existant
+        console.warn('Fallback -> /auth/forgotpassword');
         return await this.request('/auth/forgotpassword', {
           method: 'POST',
           body: JSON.stringify({ email })
         });
-      } catch (error) {
-        console.error('🔐 Auth: Erreur lors de la demande de réinitialisation', error);
-        throw error;
       }
     },
 
-    resetPassword: async (token, password) => {
+    validateResetToken: async (token) => {
+      console.log('🔐 Auth: GET /api/reset-password/:token (fallback /auth/resetpassword/:token validate)');
       try {
-        console.log(`🔐 Auth: Tentative de réinitialisation avec token...`);
-        return await this.request(`/auth/resetpassword/${token}`, {
-          method: 'PUT',
-          body: JSON.stringify({ password })
-        });
-      } catch (error) {
-        console.error('🔐 Auth: Erreur lors de la réinitialisation du mot de passe', error);
-        throw error;
+        return await this.request(`/reset-password/${encodeURIComponent(token)}`);
+      } catch (primaryError) {
+        console.warn('Fallback -> /auth/resetpassword/validate');
+        const query = new URLSearchParams({ token }).toString();
+        return await this.request(`/auth/resetpassword/validate?${query}`);
       }
+    },
+
+    postResetPassword: async (token, newPassword) => {
+      console.log('🔐 Auth: POST /api/reset-password (fallback PUT /auth/resetpassword/:token)');
+      try {
+        return await this.request('/reset-password', {
+          method: 'POST',
+          body: JSON.stringify({ token, newPassword })
+        });
+      } catch (primaryError) {
+        console.warn('Fallback -> /auth/resetpassword');
+        return await this.request(`/auth/resetpassword/${encodeURIComponent(token)}`, {
+          method: 'PUT',
+          body: JSON.stringify({ password: newPassword })
+        });
+      }
+    },
+
+    // Compat noms existants utilisés ailleurs
+    forgotPassword: async (email) => {
+      return this.postForgotPassword(email);
+    },
+    resetPassword: async (token, password) => {
+      return this.postResetPassword(token, password);
     }
   };
 

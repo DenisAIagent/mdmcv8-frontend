@@ -134,6 +134,28 @@
   text-decoration: underline;
 }
 
+/* Style pour bouton lien dans le footer (Mot de passe oublié ?) */
+.admin-login-footer .link-like {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.admin-login-footer .link-like:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Backdrop modal basique, neutralise overflow */
+.modal-backdrop {
+  overflow: auto;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
