@@ -8,10 +8,10 @@ const USERS = [
   {
     id: 'mdmc_admin_001',
     username: 'mdmc_admin',
-    password: '$2b$10$1jbx7FMEzCURQuBsQdX77OygmmwmKF7O/qOM6W1Y250k/4ZzJxpoi', // password: 'MDMC2025!'
+    password: '$2b$10$.YPXiRoxoBPo3efcXmejLuisrc0IvARFVyZDGlJzR1XKPLilXAP0y', // password: 'MDMC2025!'
     role: 'admin',
     name: 'Administrateur MDMC',
-    email: 'admin@mdmcmusicads.com',
+    email: 'denis@mdmcmusicads.com',
     permissions: ['create', 'edit', 'delete', 'analytics', 'admin'],
     createdAt: new Date('2025-08-06'),
     isActive: true
@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
     }
     
     // Recherche de l'utilisateur
-    const user = USERS.find(u => u.username.toLowerCase() === username.toLowerCase());
+    const user = USERS.find(u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === username.toLowerCase());
     
     if (!user) {
       // Simulation d'un délai pour éviter les attaques par timing
