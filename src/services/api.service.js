@@ -173,6 +173,60 @@ class ApiService {
       }
     },
 
+    /** Envoi email récupération mot de passe via EmailJS */
+    sendForgotPasswordEmail: async (email, resetToken) => {
+      try {
+        console.log('📧 Auth: Envoi email récupération via EmailJS');
+        
+        // Import dynamique d'EmailJS
+        const emailjs = await import('@emailjs/browser');
+        
+        // Configuration EmailJS
+        const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+        const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_PASSWORD_RESET_TEMPLATE_ID;
+        const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+        
+        if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+          throw new Error('Configuration EmailJS manquante pour récupération mot de passe');
+        }
+        
+        // Générer le lien de réinitialisation
+        const resetLink = `${window.location.origin}/reset-password/${resetToken}`;
+        
+        // Paramètres du template
+        const templateParams = {
+          to_email: email,
+          reset_link: resetLink,
+          site_name: 'MDMC Music Ads',
+          support_email: 'contact@mdmcmusicads.com'
+        };
+        
+        // Envoi via EmailJS
+        const result = await emailjs.default.send(
+          SERVICE_ID,
+          TEMPLATE_ID,
+          templateParams,
+          PUBLIC_KEY
+        );
+        
+        console.log('✅ Email récupération envoyé via EmailJS:', result);
+        return { success: true, message: 'Email envoyé avec succès' };
+        
+      } catch (error) {
+        console.error('❌ Erreur envoi email récupération:', error);
+        throw new Error('Impossible d\'envoyer l\'email de récupération');
+      }
+    },
+
+    /** Génération token de récupération côté frontend (temporaire) */
+    generateResetToken: () => {
+      // Génération d'un token simple côté frontend
+      // En production, ceci devrait être géré côté backend
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2);
+      return `${timestamp}-${random}`;
+    },
+
     validateResetToken: async (token) => {
       console.log('🔐 Auth: GET /api/reset-password/:token (fallback /auth/resetpassword/:token validate)');
       try {

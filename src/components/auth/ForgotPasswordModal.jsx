@@ -71,8 +71,10 @@ const ForgotPasswordModal = ({ open, onClose }) => {
     setLoading(true);
     setNetworkError('');
     try {
-      // Toujours afficher un message de succès générique
+      // Utiliser le backend sécurisé
       await apiService.auth.postForgotPassword(email);
+      
+      // Toujours afficher un message de succès générique
       setSubmitted(true);
     } catch (err) {
       // Ne pas révéler l'existence de l'email

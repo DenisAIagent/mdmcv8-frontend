@@ -18,10 +18,12 @@ const ForgotPasswordPage = () => {
     setMessage('');
 
     try {
+      // Utiliser le backend sécurisé
       await apiService.auth.postForgotPassword(email);
       setMessage('Si cette adresse email est associée à un compte, vous recevrez un lien de réinitialisation.');
     } catch (err) {
       // Sécurité: toujours succès générique
+      console.error('Erreur récupération mot de passe:', err);
       setMessage('Si cette adresse email est associée à un compte, vous recevrez un lien de réinitialisation.');
     } finally {
       setLoading(false);
