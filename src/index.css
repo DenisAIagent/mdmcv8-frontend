@@ -1,0 +1,77 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424; /* Ce fond sera probablement écrasé par celui défini dans global.css */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff; /* Couleur par défaut des liens (sera écrasée par global.css) */
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2; /* Couleur par défaut au survol (sera écrasée par global.css) */
+}
+
+/* === RÈGLE BODY CORRIGÉE === */
+body {
+  margin: 0;
+  /* Les propriétés display: flex; et place-items: center; ont été supprimées */
+  /* car elles causaient des conflits avec la mise en page standard */
+  /* et le header fixe. */
+  min-width: 320px; /* Utile pour la responsivité minimale */
+  min-height: 100vh; /* Assure que le body prend au moins toute la hauteur */
+  /* Les styles de fond, couleur, police etc. pour le body */
+  /* sont maintenant principalement gérés dans global.css */
+}
+/* ========================== */
+
+
+h1 {
+  /* Style de base H1 (peut être surchargé dans global.css) */
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  /* Style de base bouton (sera largement surchargé par .btn dans global.css) */
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color; /* Style de focus par défaut */
+}
+
+/* Styles spécifiques au mode clair (si votre :root change) */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "name": "Simulateur MDMC - Brevo Newsletter + Email Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "music-simulator-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-simulateur",
+      "name": "Webhook Simulateur",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.email }}",
+        "updateExistingContact": true,
+        "additionalFields": {
+          "attributes": {
+            "PRENOM": "={{ $json.brevo_attributes.PRENOM }}",
+            "BUDGET_ESTIME": "={{ $json.brevo_attributes.BUDGET_ESTIME }}",
+            "PLATEFORME_INTERESSE": "={{ $json.brevo_attributes.PLATEFORME_INTERESSE }}",
+            "ZONE_CIBLE": "={{ $json.brevo_attributes.ZONE_CIBLE }}",
+            "TYPE_CAMPAGNE": "={{ $json.brevo_attributes.TYPE_CAMPAGNE }}",
+            "VUES_ESTIMEES": "={{ $json.brevo_attributes.VUES_ESTIMEES }}",
+            "SOURCE_INSCRIPTION": "={{ $json.brevo_attributes.SOURCE_INSCRIPTION }}"
+          },
+          "listIds": [1] // ID de votre liste newsletter Brevo
+        }
+      },
+      "id": "brevo-inscription",
+      "name": "Brevo - Inscription Newsletter",
+      "type": "n8n-nodes-base.brevo",
+      "typeVersion": 1,
+      "position": [480, 200],
+      "credentials": {
+        "brevoApi": {
+          "id": "brevo-credentials",
+          "name": "Brevo API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "toEmail": "denis@mdmcmusicads.com",
+        "subject": "🎯 Nouveau lead simulateur MDMC - {{ $json.artist_name }}",
+        "emailType": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <style>\n        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\n        .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; }\n        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }\n        .lead-info { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }\n        .label { font-weight: bold; color: #667eea; }\n        .value { margin-left: 10px; }\n        .results { background: #e8f4f8; padding: 15px; border-radius: 8px; margin: 15px 0; }\n        .cta { background: #667eea; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 20px 0; }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>🎯 Nouveau Lead Simulateur</h1>\n            <p>Un nouveau prospect a utilisé le simulateur MDMC</p>\n        </div>\n        <div class=\"content\">\n            <div class=\"lead-info\">\n                <h2>👤 Informations du prospect</h2>\n                <p><span class=\"label\">Nom d'artiste:</span><span class=\"value\">{{ $json.artist_name }}</span></p>\n                <p><span class=\"label\">Email:</span><span class=\"value\">{{ $json.email }}</span></p>\n                <p><span class=\"label\">Budget mensuel:</span><span class=\"value\">{{ $json.budget }}€</span></p>\n                <p><span class=\"label\">Plateforme:</span><span class=\"value\">{{ $json.platform }}</span></p>\n                <p><span class=\"label\">Zone cible:</span><span class=\"value\">{{ $json.zone_cible }}</span></p>\n                <p><span class=\"label\">Type de campagne:</span><span class=\"value\">{{ $json.campaign_type }}</span></p>\n            </div>\n            \n            <div class=\"results\">\n                <h3>📊 Résultats simulés</h3>\n                <p><span class=\"label\">Vues potentielles:</span><span class=\"value\">{{ $json.views }}</span></p>\n                <p><span class=\"label\">Coût estimé:</span><span class=\"value\">{{ $json.cpv }}</span></p>\n                <p><span class=\"label\">Portée estimée:</span><span class=\"value\">{{ $json.reach }}</span></p>\n            </div>\n            \n            <p><strong>✅ Actions automatiques réalisées:</strong></p>\n            <ul>\n                <li>Contact ajouté à la newsletter Brevo</li>\n                <li>Attributs personnalisés mis à jour</li>\n                <li>Lead tracé dans le CRM</li>\n            </ul>\n            \n            <a href=\"mailto:{{ $json.email }}?subject=Suite à votre simulation MDMC&body=Bonjour {{ $json.artist_name }},\\n\\nMerci d'avoir utilisé notre simulateur ! Je reviens vers vous concernant votre projet...\" class=\"cta\">\n                📧 Répondre directement\n            </a>\n            \n            <p><small>Reçu le {{ $json.timestamp }}</small></p>\n        </div>\n    </div>\n</body>\n</html>",
+        "additionalFields": {
+          "senderName": "MDMC Notifications"
+        }
+      },
+      "id": "email-notification",
+      "name": "Email Notification Denis",
+      "type": "n8n-nodes-base.brevo",
+      "typeVersion": 1,
+      "position": [480, 400],
+      "credentials": {
+        "brevoApi": {
+          "id": "brevo-credentials",
+          "name": "Brevo API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Lead traité avec succès\",\n  \"leadId\": \"LEAD_{{ $json.timestamp }}\",\n  \"actions\": {\n    \"brevo_subscription\": true,\n    \"email_notification\": true\n  },\n  \"contact\": {\n    \"email\": \"{{ $json.email }}\",\n    \"name\": \"{{ $json.artist_name }}\"\n  }\n}"
+      },
+      "id": "response-success",
+      "name": "Response Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [720, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Simulateur": {
+      "main": [
+        [
+          {
+            "node": "Brevo - Inscription Newsletter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Notification Denis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brevo - Inscription Newsletter": {
+      "main": [
+        [
+          {
+            "node": "Response Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Notification Denis": {
+      "main": [
+        [
+          {
+            "node": "Response Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["mdmc", "simulateur", "brevo", "leads"],
+  "triggerCount": 0,
+  "updatedAt": "2025-07-20T00:00:00.000Z",
+  "versionId": "1"
+}
