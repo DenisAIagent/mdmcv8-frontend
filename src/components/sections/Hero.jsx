@@ -94,19 +94,27 @@ const Hero = ({ openSimulator }) => {
         
         <div className="hero-stats" ref={countersRef}>
           <div className="stat-item">
-            <span className="stat-number">{counts.campaigns}+</span>
+            <span className="stat-number">
+              {counts.campaigns > 0 ? counts.campaigns : targetCounts.campaigns}+
+            </span>
             <span className="stat-label">{t('hero.stats.campaigns')}</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">{counts.artists}+</span>
+            <span className="stat-number">
+              {counts.artists > 0 ? counts.artists : targetCounts.artists}+
+            </span>
             <span className="stat-label">{t('hero.stats.artists')}</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">{counts.views}M+</span>
+            <span className="stat-number">
+              {counts.views > 0 ? counts.views : targetCounts.views}M+
+            </span>
             <span className="stat-label">{t('hero.stats.views')}</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">{counts.countries}+</span>
+            <span className="stat-number">
+              {counts.countries > 0 ? counts.countries : targetCounts.countries}+
+            </span>
             <span className="stat-label">{t('hero.stats.countries')}</span>
           </div>
         </div>

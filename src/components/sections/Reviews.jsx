@@ -105,6 +105,7 @@ const ReviewCard = ({ review, index, delay = 0 }) => {
           <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
             <Avatar
               src={review.avatar}
+              alt={`Avatar de ${review.name} - Avis Google`}
               sx={{
                 width: 56,
                 height: 56,
