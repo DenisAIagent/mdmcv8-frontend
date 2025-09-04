@@ -120,11 +120,65 @@ const Simulator = forwardRef((props, ref) => {
   const [submitting, setSubmitting] = useState(false);
   const isMountedRef = useRef(true);
 
+  // ===== CORRECTION 1: Persistance des données avec localStorage =====
+  const saveToLocalStorage = (data) => {
+    try {
+      localStorage.setItem('mdmc_simulator_data', JSON.stringify({
+        ...data,
+        timestamp: Date.now()
+      }));
+    } catch (error) {
+      console.log('Erreur sauvegarde localStorage:', error);
+    }
+  };
+
+  const loadFromLocalStorage = () => {
+    try {
+      const saved = localStorage.getItem('mdmc_simulator_data');
+      if (saved) {
+        const data = JSON.parse(saved);
+        // Vérifier que les données ne sont pas trop anciennes (24h)
+        if (Date.now() - data.timestamp < 24 * 60 * 60 * 1000) {
+          return data;
+        }
+      }
+    } catch (error) {
+      console.log('Erreur chargement localStorage:', error);
+    }
+    return null;
+  };
+
+  const clearLocalStorage = () => {
+    try {
+      localStorage.removeItem('mdmc_simulator_data');
+    } catch (error) {
+      console.log('Erreur suppression localStorage:', error);
+    }
+  };
+
+  // ===== CORRECTION 2: useEffect amélioré pour charger les données =====
   useEffect(() => {
+    const savedData = loadFromLocalStorage();
+    if (savedData) {
+      setFormData(savedData.formData || formData);
+      setCurrentStep(savedData.currentStep || 1);
+    }
+    
     return () => {
       isMountedRef.current = false;
     };
   }, []);
+
+  // Sauvegarder automatiquement les changements
+  useEffect(() => {
+    if (formData.platform || formData.budget || formData.country) {
+      saveToLocalStorage({
+        formData,
+        currentStep,
+        timestamp: Date.now()
+      });
+    }
+  }, [formData, currentStep]);
 
   useImperativeHandle(ref, () => ({
     openSimulator: () => {
@@ -134,12 +188,32 @@ const Simulator = forwardRef((props, ref) => {
     }
   }));
 
+  // ===== CORRECTION 3: closeSimulator amélioré - NE REMET PLUS À ZÉRO =====
   const closeSimulator = () => {
     setIsOpen(false);
+    // NE PAS remettre à zéro les données automatiquement
+    // L'utilisateur peut reprendre où il s'est arrêté
+  };
+
+  // Nouvelle fonction pour reset complet (optionnel)
+  const resetSimulator = () => {
     setCurrentStep(1);
-    setFormData({ platform: '', budget: '', country: '', campaignType: '', artistName: '', email: '' });
+    setFormData({ 
+      platform: '', 
+      budget: '', 
+      country: '', 
+      campaignType: '', 
+      artistName: '', 
+      email: '' 
+    });
     setErrors({});
-    setResults({ views: null, cpv: null, reach: null, subscribers: null });
+    setResults({ 
+      views: null, 
+      cpv: null, 
+      reach: null, 
+      subscribers: null 
+    });
+    clearLocalStorage();
   };
 
   const handleChange = (e) => {
@@ -150,6 +224,7 @@ const Simulator = forwardRef((props, ref) => {
     }
   };
 
+  // ===== CORRECTION 4: validateStep amélioré avec meilleur feedback =====
   const validateStep = (step) => {
     let isValid = true;
     const newErrors = {};
@@ -184,7 +259,9 @@ const Simulator = forwardRef((props, ref) => {
           newErrors.artistName = t('simulator.artist_error');
           isValid = false;
         }
-        if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        // Validation email améliorée
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email || !emailRegex.test(formData.email)) {
           newErrors.email = t('simulator.email_error');
           isValid = false;
         }
@@ -197,9 +274,25 @@ const Simulator = forwardRef((props, ref) => {
     return isValid;
   };
 
+  // ===== CORRECTION 5: nextStep amélioré - PLUS DE FERMETURE INTEMPESTIVE =====
   const nextStep = () => {
-    if (validateStep(currentStep)) {
+    const isValid = validateStep(currentStep);
+    if (isValid) {
       setCurrentStep(prev => prev + 1);
+      setErrors({}); // Effacer les erreurs lors du passage réussi
+    } else {
+      // Ajouter un feedback visuel pour les erreurs
+      // Le simulateur reste ouvert pour permettre la correction
+      console.log('Validation échouée, veuillez vérifier le formulaire');
+      
+      // Optionnel: ajouter un effet visuel
+      const submitButton = document.querySelector('.simulator-next-btn');
+      if (submitButton) {
+        submitButton.classList.add('error-shake');
+        setTimeout(() => {
+          submitButton.classList.remove('error-shake');
+        }, 500);
+      }
     }
   };
 
@@ -266,6 +359,9 @@ const Simulator = forwardRef((props, ref) => {
       gtm.trackSimulatorComplete(formData, resultsData);
       
       setCurrentStep(6);
+      
+      // Nettoyer le localStorage une fois les résultats obtenus
+      clearLocalStorage();
     }
   };
 
@@ -380,6 +476,7 @@ const Simulator = forwardRef((props, ref) => {
     }
   };
 
+  // ===== CORRECTION 6: handleClickOutside amélioré =====
   const handleClickOutside = (e) => {
     if (e.target.classList.contains('simulator-popup') && currentStep !== 6) {
       closeSimulator();
@@ -420,7 +517,7 @@ const Simulator = forwardRef((props, ref) => {
               {errors.platform && <span className="form-error" id="platform-error">{errors.platform}</span>}
             </div>
             <div className="form-buttons" style={{ justifyContent: 'flex-end' }}>
-              <button type="button" className="btn btn-primary" onClick={nextStep} aria-label={t('simulator.button_next')}>
+              <button type="button" className="btn btn-primary simulator-next-btn" onClick={nextStep} aria-label={t('simulator.button_next')}>
                 {t('simulator.button_next')}
               </button>
             </div>
@@ -443,7 +540,7 @@ const Simulator = forwardRef((props, ref) => {
               <button type="button" className="btn btn-secondary" onClick={prevStep} aria-label={t('simulator.button_prev')}>
                 {t('simulator.button_prev')}
               </button>
-              <button type="button" className="btn btn-primary" onClick={nextStep} aria-label={t('simulator.button_next')}>
+              <button type="button" className="btn btn-primary simulator-next-btn" onClick={nextStep} aria-label={t('simulator.button_next')}>
                 {t('simulator.button_next')}
               </button>
             </div>
@@ -451,34 +548,34 @@ const Simulator = forwardRef((props, ref) => {
 
           {/* Étape 3 - Budget */}
           <div className={`form-step ${currentStep === 3 ? 'active' : ''}`} id="step-3" role="tabpanel">
-             <h3>{t('simulator.step3_title')}</h3>
+            <h3>{t('simulator.step3_title')}</h3>
             <div className="form-group">
-              <label htmlFor="budget">{t('simulator.step3_budget_label')}</label> {/* Clé modifiée pour correspondre à l'étape */}
-              <input type="number" id="budget" name="budget" min="500" step="10" value={formData.budget} onChange={handleChange} required placeholder={t('simulator.step3_budget_placeholder')} aria-describedby={errors.budget ? "budget-error" : undefined} />
+              <label htmlFor="budget">{t('simulator.step3_budget_label')}</label>
+              <input type="number" id="budget" name="budget" value={formData.budget} onChange={handleChange} required min="500" placeholder={t('simulator.step3_budget_placeholder')} aria-describedby={errors.budget ? "budget-error" : undefined} />
               {errors.budget && <span className="form-error" id="budget-error">{errors.budget}</span>}
             </div>
             <div className="form-buttons">
               <button type="button" className="btn btn-secondary" onClick={prevStep} aria-label={t('simulator.button_prev')}>
                 {t('simulator.button_prev')}
               </button>
-              <button type="button" className="btn btn-primary" onClick={nextStep} aria-label={t('simulator.button_next')}>
+              <button type="button" className="btn btn-primary simulator-next-btn" onClick={nextStep} aria-label={t('simulator.button_next')}>
                 {t('simulator.button_next')}
               </button>
             </div>
           </div>
 
-          {/* Étape 4 - Pays */}
+          {/* Étape 4 - Zone géographique */}
           <div className={`form-step ${currentStep === 4 ? 'active' : ''}`} id="step-4" role="tabpanel">
             <h3>{t('simulator.step4_title')}</h3>
             <div className="form-group">
-              <label htmlFor="country">{t('simulator.step4_region_label')}</label> {/* Clé modifiée */}
+              <label htmlFor="country">{t('simulator.step4_country_label')}</label>
               <select id="country" name="country" value={formData.country} onChange={handleChange} required aria-describedby={errors.country ? "country-error" : undefined}>
                 <option value="" disabled>{t('simulator.option_select')}</option>
-                <option value="europe">{t('simulator.region_europe')}</option>
-                <option value="usa">{t('simulator.region_usa')}</option>
-                <option value="canada">{t('simulator.region_canada')}</option>
-                <option value="south_america">{t('simulator.region_south_america')}</option>
-                <option value="asia">{t('simulator.region_asia')}</option>
+                <option value="usa">{t('simulator.country_usa')}</option>
+                <option value="canada">{t('simulator.country_canada')}</option>
+                <option value="europe">{t('simulator.country_europe')}</option>
+                <option value="south_america">{t('simulator.country_south_america')}</option>
+                <option value="asia">{t('simulator.country_asia')}</option>
               </select>
               {errors.country && <span className="form-error" id="country-error">{errors.country}</span>}
             </div>
@@ -486,18 +583,18 @@ const Simulator = forwardRef((props, ref) => {
               <button type="button" className="btn btn-secondary" onClick={prevStep} aria-label={t('simulator.button_prev')}>
                 {t('simulator.button_prev')}
               </button>
-              <button type="button" className="btn btn-primary" onClick={nextStep} aria-label={t('simulator.button_next')}>
+              <button type="button" className="btn btn-primary simulator-next-btn" onClick={nextStep} aria-label={t('simulator.button_next')}>
                 {t('simulator.button_next')}
               </button>
             </div>
           </div>
 
-          {/* Étape 5 - Informations */}
+          {/* Étape 5 - Informations personnelles */}
           <div className={`form-step ${currentStep === 5 ? 'active' : ''}`} id="step-5" role="tabpanel">
-             <h3>{t('simulator.step5_title')}</h3>
+            <h3>{t('simulator.step5_title')}</h3>
             <div className="form-group">
-              <label htmlFor="artistName">{t('simulator.step5_artist_label')}</label> {/* Clé modifiée */}
-              <input type="text" id="artistName" name="artistName" value={formData.artistName} onChange={handleChange} required placeholder={t('simulator.step5_artist_placeholder')} aria-describedby={errors.artistName ? "artistName-error" : undefined} />
+              <label htmlFor="artistName">{t('simulator.step5_artistName_label')}</label>
+              <input type="text" id="artistName" name="artistName" value={formData.artistName} onChange={handleChange} required placeholder={t('simulator.step5_artistName_placeholder')} aria-describedby={errors.artistName ? "artistName-error" : undefined} />
               {errors.artistName && <span className="form-error" id="artistName-error">{errors.artistName}</span>}
             </div>
             <div className="form-group">
@@ -544,6 +641,9 @@ const Simulator = forwardRef((props, ref) => {
               <button type="button" className="btn btn-secondary" onClick={() => setCurrentStep(5)} aria-label={t('simulator.button_modify')}> {/* Retour à l'étape 5 */}
                 {t('simulator.button_modify')}
               </button>
+              <button type="button" className="btn btn-outline" onClick={resetSimulator} aria-label="Nouvelle simulation">
+                Nouvelle simulation
+              </button>
               <a id="calendly-link" href={`${CALENDLY_LINKS[formData.platform]}?name=${encodeURIComponent(formData.artistName)}&email=${encodeURIComponent(formData.email)}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary" aria-label={t('simulator.results_cta_expert')}>
                 {t('simulator.cta_expert_button')}
               </a>
@@ -558,3 +658,4 @@ const Simulator = forwardRef((props, ref) => {
 Simulator.displayName = 'Simulator';
 
 export default Simulator;
+

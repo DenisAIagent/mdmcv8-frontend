@@ -195,3 +195,8 @@
     width: 100%;
   }
 }
+
+
+/* ===== CORRECTIONS POUR BUG PERSISTANCE DONNÉES ===== */
+@import './simulator_corrections.css';
+
