@@ -23,7 +23,7 @@ const NewsletterForm = () => {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
-          'api-key': 'vRxNSCYQgtZIWaXK',
+          'api-key': import.meta.env.VITE_BREVO_API_KEY,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
