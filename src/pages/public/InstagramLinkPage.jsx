@@ -227,6 +227,7 @@ const InstagramLinkPage = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     loadArticles();
@@ -241,6 +242,7 @@ const InstagramLinkPage = () => {
       
       if (response.success && response.data.length > 0) {
         setArticles(response.data);
+        setRetryCount(0);
         console.log('✅ Articles: Chargés depuis blog MDMC avec succès');
       } else {
         throw new Error(response.error || 'Aucun article trouvé');
@@ -255,6 +257,14 @@ const InstagramLinkPage = () => {
     }
   };
 
+  const handleRetry = () => {
+    if (retryCount < 3) {
+      const newRetryCount = retryCount + 1;
+      setRetryCount(newRetryCount);
+      console.log(`🔄 Articles: Tentative ${newRetryCount}...`);
+      loadArticles();
+    }
+  };
 
   const mainLinks = [
     {
