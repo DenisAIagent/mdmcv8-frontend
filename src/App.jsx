@@ -48,6 +48,7 @@ import AllReviews from './components/pages/AllReviews';
 import ArtistPage from './pages/public/ArtistPage';
 import SmartLinkPageNew from './pages/public/SmartLinkPageNew';
 import SmartLinkPageClean from './pages/public/SmartLinkPageClean';
+import InstagramLinkPage from './pages/public/InstagramLinkPage';
 import SmartLinkPageDoubleTracking from './pages/public/SmartLinkPageDoubleTracking';
 
 // Pages de ressources légales
@@ -228,6 +229,7 @@ function App() {
         <Route path="/" element={<HomePage openSimulator={openSimulator} />} />
         <Route path="/all-reviews" element={<AllReviews />} />
         <Route path="/artists/:slug" element={<ArtistPage />} />
+        <Route path="/links" element={<InstagramLinkPage />} />
         <Route path="/s/:slug" element={<SmartLinkPageNew />} />
         <Route path="/smartlinks/:artistSlug/:trackSlug" element={<SmartLinkPageClean />} />
         <Route path="/smartlinks-old/:artistSlug/:trackSlug" element={<SmartLinkPageNew />} />
