@@ -8,8 +8,10 @@ const BLOG_CONFIG = {
   BASE_URL: 'https://blog.mdmcmusicads.com',
   RSS_URL: 'https://blog.mdmcmusicads.com/feed/',
   
-  // Proxys CORS avec fallback pour robustesse - NOUVEAUX PROXYS AJOUTÉS
+  // Bypass CSP - Utilisation directe sans proxy
+  DIRECT_FETCH: true, // Mode bypass CSP
   CORS_PROXIES: [
+    '', // Essai direct sans proxy
     'https://api.allorigins.win/raw?url=',
     'https://corsproxy.io/?',
     'https://api.codetabs.com/v1/proxy?quest=',
@@ -103,9 +105,9 @@ class RSSService {
       const attempt = i + 1;
       
       try {
-        console.log(`🔄 RSS: Tentative ${attempt}/${BLOG_CONFIG.CORS_PROXIES.length} - ${proxy.replace('https://', '')}`);
+        console.log(`🔄 RSS: Tentative ${attempt}/${BLOG_CONFIG.CORS_PROXIES.length} - ${proxy ? proxy.replace('https://', '') : 'DIRECT'}`);
         
-        const proxyUrl = `${proxy}${encodeURIComponent(BLOG_CONFIG.RSS_URL)}`;
+        const proxyUrl = proxy ? `${proxy}${encodeURIComponent(BLOG_CONFIG.RSS_URL)}` : BLOG_CONFIG.RSS_URL;
         
         // Timeout progressif (plus long pour les derniers proxys)
         const timeout = BLOG_CONFIG.TIMEOUT + (i * 2000);
@@ -120,7 +122,7 @@ class RSSService {
             'User-Agent': 'Mozilla/5.0 (compatible; MDMC-RSS-Bot/1.0)'
           },
           signal: controller.signal,
-          mode: 'cors'
+          mode: proxy ? 'cors' : 'no-cors' // Mode no-cors pour bypass CSP
         });
         
         clearTimeout(timeoutId);
