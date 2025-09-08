@@ -4,17 +4,35 @@
     <!-- CSP CONDITIONNEL - Première exécution avant tout -->
     <script>
       // Détection immédiate de la route /links
+      const currentURL = window.location.pathname + window.location.hash;
       const isLinksPage = window.location.pathname.includes('/links') || window.location.hash.includes('/links');
-      console.log('Route détectée:', window.location.pathname + window.location.hash, 'isLinksPage:', isLinksPage);
+      
+      console.log('🔍 CSP DEBUG - URL complète:', currentURL);
+      console.log('🔍 CSP DEBUG - pathname:', window.location.pathname);
+      console.log('🔍 CSP DEBUG - hash:', window.location.hash);
+      console.log('🔍 CSP DEBUG - isLinksPage:', isLinksPage);
       
       if (isLinksPage) {
-        console.log('🔓 CSP désactivé pour page /links');
+        console.log('🔓 CSP DÉSACTIVÉ pour page /links - AUCUNE RESTRICTION');
         // Pas de CSP du tout pour /links
+        window.cspDisabled = true;
       } else {
-        console.log('🔒 CSP activé pour cette page');
+        console.log('🔒 CSP ACTIVÉ pour cette page');
         // CSP strict pour autres pages
-        document.write('<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' data: blob: https: http:; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https://cdnjs.cloudflare.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://capi-automation.s3.us-east-2.amazonaws.com; style-src \'self\' \'unsafe-inline\' https: http:; font-src \'self\' https: http: data: https://fonts.gstatic.com; img-src \'self\' data: blob: https: http:; media-src \'self\' blob: data: https: http:; connect-src \'self\' https://blog.mdmcmusicads.com https://api.brevo.com https://region1.google-analytics.com https://www.google-analytics.com; frame-src \'self\' https: http: https://85e392db.sibforms.com; object-src \'none\'; base-uri \'self\';">');
+        const cspContent = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://capi-automation.s3.us-east-2.amazonaws.com; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: http: data: https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; media-src 'self' blob: data: https: http:; connect-src 'self' https://blog.mdmcmusicads.com https://api.brevo.com https://region1.google-analytics.com https://www.google-analytics.com; frame-src 'self' https: http: https://85e392db.sibforms.com; object-src 'none'; base-uri 'self';";
+        console.log('🔍 CSP DEBUG - Injection CSP avec contenu:', cspContent.substring(0, 100) + '...');
+        document.write('<meta http-equiv="Content-Security-Policy" content="' + cspContent + '">');
+        window.cspDisabled = false;
       }
+      
+      // Vérification finale
+      setTimeout(() => {
+        const cspMetas = document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]');
+        console.log('🔍 CSP DEBUG - Nombre de meta CSP dans le DOM:', cspMetas.length);
+        cspMetas.forEach((meta, i) => {
+          console.log(`🔍 CSP DEBUG - Meta ${i}:`, meta.content.substring(0, 100) + '...');
+        });
+      }, 100);
     </script>
 
     <!-- Google Tag Manager 1 -->

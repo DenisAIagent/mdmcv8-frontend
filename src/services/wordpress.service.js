@@ -16,9 +16,12 @@ class WordPressService {
 
   async getLatestPosts(limit = 3) {
     try {
-      console.log('📝 WordPress: Récupération directe des articles...');
+      console.log('📝 WordPress DEBUG: Début récupération articles...');
+      console.log('📝 WordPress DEBUG: Base URL:', this.api.defaults.baseURL);
+      console.log('📝 WordPress DEBUG: Limit demandé:', limit);
+      console.log('📝 WordPress DEBUG: URL complète:', `${this.api.defaults.baseURL}/posts`);
       
-      const response = await this.api.get('/posts', {
+      const requestConfig = {
         params: {
           per_page: limit,
           _embed: true,
@@ -26,7 +29,12 @@ class WordPressService {
           orderby: 'date',
           order: 'desc'
         }
-      });
+      };
+      
+      console.log('📝 WordPress DEBUG: Params requête:', requestConfig.params);
+      console.log('📝 WordPress DEBUG: Lancement requête...');
+      
+      const response = await this.api.get('/posts', requestConfig);
 
       console.log('✅ WordPress: Articles récupérés avec succès!', response.data.length);
       
@@ -49,7 +57,25 @@ class WordPressService {
       };
 
     } catch (error) {
-      console.error('❌ WordPress: Erreur lors de la récupération:', error.message);
+      console.error('❌ WordPress DEBUG: Erreur détaillée lors de la récupération');
+      console.error('❌ WordPress DEBUG: Type erreur:', error.constructor.name);
+      console.error('❌ WordPress DEBUG: Message:', error.message);
+      console.error('❌ WordPress DEBUG: Code:', error.code);
+      console.error('❌ WordPress DEBUG: Config:', error.config?.url);
+      console.error('❌ WordPress DEBUG: Response status:', error.response?.status);
+      console.error('❌ WordPress DEBUG: Response data:', error.response?.data);
+      console.error('❌ WordPress DEBUG: Stack:', error.stack);
+      
+      if (error.response) {
+        console.error('❌ WordPress DEBUG: Réponse HTTP reçue avec erreur');
+        console.error('❌ WordPress DEBUG: Status:', error.response.status);
+        console.error('❌ WordPress DEBUG: Headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('❌ WordPress DEBUG: Aucune réponse reçue');
+        console.error('❌ WordPress DEBUG: Request config:', error.request);
+      } else {
+        console.error('❌ WordPress DEBUG: Erreur lors de la configuration de la requête');
+      }
       
       return {
         success: false,
