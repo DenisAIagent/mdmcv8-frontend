@@ -4,8 +4,11 @@ class NewsletterService {
     const isDev = window.location.hostname === 'localhost' || 
                   window.location.hostname === '127.0.0.1';
     
-    // En développement, utiliser le backend local sur port 5001, sinon fallback sur Brevo direct
-    this.baseURL = isDev ? 'http://localhost:5001' : null;
+    // En développement, utiliser le backend local sur port 5001
+    // En production, utiliser le backend Railway
+    this.baseURL = isDev 
+      ? 'http://localhost:5001' 
+      : 'https://mdmcv4-backend-production-b615.up.railway.app';
     
     console.log('📧 Newsletter Service initialized:', { 
       isDev, 
@@ -16,10 +19,13 @@ class NewsletterService {
   }
 
   async subscribe(email, source = 'Instagram Links Page') {
-    // En production, aller directement vers Brevo API
+    // Toujours utiliser le backend (local ou Railway)
     if (!this.baseURL) {
-      console.log('📧 Newsletter Service: Production mode - utilisation directe de Brevo API');
-      return this.subscribeDirectToBrevo(email, source);
+      console.error('📧 Newsletter Service: Aucun backend configuré');
+      return { 
+        success: false, 
+        message: 'Service temporairement indisponible' 
+      };
     }
 
     try {
