@@ -9,6 +9,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware pour parser le JSON
+app.use(express.json());
+
 // Configuration pour servir les fichiers statiques depuis le dossier dist
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -35,6 +38,81 @@ app.use((req, res, next) => {
 // Health check endpoint pour Railway
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// Endpoint Newsletter avec Brevo
+app.post('/api/newsletter/subscribe', async (req, res) => {
+  const { email, source = 'Website', attributes = {} } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Email requis' 
+    });
+  }
+
+  // Clé API Brevo depuis les variables d'environnement
+  const BREVO_API_KEY = process.env.VITE_BREVO_API_KEY;
+  
+  if (!BREVO_API_KEY) {
+    console.error('❌ Newsletter Backend: VITE_BREVO_API_KEY manquante');
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Configuration serveur manquante' 
+    });
+  }
+  
+  console.log('📧 Newsletter Backend: Tentative inscription', { email, source });
+  
+  try {
+    const response = await fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        listIds: [2], // ID de votre liste Brevo
+        attributes: {
+          SOURCE: source,
+          DATE_INSCRIPTION: new Date().toISOString(),
+          ...attributes
+        },
+        updateEnabled: true
+      }),
+    });
+
+    const responseData = await response.json().catch(() => null);
+    
+    if (response.ok) {
+      console.log('✅ Newsletter Backend: Inscription réussie');
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Inscription réussie' 
+      });
+    } else if (response.status === 400) {
+      // Email déjà inscrit
+      console.log('ℹ️ Newsletter Backend: Email déjà inscrit');
+      return res.status(200).json({ 
+        success: true, 
+        message: 'Vous êtes déjà inscrit(e)' 
+      });
+    } else {
+      console.error('❌ Newsletter Backend: Erreur Brevo', response.status, responseData);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Erreur lors de l\'inscription' 
+      });
+    }
+  } catch (error) {
+    console.error('❌ Newsletter Backend: Erreur', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
 });
 
 // Route pour servir les pages statiques SmartLinks

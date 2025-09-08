@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import wordpressService from '../../services/wordpress.service';
+import newsletterService from '../../services/newsletter.service';
 import './InstagramLinkPage.css';
 
 // Composant Newsletter Form avec API Brevo
@@ -16,47 +17,19 @@ const NewsletterForm = () => {
     setStatus('loading');
 
     try {
-      // Appel API Brevo pour inscription
-      console.log('🔧 Brevo DEBUG: Tentative inscription avec email:', email);
-      console.log('🔧 Brevo DEBUG: API Key loaded:', import.meta.env.VITE_BREVO_API_KEY ? '✅ Present' : '❌ Missing');
-      console.log('🔧 Brevo DEBUG: API Key length:', import.meta.env.VITE_BREVO_API_KEY?.length || 0);
+      const result = await newsletterService.subscribe(email, 'Instagram Links Page');
       
-      const response = await fetch('https://api.brevo.com/v3/contacts', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'api-key': import.meta.env.VITE_BREVO_API_KEY,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          listIds: [2],
-          attributes: {
-            SOURCE: 'Instagram Links Page',
-            DATE_INSCRIPTION: new Date().toISOString()
-          },
-          updateEnabled: true
-        }),
-      });
-      
-      console.log('🔧 Brevo DEBUG: Response status:', response.status);
-      console.log('🔧 Brevo DEBUG: Response headers:', Object.fromEntries(response.headers.entries()));
-
-      if (response.ok || response.status === 400) {
-        // 400 peut signifier que l'email existe déjà, ce qui est OK
+      if (result.success) {
         setStatus('success');
         setEmail('');
+        console.log('✅ Newsletter: Inscription réussie');
       } else {
         setStatus('error');
+        console.error('❌ Newsletter: Erreur inscription', result.message);
       }
     } catch (error) {
-      console.error('Erreur inscription newsletter:', error);
+      console.error('❌ Newsletter: Erreur inattendue', error);
       setStatus('error');
-      
-      // Log détaillé pour debug
-      if (error.response?.status === 401) {
-        console.error('❌ API Brevo: Clé API invalide ou expirée');
-      }
     }
   };
 
