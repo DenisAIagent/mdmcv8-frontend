@@ -281,7 +281,7 @@ const Simulator = forwardRef((props, ref) => {
       const emailJSServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
       const emailJSTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
       const emailJSPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-      const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n-production-de00.up.railway.app/webhook/music-lead-simple';
+      const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n-production-de00.up.railway.app/webhook-test/music-lead-simple';
       
       console.log('🚀 Envoi simultané EmailJS + n8n...');
       
