@@ -16,7 +16,8 @@
       "Bash(find:*)",
       "WebSearch",
       "WebFetch(domain:developers.brevo.com)",
-      "WebFetch(domain:endgrate.com)"
+      "WebFetch(domain:endgrate.com)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []
