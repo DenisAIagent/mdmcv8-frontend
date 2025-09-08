@@ -13,7 +13,10 @@
       "Bash(npm install:*)",
       "Read(//Users/denisadam/Downloads/**)",
       "Bash(npm run build:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebSearch",
+      "WebFetch(domain:developers.brevo.com)",
+      "WebFetch(domain:endgrate.com)"
     ],
     "deny": [],
     "ask": []

@@ -17,22 +17,28 @@ const NewsletterForm = () => {
 
     try {
       // Appel API Brevo pour inscription
+      console.log('🔧 Brevo DEBUG: Tentative inscription avec email:', email);
+      
       const response = await fetch('https://api.brevo.com/v3/contacts', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
+          'Accept': 'application/json',
           'api-key': 'vRxNSCYQgtZIWaXK',
-          'content-type': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: email,
-          listIds: [2], // ID de votre liste newsletter
+          listIds: [2],
           attributes: {
             SOURCE: 'Instagram Links Page',
             DATE_INSCRIPTION: new Date().toISOString()
-          }
+          },
+          updateEnabled: true
         }),
       });
+      
+      console.log('🔧 Brevo DEBUG: Response status:', response.status);
+      console.log('🔧 Brevo DEBUG: Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (response.ok || response.status === 400) {
         // 400 peut signifier que l'email existe déjà, ce qui est OK
@@ -44,6 +50,11 @@ const NewsletterForm = () => {
     } catch (error) {
       console.error('Erreur inscription newsletter:', error);
       setStatus('error');
+      
+      // Log détaillé pour debug
+      if (error.response?.status === 401) {
+        console.error('❌ API Brevo: Clé API invalide ou expirée');
+      }
     }
   };
 
