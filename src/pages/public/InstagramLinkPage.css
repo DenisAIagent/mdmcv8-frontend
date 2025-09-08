@@ -54,6 +54,7 @@
   margin: 0 auto 20px;
   border-radius: 50%;
   padding: 30px;
+  background: white;
   box-shadow: 0 8px 32px rgba(229, 9, 20, 0.3);
   animation: pulse 2s infinite;
 }

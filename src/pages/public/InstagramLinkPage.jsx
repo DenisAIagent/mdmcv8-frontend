@@ -193,7 +193,7 @@ const InstagramLinkPage = () => {
         <header className="ilp-header">
           <div className="ilp-logo-wrapper">
             <img 
-              src="/assets/images/logo.png" 
+              src="/assets/images/logo-white-bg.png" 
               alt="MDMC Music Ads" 
               className="ilp-logo"
             />
