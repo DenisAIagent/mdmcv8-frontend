@@ -10,7 +10,9 @@
       "Bash(git push:*)",
       "Bash(git pull:*)",
       "Bash(npm run dev:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Read(//Users/denisadam/Downloads/**)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

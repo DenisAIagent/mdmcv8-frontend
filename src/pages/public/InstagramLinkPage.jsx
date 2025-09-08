@@ -257,9 +257,9 @@ const InstagramLinkPage = () => {
 
   const mainLinks = [
     {
-      title: 'Simulateur de Campagne',
+      title: t('instagramLinks.simulatorButton.title'),
       url: 'https://www.mdmcmusicads.com/#simulator',
-      description: 'Estimez les résultats de votre campagne',
+      description: t('instagramLinks.simulatorButton.description'),
       isPrimary: true
     }
   ];
@@ -306,11 +306,11 @@ const InstagramLinkPage = () => {
               className="ilp-logo"
             />
           </div>
-          <h1 className="ilp-title">MDMC Music Ads</h1>
+          <h1 className="ilp-title">{t('instagramLinks.title')}</h1>
           <p className="ilp-bio">
-            Marketing Musical Digital<br />
-            YouTube, Meta & TikTok Ads<br />
-            Faites décoller votre musique
+            {t('instagramLinks.bio.line1')}<br />
+            {t('instagramLinks.bio.line2')}<br />
+            {t('instagramLinks.bio.line3')}
           </p>
         </header>
 
@@ -336,13 +336,13 @@ const InstagramLinkPage = () => {
           {loading && (
             <div className="ilp-loading">
               <span className="ilp-loading-spinner"></span>
-              <p>Chargement des articles...</p>
+              <p>{t('instagramLinks.blogSection.loadingMessage')}</p>
             </div>
           )}
           
           {error && (
             <div className="ilp-error">
-              <p>{error}</p>
+              <p>{t('instagramLinks.blogSection.errorMessage')}</p>
             </div>
           )}
           
@@ -367,7 +367,7 @@ const InstagramLinkPage = () => {
                   </div>
                   <div className="ilp-article-content">
                     <h3 className="ilp-article-title">{article.title}</h3>
-                    <p className="ilp-article-description">{article.excerpt || article.description || "Découvrez cet article passionnant sur notre blog..."}</p>
+                    <p className="ilp-article-description">{article.excerpt || article.description || t('instagramLinks.blogSection.fallbackDescription')}</p>
                   </div>
                 </a>
               ))}
@@ -377,7 +377,7 @@ const InstagramLinkPage = () => {
 
         {/* Réseaux sociaux */}
         <section className="ilp-social-section">
-          <h2 className="ilp-section-title">Suivez-nous</h2>
+          <h2 className="ilp-section-title">{t('instagramLinks.socialSection.title')}</h2>
           <div className="ilp-social-links">
             {socialLinks.map((social, index) => (
               <a
@@ -396,7 +396,7 @@ const InstagramLinkPage = () => {
 
         {/* Footer */}
         <footer className="ilp-footer">
-          <p>&copy; 2025 MDMC Music Ads - Tous droits réservés</p>
+          <p>{t('instagramLinks.footer.copyright')}</p>
         </footer>
       </div>
     </div>

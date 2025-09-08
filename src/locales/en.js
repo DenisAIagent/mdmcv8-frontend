@@ -583,5 +583,28 @@ export default {
     "submit": "Submit",
     "submitting": "Submitting...",
     "close": "Close"
+  },
+  "instagramLinks": {
+    "title": "MDMC Music Ads",
+    "bio": {
+      "line1": "Digital Music Marketing",
+      "line2": "YouTube, Meta & TikTok Ads",
+      "line3": "Make your music soar"
+    },
+    "simulatorButton": {
+      "title": "Campaign Simulator",
+      "description": "Estimate your campaign results"
+    },
+    "blogSection": {
+      "loadingMessage": "Loading articles...",
+      "errorMessage": "Unable to load articles",
+      "fallbackDescription": "Discover this exciting article on our blog..."
+    },
+    "socialSection": {
+      "title": "Follow us"
+    },
+    "footer": {
+      "copyright": "© 2025 MDMC Music Ads - All rights reserved"
+    }
   }
 }
