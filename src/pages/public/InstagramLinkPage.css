@@ -1,29 +1,57 @@
 /* Instagram Link Page Styles */
 .instagram-link-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  position: relative;
   padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.instagram-link-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/assets/images/fans-loyalty.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(6px);
+  opacity: 1;
+  z-index: 0;
+}
+
+.instagram-link-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.7) 0%, rgba(45, 45, 45, 0.7) 100%);
+  z-index: 1;
 }
 
 .ilp-container {
   max-width: 680px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
   animation: fadeInUp 0.6s ease;
 }
 
 /* Header */
 .ilp-header {
   text-align: center;
-  margin-bottom: 40px;
-  padding: 20px 0;
+  margin-bottom: 15px;
+  padding: 10px 0;
 }
 
 .ilp-logo-wrapper {
   width: 120px;
   height: 120px;
   margin: 0 auto 20px;
-  background: white;
   border-radius: 50%;
   padding: 20px;
   box-shadow: 0 8px 32px rgba(229, 9, 20, 0.3);
@@ -53,14 +81,15 @@
 
 /* Main Links */
 .ilp-main-links {
-  margin-bottom: 50px;
+  margin-bottom: 15px;
 }
 
 .ilp-link-button {
   display: block;
-  width: 100%;
+  width: 85%;
+  max-width: 400px;
+  margin: 0 auto;
   padding: 18px 24px;
-  margin-bottom: 16px;
   background: rgba(255, 255, 255, 0.08);
   border: 2px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
@@ -78,41 +107,69 @@
 
 .ilp-link-button.ilp-primary {
   background: linear-gradient(135deg, #E50914 0%, #ff1a28 100%);
-  border-color: #E50914;
+  border: 2px solid #E50914;
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+}
+
+.ilp-link-button.ilp-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.ilp-link-button.ilp-primary:hover::before {
+  left: 100%;
 }
 
 .ilp-link-button.ilp-primary:hover {
   background: linear-gradient(135deg, #ff1a28 0%, #E50914 100%);
-  box-shadow: 0 12px 32px rgba(229, 9, 20, 0.5);
+  box-shadow: 0 15px 40px rgba(229, 9, 20, 0.6);
+  transform: translateY(-3px);
+  border-color: #ff1a28;
 }
 
 .ilp-link-title {
   display: block;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: white;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 2;
 }
 
 .ilp-link-description {
   display: block;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
 }
 
 /* Blog Section */
 .ilp-blog-section {
-  margin-bottom: 50px;
+  margin-bottom: 15px;
 }
 
 .ilp-section-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: white;
-  margin: 0 0 25px;
+  margin: 0 0 18px;
   text-align: center;
   position: relative;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .ilp-section-title::after {
@@ -130,19 +187,20 @@
 /* Articles Grid */
 .ilp-articles-grid {
   display: grid;
-  gap: 16px;
+  gap: 8px;
 }
 
 .ilp-article-card {
   display: flex;
-  gap: 16px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
   text-decoration: none;
   transition: all 0.3s ease;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .ilp-article-card:hover {
@@ -193,14 +251,17 @@
 
 .ilp-article-description {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #ffffff;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  font-weight: 400;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Loading & Error States */
@@ -231,7 +292,7 @@
 
 /* Social Section */
 .ilp-social-section {
-  margin-bottom: 40px;
+  margin-bottom: 10px;
 }
 
 .ilp-social-links {
@@ -251,6 +312,7 @@
   border-radius: 50%;
   text-decoration: none;
   transition: all 0.3s ease;
+  color: white;
 }
 
 .ilp-social-link:hover {
@@ -258,6 +320,7 @@
   border-color: #E50914;
   transform: translateY(-4px) scale(1.1);
   box-shadow: 0 8px 24px rgba(229, 9, 20, 0.4);
+  color: white;
 }
 
 .ilp-social-icon {
