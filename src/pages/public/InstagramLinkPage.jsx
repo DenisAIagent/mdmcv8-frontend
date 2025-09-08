@@ -13,11 +13,12 @@ const BLOG_CONFIG = {
     'https://api.codetabs.com/v1/proxy?quest='
   ],
   TIMEOUT: 15000,
+  USE_BACKEND_PROXY: false // Utiliser directement le RSS avec proxy CORS
 };
 
 // Service RSS intégré - identique à Articles.jsx
 class RSSService {
-  async getLatestArticles(limit = 10) {
+  async getLatestArticles(limit = 3) {
     console.log('📰 RSS: Récupération directe depuis blog MDMC...', BLOG_CONFIG.RSS_URL);
     
     // Essayer chaque proxy CORS jusqu'à ce qu'un fonctionne
