@@ -17,7 +17,9 @@
       "WebSearch",
       "WebFetch(domain:developers.brevo.com)",
       "WebFetch(domain:endgrate.com)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(curl:*)",
+      "Bash(PORT=5001 node server.js)"
     ],
     "deny": [],
     "ask": []
