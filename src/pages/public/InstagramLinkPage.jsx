@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import rssService from '../../services/RSSService';
+import wordpressService from '../../services/wordpress.service';
 import './InstagramLinkPage.css';
 
 // Composant Newsletter Form avec API Brevo
@@ -101,14 +101,14 @@ const InstagramLinkPage = () => {
       setLoading(true);
       setError(null);
       
-      console.log('📰 InstagramLinks: Chargement articles depuis service RSS avec fallbacks...');
+      console.log('📰 InstagramLinks: Chargement articles depuis WordPress REST API...');
       
-      const response = await rssService.getLatestArticles(3);
+      const response = await wordpressService.getLatestPosts(3);
       
       if (response.success && response.data.length > 0) {
         setArticles(response.data);
         setRetryCount(0);
-        console.log(`✅ InstagramLinks: ${response.data.length} articles chargés depuis ${response.source || 'RSS'}`);
+        console.log(`✅ InstagramLinks: ${response.data.length} articles chargés depuis WordPress REST API`);
         
         if (response.warning) {
           console.warn(`⚠️ InstagramLinks: ${response.warning}`);
@@ -132,10 +132,7 @@ const InstagramLinkPage = () => {
       setRetryCount(newRetryCount);
       console.log(`🔄 Articles: Tentative ${newRetryCount}...`);
       
-      // Clear cache et retry
-      if (rssService.clearCache) {
-        rssService.clearCache();
-      }
+      // WordPress API n'a pas de cache à vider
       
       loadArticles();
     }
@@ -258,14 +255,14 @@ const InstagramLinkPage = () => {
                   rel="noopener noreferrer"
                   className="ilp-article-card"
                 >
-                  {article.image && (
+                  {(article.featuredImage?.url || article.image) && (
                     <div className="ilp-article-image">
                       <img 
-                        src={article.image} 
-                        alt={article.title}
+                        src={article.featuredImage?.url || article.image} 
+                        alt={article.featuredImage?.alt || article.title}
                         loading="lazy"
                         onError={(e) => {
-                          console.warn(`⚠️ Erreur image article ${index + 1}:`, article.image);
+                          console.warn(`⚠️ Erreur image article ${index + 1}:`, article.featuredImage?.url || article.image);
                           e.target.src = '/assets/images/logo.png';
                         }}
                       />
