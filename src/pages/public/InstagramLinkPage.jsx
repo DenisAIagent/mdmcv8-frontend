@@ -18,6 +18,8 @@ const NewsletterForm = () => {
     try {
       // Appel API Brevo pour inscription
       console.log('🔧 Brevo DEBUG: Tentative inscription avec email:', email);
+      console.log('🔧 Brevo DEBUG: API Key loaded:', import.meta.env.VITE_BREVO_API_KEY ? '✅ Present' : '❌ Missing');
+      console.log('🔧 Brevo DEBUG: API Key length:', import.meta.env.VITE_BREVO_API_KEY?.length || 0);
       
       const response = await fetch('https://api.brevo.com/v3/contacts', {
         method: 'POST',
