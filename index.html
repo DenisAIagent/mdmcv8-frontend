@@ -57,8 +57,23 @@
     <meta property="twitter:site" content="@mdmcmusicads" />
     <meta property="twitter:creator" content="@mdmcmusicads" />
     
-    <!-- CSP DÉSACTIVÉ TEMPORAIREMENT - Pour RSS et services externes -->
-    <!-- <meta http-equiv="Content-Security-Policy" content="..."> -->
+    <!-- CSP CONDITIONNEL - Désactivé uniquement sur /links -->
+    <script>
+      // Détection route /links pour désactiver CSP
+      const currentPath = window.location.pathname + window.location.hash;
+      const isLinksPage = currentPath.includes('/links') || currentPath.includes('#/links');
+      
+      if (!isLinksPage) {
+        // CSP normal pour toutes les autres pages
+        const cspMeta = document.createElement('meta');
+        cspMeta.httpEquiv = 'Content-Security-Policy';
+        cspMeta.content = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://capi-automation.s3.us-east-2.amazonaws.com; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: http: data: https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; media-src 'self' blob: data: https: http:; connect-src 'self' https://blog.mdmcmusicads.com https://api.brevo.com https://region1.google-analytics.com https://www.google-analytics.com; frame-src 'self' https: http: https://85e392db.sibforms.com; object-src 'none'; base-uri 'self';";
+        document.head.appendChild(cspMeta);
+        console.log('🔒 CSP activé pour cette page');
+      } else {
+        console.log('🔓 CSP désactivé pour page /links');
+      }
+    </script>
     
     <!-- Fonts Google optimisées avec preload -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
