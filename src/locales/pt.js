@@ -594,6 +594,10 @@ export default {
       "errorMessage": "Não foi possível carregar os artigos",
       "fallbackDescription": "Descubra este artigo emocionante em nosso blog..."
     },
+    "newsletter": {
+      "title": "Newsletter MDMC",
+      "subtitle": "Receba nossas últimas dicas de marketing musical"
+    },
     "socialSection": {
       "title": "Siga-nos"
     },

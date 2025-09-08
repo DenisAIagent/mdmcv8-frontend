@@ -12,7 +12,8 @@
       "Bash(npm run dev:*)",
       "Bash(npm install:*)",
       "Read(//Users/denisadam/Downloads/**)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

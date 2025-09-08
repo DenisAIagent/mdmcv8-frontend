@@ -49,11 +49,11 @@
 }
 
 .ilp-logo-wrapper {
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   margin: 0 auto 20px;
   border-radius: 50%;
-  padding: 20px;
+  padding: 30px;
   box-shadow: 0 8px 32px rgba(229, 9, 20, 0.3);
   animation: pulse 2s infinite;
 }
@@ -82,6 +82,7 @@
 /* Main Links */
 .ilp-main-links {
   margin-bottom: 15px;
+  padding: 40px 0;
 }
 
 .ilp-link-button {
@@ -160,6 +161,7 @@
 /* Blog Section */
 .ilp-blog-section {
   margin-bottom: 15px;
+  padding: 40px 0;
 }
 
 .ilp-section-title {
@@ -368,6 +370,111 @@
   }
 }
 
+/* === NEWSLETTER FORM STYLE === */
+.ilp-newsletter-link {
+  flex-direction: column;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.4) !important;
+  cursor: default !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-height: 180px;
+  overflow: hidden;
+}
+
+.ilp-newsletter-link .ilp-link-title {
+  margin-bottom: 2px;
+}
+
+.ilp-newsletter-link:hover {
+  transform: none !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.newsletter-form-wrapper {
+  margin-top: 0px;
+  width: 100%;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.newsletter-input-group {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input:focus {
+  background: white;
+  border-color: #E50914;
+  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.1);
+}
+
+.newsletter-input::placeholder {
+  color: #666;
+}
+
+.newsletter-submit {
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #E50914 0%, #cc0811 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.newsletter-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff1a28 0%, #E50914 100%);
+  box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+  transform: translateY(-2px);
+}
+
+.newsletter-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.newsletter-success {
+  padding: 5px 8px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: 4px;
+  color: #4caf50;
+  text-align: center;
+  font-size: 12px;
+}
+
+.newsletter-error {
+  padding: 5px 8px;
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid rgba(244, 67, 54, 0.5);
+  border-radius: 4px;
+  color: #f44336;
+  text-align: center;
+  font-size: 12px;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 480px) {
   .ilp-container {
@@ -403,6 +510,22 @@
   
   .ilp-social-icon {
     font-size: 20px;
+  }
+  
+  /* Newsletter mobile */
+  .ilp-newsletter-link {
+    padding: 18px;
+  }
+  
+  .newsletter-input-group {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .newsletter-input, 
+  .newsletter-submit {
+    width: 100%;
+    font-size: 16px; /* Évite le zoom sur iOS */
   }
 }
 

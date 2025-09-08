@@ -1,226 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import rssService from '../../services/RSSService';
 import './InstagramLinkPage.css';
 
-// Configuration du blog MDMC
-const BLOG_CONFIG = {
-  BASE_URL: 'https://blog.mdmcmusicads.com',
-  RSS_URL: 'https://blog.mdmcmusicads.com/feed/',
-  // Proxys CORS avec fallback pour robustesse
-  CORS_PROXIES: [
-    'https://api.allorigins.win/raw?url=',
-    'https://corsproxy.io/?',
-    'https://api.codetabs.com/v1/proxy?quest='
-  ],
-  TIMEOUT: 15000,
-  USE_BACKEND_PROXY: false // Utiliser directement le RSS avec proxy CORS
+// Composant Newsletter Form avec API Brevo
+const NewsletterForm = () => {
+  const { t } = useTranslation();
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // idle, loading, success, error
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus('loading');
+
+    try {
+      // Appel API Brevo pour inscription
+      const response = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': 'vRxNSCYQgtZIWaXK',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          listIds: [2], // ID de votre liste newsletter
+          attributes: {
+            SOURCE: 'Instagram Links Page',
+            DATE_INSCRIPTION: new Date().toISOString()
+          }
+        }),
+      });
+
+      if (response.ok || response.status === 400) {
+        // 400 peut signifier que l'email existe déjà, ce qui est OK
+        setStatus('success');
+        setEmail('');
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error('Erreur inscription newsletter:', error);
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="newsletter-form-wrapper">
+      <form onSubmit={handleSubmit} className="newsletter-form">
+        <div className="newsletter-input-group">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="votre@email.com"
+            required
+            disabled={status === 'loading'}
+            className="newsletter-input"
+          />
+          <button
+            type="submit"
+            disabled={status === 'loading' || !email}
+            className="newsletter-submit"
+          >
+            {status === 'loading' ? 'Inscription...' : "S'abonner"}
+          </button>
+        </div>
+
+        {status === 'success' && (
+          <div className="newsletter-success">
+            Merci ! Vous êtes inscrit(e) à notre newsletter.
+          </div>
+        )}
+
+        {status === 'error' && (
+          <div className="newsletter-error">
+            Une erreur est survenue. Veuillez réessayer.
+          </div>
+        )}
+      </form>
+    </div>
+  );
 };
-
-// Service RSS intégré - identique à Articles.jsx
-class RSSService {
-  async getLatestArticles(limit = 3) {
-    console.log('📰 RSS: Récupération directe depuis blog MDMC...', BLOG_CONFIG.RSS_URL);
-    
-    // Essayer chaque proxy CORS jusqu'à ce qu'un fonctionne
-    for (let i = 0; i < BLOG_CONFIG.CORS_PROXIES.length; i++) {
-      const proxy = BLOG_CONFIG.CORS_PROXIES[i];
-      try {
-        console.log(`🔄 RSS: Tentative ${i + 1}/${BLOG_CONFIG.CORS_PROXIES.length} - ${proxy}`);
-        
-        const proxyUrl = `${proxy}${encodeURIComponent(BLOG_CONFIG.RSS_URL)}`;
-        
-        const response = await fetch(proxyUrl, {
-          method: 'GET',
-          headers: { 'Accept': 'application/xml, application/rss+xml, text/xml' },
-          signal: AbortSignal.timeout(BLOG_CONFIG.TIMEOUT)
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Erreur proxy CORS: ${response.status}`);
-        }
-
-        const xmlText = await response.text();
-        console.log(`✅ RSS: Flux récupéré via proxy ${i + 1}`);
-
-        if (xmlText.includes('<html') || xmlText.includes('<!DOCTYPE')) {
-          throw new Error('Réponse HTML au lieu de XML');
-        }
-
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-
-        const parseError = xmlDoc.querySelector('parsererror');
-        if (parseError) {
-          throw new Error('Flux RSS invalide');
-        }
-
-        const items = Array.from(xmlDoc.querySelectorAll('item')).slice(0, limit);
-        
-        if (items.length === 0) {
-          throw new Error('Aucun article trouvé dans le flux RSS');
-        }
-
-        const articles = items.map((item, index) => this.parseRSSItem(item, index));
-        
-        console.log('✅ RSS: Articles parsés avec succès', { count: articles.length, proxy: i + 1 });
-        
-        return {
-          success: true,
-          data: articles
-        };
-
-      } catch (error) {
-        console.warn(`⚠️ RSS: Proxy ${i + 1} échoué:`, error.message);
-        
-        // Si c'est le dernier proxy, on retourne l'erreur
-        if (i === BLOG_CONFIG.CORS_PROXIES.length - 1) {
-          console.error('❌ RSS: Tous les proxys ont échoué');
-          return {
-            success: false,
-            error: `Tous les proxys CORS ont échoué. Dernière erreur: ${error.message}`,
-            data: []
-          };
-        }
-        
-        // Sinon, on continue avec le proxy suivant
-        continue;
-      }
-    }
-  }
-
-  parseRSSItem(item, index) {
-    const title = this.getTextContent(item, 'title') || `Article ${index + 1}`;
-    const link = this.getTextContent(item, 'link') || BLOG_CONFIG.BASE_URL;
-    const description = this.getTextContent(item, 'description') || '';
-    const pubDate = this.getTextContent(item, 'pubDate');
-    const creator = this.getTextContent(item, 'dc:creator') || 'MDMC Team';
-
-    const imageUrl = this.extractImage(item, index);
-    const cleanDescription = this.cleanDescription(description);
-    const formattedDate = this.formatDate(pubDate);
-
-    return {
-      id: `rss-${Date.now()}-${index}`,
-      title: this.cleanText(title),
-      excerpt: cleanDescription,
-      link: link,
-      image: imageUrl,
-      date: formattedDate,
-      author: this.cleanText(creator)
-    };
-  }
-
-  extractImage(item, index) {
-    console.log('🔍 Extraction image de couverture pour article', index);
-    
-    // 1. PRIORITÉ: Image de couverture WordPress (Featured Image)
-    // Chercher dans media:content (WordPress RSS media)
-    const mediaContents = Array.from(item.querySelectorAll('media\\:content, media\\:thumbnail'));
-    for (const mediaContent of mediaContents) {
-      const url = mediaContent.getAttribute('url');
-      const medium = mediaContent.getAttribute('medium');
-      if (url && (medium === 'image' || url.match(/\.(jpg|jpeg|png|webp|gif)$/i))) {
-        console.log('🖼️ Image de couverture trouvée dans media:content:', url);
-        return url;
-      }
-    }
-
-    // 2. Enclosure (WordPress RSS Featured Image)
-    const enclosures = Array.from(item.querySelectorAll('enclosure'));
-    for (const enclosure of enclosures) {
-      const type = enclosure.getAttribute('type');
-      const url = enclosure.getAttribute('url');
-      if (type && type.startsWith('image/') && url) {
-        console.log('🖼️ Image de couverture trouvée dans enclosure:', url);
-        return url;
-      }
-    }
-
-    // 3. WordPress Featured Image dans content:encoded
-    const contentEncoded = this.getTextContent(item, 'content:encoded');
-    if (contentEncoded) {
-      const patterns = [
-        /<img[^>]*fetchpriority=["']high["'][^>]+src=["']([^"']+)[^>]*>/i,
-        /<img[^>]*class="[^"]*wp-image[^"]*"[^>]+src=["']([^"']+)[^>]*>/i,
-        /<img[^>]+src=["']([^"']*wp-content[^"']*\.(jpg|jpeg|png|webp|gif))[^>]*>/i,
-        /<img[^>]+src=["']([^"']+\.(jpg|jpeg|png|webp|gif))[^>]*>/i
-      ];
-      
-      for (const pattern of patterns) {
-        const imgMatch = contentEncoded.match(pattern);
-        if (imgMatch && imgMatch[1]) {
-          console.log('🖼️ Image de couverture trouvée dans content:encoded:', imgMatch[1]);
-          return imgMatch[1];
-        }
-      }
-    }
-
-    console.log('❌ Aucune image de couverture trouvée pour l\'article', index);
-    return null;
-  }
-
-  getTextContent(item, selector) {
-    try {
-      if (selector.includes(':')) {
-        const elements = item.getElementsByTagName(selector);
-        if (elements.length > 0) {
-          return elements[0].textContent.trim();
-        }
-      }
-      const element = item.querySelector(selector);
-      return element ? element.textContent.trim() : null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  cleanDescription(description) {
-    if (!description) return 'Découvrez cet article sur notre blog...';
-    
-    let cleaned = description.replace(/<[^>]*>/g, '');
-    
-    const entities = {
-      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
-      '&#39;': "'", '&nbsp;': ' ', '&hellip;': '...'
-    };
-    
-    Object.entries(entities).forEach(([entity, char]) => {
-      cleaned = cleaned.replace(new RegExp(entity, 'g'), char);
-    });
-    
-    cleaned = cleaned.replace(/\s+/g, ' ').trim();
-    
-    if (cleaned.length > 150) {
-      cleaned = cleaned.substring(0, 147) + '...';
-    }
-    
-    return cleaned || 'Découvrez cet article sur notre blog...';
-  }
-
-  cleanText(text) {
-    if (!text) return '';
-    try {
-      const textArea = document.createElement('textarea');
-      textArea.innerHTML = text;
-      return textArea.value.trim();
-    } catch (error) {
-      return text.trim();
-    }
-  }
-
-  formatDate(pubDate) {
-    if (!pubDate) return new Date().toLocaleDateString('fr-FR');
-    try {
-      const date = new Date(pubDate);
-      return isNaN(date.getTime()) ? new Date().toLocaleDateString('fr-FR') : date.toLocaleDateString('fr-FR');
-    } catch (error) {
-      return new Date().toLocaleDateString('fr-FR');
-    }
-  }
-}
-
-// Instance du service RSS
-const rssService = new RSSService();
 
 const InstagramLinkPage = () => {
   const { t } = useTranslation();
@@ -238,20 +101,26 @@ const InstagramLinkPage = () => {
       setLoading(true);
       setError(null);
       
+      console.log('📰 InstagramLinks: Chargement articles depuis service RSS avec fallbacks...');
+      
       const response = await rssService.getLatestArticles(3);
       
       if (response.success && response.data.length > 0) {
         setArticles(response.data);
         setRetryCount(0);
-        console.log('✅ Articles: Chargés depuis blog MDMC avec succès');
+        console.log(`✅ InstagramLinks: ${response.data.length} articles chargés depuis ${response.source || 'RSS'}`);
+        
+        if (response.warning) {
+          console.warn(`⚠️ InstagramLinks: ${response.warning}`);
+        }
       } else {
         throw new Error(response.error || 'Aucun article trouvé');
       }
       
     } catch (err) {
-      console.error('❌ Articles: Erreur blog MDMC', err);
+      console.error('❌ InstagramLinks: Erreur chargement articles', err);
       setError(err.message);
-      setArticles([]);
+      setArticles([]); // En cas d'échec total, affichage vide
     } finally {
       setLoading(false);
     }
@@ -262,6 +131,12 @@ const InstagramLinkPage = () => {
       const newRetryCount = retryCount + 1;
       setRetryCount(newRetryCount);
       console.log(`🔄 Articles: Tentative ${newRetryCount}...`);
+      
+      // Clear cache et retry
+      if (rssService.clearCache) {
+        rssService.clearCache();
+      }
+      
       loadArticles();
     }
   };
@@ -341,7 +216,16 @@ const InstagramLinkPage = () => {
           ))}
         </section>
 
-        {/* Section Blog */}
+        {/* Section Newsletter - Formulaire custom avec API Brevo */}
+        <section className="ilp-main-links">
+          <div className="ilp-link-button ilp-newsletter-link">
+            <span className="ilp-link-title">{t('instagramLinks.newsletter.title')}</span>
+            <span className="ilp-link-description">{t('instagramLinks.newsletter.subtitle')}</span>
+            <NewsletterForm />
+          </div>
+        </section>
+
+        {/* Section Blog avec service RSS avancé */}
         <section className="ilp-blog-section">
           
           {loading && (
@@ -351,34 +235,47 @@ const InstagramLinkPage = () => {
             </div>
           )}
           
-          {error && (
+          {error && !loading && articles.length === 0 && (
             <div className="ilp-error">
               <p>{t('instagramLinks.blogSection.errorMessage')}</p>
+              <button 
+                onClick={handleRetry} 
+                className="ilp-retry-button"
+                disabled={retryCount >= 3}
+              >
+                {retryCount >= 3 ? 'Limite atteinte' : `Réessayer (${retryCount}/3)`}
+              </button>
             </div>
           )}
           
-          {!loading && !error && articles.length > 0 && (
+          {!loading && articles.length > 0 && (
             <div className="ilp-articles-grid">
               {articles.map((article, index) => (
                 <a
-                  key={index}
+                  key={article.id || index}
                   href={article.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="ilp-article-card"
                 >
-                  <div className="ilp-article-image">
-                    <img 
-                      src={article.image} 
-                      alt={article.title}
-                      onError={(e) => {
-                        e.target.src = '/assets/images/logo.png';
-                      }}
-                    />
-                  </div>
+                  {article.image && (
+                    <div className="ilp-article-image">
+                      <img 
+                        src={article.image} 
+                        alt={article.title}
+                        loading="lazy"
+                        onError={(e) => {
+                          console.warn(`⚠️ Erreur image article ${index + 1}:`, article.image);
+                          e.target.src = '/assets/images/logo.png';
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className="ilp-article-content">
                     <h3 className="ilp-article-title">{article.title}</h3>
-                    <p className="ilp-article-description">{article.excerpt || article.description || t('instagramLinks.blogSection.fallbackDescription')}</p>
+                    <p className="ilp-article-description">
+                      {article.excerpt || article.description || t('instagramLinks.blogSection.fallbackDescription')}
+                    </p>
                   </div>
                 </a>
               ))}

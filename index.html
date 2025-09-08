@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <!-- Google Tag Manager 1 -->
-    <script nonce="gtm-script-1">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -10,7 +10,7 @@
     <!-- End Google Tag Manager 1 -->
 
     <!-- Google Tag Manager 2 -->
-    <script nonce="gtm-script-2">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -19,7 +19,7 @@
 
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-P11JTJ21NZ"></script>
-<script nonce="gtag-script">
+<script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -57,8 +57,8 @@
     <meta property="twitter:site" content="@mdmcmusicads" />
     <meta property="twitter:creator" content="@mdmcmusicads" />
     
-    <!-- CSP sécurisée pour MDMC - Mode debug temporaire -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'nonce-gtm-script-1' 'nonce-gtm-script-2' 'nonce-gtag-script' 'nonce-redirect-script' https: http:; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: http: data:; img-src 'self' data: blob: https: http:; media-src 'self' blob: data: https: http:; connect-src 'self' https: http:; frame-src 'self' https: http:; object-src 'none'; base-uri 'self';">
+    <!-- CSP CORRIGÉE - Suppression nonces pour réactiver 'unsafe-inline' -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: http: data:; img-src 'self' data: blob: https: http:; media-src 'self' blob: data: https: http:; connect-src 'self' https: http:; frame-src 'self' https: http:; object-src 'none'; base-uri 'self';">
     
     <!-- Fonts Google optimisées avec preload -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,7 +83,7 @@
     <div id="root"></div>
     
     <!-- Script de redirection pour HashRouter et SEO -->
-    <script nonce="redirect-script">
+    <script>
       // Gestion des routes admin pour HashRouter
       (function() {
         const path = window.location.pathname;

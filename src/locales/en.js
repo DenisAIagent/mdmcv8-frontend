@@ -600,6 +600,10 @@ export default {
       "errorMessage": "Unable to load articles",
       "fallbackDescription": "Discover this exciting article on our blog..."
     },
+    "newsletter": {
+      "title": "MDMC Newsletter",
+      "subtitle": "Get our latest music marketing tips"
+    },
     "socialSection": {
       "title": "Follow us"
     },
