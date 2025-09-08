@@ -19,7 +19,8 @@
       "WebFetch(domain:endgrate.com)",
       "Bash(git reset:*)",
       "Bash(curl:*)",
-      "Bash(PORT=5001 node server.js)"
+      "Bash(PORT=5001 node server.js)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
