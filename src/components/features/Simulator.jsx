@@ -281,7 +281,7 @@ const Simulator = forwardRef((props, ref) => {
       const emailJSServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
       const emailJSTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
       const emailJSPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-      const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n-production-de00.up.railway.app/webhook-test/music-lead-simple';
+      const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n-production-de00.up.railway.app/webhook/music-lead-simple';
       
       console.log('🚀 Envoi simultané EmailJS + n8n...');
       
@@ -321,20 +321,25 @@ const Simulator = forwardRef((props, ref) => {
         console.log('⚠️ EmailJS non configuré, envoi n8n uniquement');
       }
       
-      // 2. n8n Webhook
-      const n8nPromise = fetch(n8nWebhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...commonData,
-          target_zone: commonData.platform,
-          zone_cible: commonData.country,
-          subscribers: subscribers
-        })
-      }).then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-      }).then(result => ({ type: 'n8n', success: true, result }))
+      // 2. n8n Webhook avec timeout de 10 secondes
+      const n8nPromise = Promise.race([
+        fetch(n8nWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...commonData,
+            target_zone: commonData.platform,
+            zone_cible: commonData.country,
+            subscribers: subscribers
+          })
+        }).then(response => {
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          return response.json();
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout après 10s')), 10000)
+        )
+      ]).then(result => ({ type: 'n8n', success: true, result }))
         .catch(error => ({ type: 'n8n', success: false, error }));
       
       promises.push(n8nPromise);
