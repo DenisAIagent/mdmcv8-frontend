@@ -1,12 +1,29 @@
 class NewsletterService {
   constructor() {
-    // Utiliser l'URL locale en développement, sinon l'API externe
-    this.baseURL = window.location.origin;
+    // Détecter l'environnement de développement
+    const isDev = window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1';
+    
+    // En développement, utiliser le backend local sur port 5001, sinon fallback sur Brevo direct
+    this.baseURL = isDev ? 'http://localhost:5001' : null;
+    
+    console.log('📧 Newsletter Service initialized:', { 
+      isDev, 
+      hostname: window.location.hostname, 
+      port: window.location.port,
+      baseURL: this.baseURL 
+    });
   }
 
   async subscribe(email, source = 'Instagram Links Page') {
+    // En production, aller directement vers Brevo API
+    if (!this.baseURL) {
+      console.log('📧 Newsletter Service: Production mode - utilisation directe de Brevo API');
+      return this.subscribeDirectToBrevo(email, source);
+    }
+
     try {
-      console.log('📧 Newsletter Service: Inscription en cours...', { email, source });
+      console.log('📧 Newsletter Service: Inscription en cours via backend...', { email, source, baseURL: this.baseURL });
       
       const response = await fetch(`${this.baseURL}/api/newsletter/subscribe`, {
         method: 'POST',
