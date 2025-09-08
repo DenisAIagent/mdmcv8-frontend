@@ -92,6 +92,15 @@ const InstagramLinkPage = () => {
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
 
+  // Fonction pour nettoyer le HTML et extraire le texte
+  const stripHtmlTags = (html) => {
+    if (!html) return '';
+    // Supprimer les balises HTML et décoder les entités HTML
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
   useEffect(() => {
     loadArticles();
   }, []);
@@ -269,9 +278,9 @@ const InstagramLinkPage = () => {
                     </div>
                   )}
                   <div className="ilp-article-content">
-                    <h3 className="ilp-article-title">{article.title}</h3>
+                    <h3 className="ilp-article-title">{stripHtmlTags(article.title)}</h3>
                     <p className="ilp-article-description">
-                      {article.excerpt || article.description || t('instagramLinks.blogSection.fallbackDescription')}
+                      {stripHtmlTags(article.excerpt || article.description || t('instagramLinks.blogSection.fallbackDescription'))}
                     </p>
                   </div>
                 </a>
