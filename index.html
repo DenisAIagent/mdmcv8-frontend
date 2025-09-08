@@ -1,6 +1,22 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <!-- CSP CONDITIONNEL - Première exécution avant tout -->
+    <script>
+      // Détection immédiate de la route /links
+      const isLinksPage = window.location.pathname.includes('/links') || window.location.hash.includes('/links');
+      console.log('Route détectée:', window.location.pathname + window.location.hash, 'isLinksPage:', isLinksPage);
+      
+      if (isLinksPage) {
+        console.log('🔓 CSP désactivé pour page /links');
+        // Pas de CSP du tout pour /links
+      } else {
+        console.log('🔒 CSP activé pour cette page');
+        // CSP strict pour autres pages
+        document.write('<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' data: blob: https: http:; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\' https://cdnjs.cloudflare.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://capi-automation.s3.us-east-2.amazonaws.com; style-src \'self\' \'unsafe-inline\' https: http:; font-src \'self\' https: http: data: https://fonts.gstatic.com; img-src \'self\' data: blob: https: http:; media-src \'self\' blob: data: https: http:; connect-src \'self\' https://blog.mdmcmusicads.com https://api.brevo.com https://region1.google-analytics.com https://www.google-analytics.com; frame-src \'self\' https: http: https://85e392db.sibforms.com; object-src \'none\'; base-uri \'self\';">');
+      }
+    </script>
+
     <!-- Google Tag Manager 1 -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -57,23 +73,6 @@
     <meta property="twitter:site" content="@mdmcmusicads" />
     <meta property="twitter:creator" content="@mdmcmusicads" />
     
-    <!-- CSP CONDITIONNEL - Désactivé uniquement sur /links -->
-    <script>
-      // Détection route /links pour désactiver CSP
-      const currentPath = window.location.pathname + window.location.hash;
-      const isLinksPage = currentPath.includes('/links') || currentPath.includes('#/links');
-      
-      if (!isLinksPage) {
-        // CSP normal pour toutes les autres pages
-        const cspMeta = document.createElement('meta');
-        cspMeta.httpEquiv = 'Content-Security-Policy';
-        cspMeta.content = "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://connect.facebook.net https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://capi-automation.s3.us-east-2.amazonaws.com; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: http: data: https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; media-src 'self' blob: data: https: http:; connect-src 'self' https://blog.mdmcmusicads.com https://api.brevo.com https://region1.google-analytics.com https://www.google-analytics.com; frame-src 'self' https: http: https://85e392db.sibforms.com; object-src 'none'; base-uri 'self';";
-        document.head.appendChild(cspMeta);
-        console.log('🔒 CSP activé pour cette page');
-      } else {
-        console.log('🔓 CSP désactivé pour page /links');
-      }
-    </script>
     
     <!-- Fonts Google optimisées avec preload -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
