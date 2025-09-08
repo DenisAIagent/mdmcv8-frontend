@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/denisadam/Downloads/MDMC 2025/website/Site react fonctionnel/MDMC Music Ads Website/mdmc v8 Frontend/**)",
+      "Read(//Users/denisadam/Downloads/MDMC 2025/website/Site react fonctionnel/MDMC Music Ads Website/**)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

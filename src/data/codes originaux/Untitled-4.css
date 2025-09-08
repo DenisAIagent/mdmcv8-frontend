@@ -1,0 +1,218 @@
+/* src/assets/styles/global.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+@import './variables.css'; /* Assurez-vous que ce chemin est correct */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 100%; /* Équivaut généralement à 16px par défaut */
+}
+
+body {
+  /* === AJOUTÉ POUR COMPENSER LE HEADER FIXE === */
+  /* Ajustez 80px si la hauteur réelle de votre header est différente */
+  padding-top: 80px;
+  /* ========================================== */
+
+  font-family: var(--font-body);
+  font-size: 1rem; /* Taille de police de base */
+  line-height: 1.6; /* Interligne */
+  color: var(--color-text); /* Couleur du texte par défaut (blanc) */
+  background-color: var(--color-bg); /* Couleur de fond (sombre) */
+  overflow-x: hidden; /* Empêche le défilement horizontal */
+  -webkit-font-smoothing: antialiased; /* Améliore le rendu des polices sur Webkit */
+  -moz-osx-font-smoothing: grayscale; /* Améliore le rendu des polices sur Firefox */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--color-primary);
+}
+
+img {
+  max-width: 100%;
+  height: auto; /* Garde les proportions */
+  display: block; /* Empêche les espaces sous les images */
+}
+
+/* Classe pour masquer visuellement mais garder accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Conteneur principal pour centrer le contenu */
+.container {
+  width: 100%;
+  max-width: 1200px; /* Largeur maximale */
+  margin: 0 auto; /* Centrage horizontal */
+  padding: 0 1.5rem; /* Espacement gauche/droite */
+}
+
+/* Style de base pour les sections */
+section {
+  padding: 4rem 0; /* Espacement vertical */
+}
+
+/* Augmenter l'espacement sur écrans plus grands */
+@media (min-width: 768px) {
+  section {
+    padding: 5rem 0;
+  }
+}
+
+/* === AJOUTÉ POUR FORCER UN FOND TRANSPARENT SUR L'ENTÊTE DE SECTION === */
+/* Ceci est pour annuler une règle existante non trouvée qui met un fond blanc */
+.section-header {
+  background-color: transparent !important;
+}
+/* ==================================================================== */
+
+/* Style commun pour les titres de section */
+.section-title {
+  text-align: center;
+  position: relative;
+  margin-bottom: 3rem;
+  padding-bottom: 1rem;
+}
+
+/* Soulignement décoratif sous le titre */
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px; /* Largeur du soulignement */
+  height: 3px; /* Épaisseur */
+  background-color: var(--color-primary); /* Couleur primaire */
+}
+
+/* Styles de base pour les boutons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem; /* Espacement interne */
+  border-radius: 50px; /* Bord arrondi */
+  border: none; /* Pas de bordure par défaut */
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+  transform: scale(1); /* Pour l'animation au survol */
+  white-space: nowrap; /* Empêche le texte de passer à la ligne */
+}
+
+.btn:hover {
+  transform: scale(1.05); /* Léger agrandissement au survol */
+  box-shadow: var(--shadow); /* Ombre portée */
+}
+
+/* Style pour l'accessibilité au clavier */
+.btn:focus {
+  outline: none; /* On supprime l'outline par défaut */
+}
+.btn:focus-visible { /* Style visible uniquement à la navigation clavier */
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Bouton Primaire (fond rouge) */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text); /* Texte blanc */
+}
+
+.btn-primary:hover {
+  background-color: #FF1A25; /* Rouge légèrement plus clair au survol */
+  color: var(--color-text);
+}
+
+.btn-primary:focus-visible {
+  outline-color: #FF1A25; /* Outline assorti */
+}
+
+/* Bouton Secondaire (contour blanc) */
+.btn-secondary {
+  background-color: transparent; /* Fond transparent */
+  color: var(--color-text);
+  border: 2px solid var(--color-text); /* Bordure blanche */
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-text); /* Fond blanc au survol */
+  color: var(--color-bg); /* Texte sombre */
+}
+
+.btn-secondary:focus-visible {
+  outline-color: var(--color-text); /* Outline blanc */
+}
+
+/* Style pour les éléments cliquables ressemblant à du texte */
+.btn-link-style {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-text-secondary); /* Couleur secondaire */
+  cursor: pointer;
+  text-align: left;
+  font: inherit; /* Utilise la police de l'élément parent */
+}
+
+.btn-link-style:hover,
+.btn-link-style:focus {
+  color: var(--color-primary); /* Change en couleur primaire */
+  opacity: 1;
+  text-decoration: underline; /* Souligne */
+}

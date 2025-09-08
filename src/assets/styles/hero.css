@@ -1,0 +1,202 @@
+.hero {
+  position: relative;
+  /* height: 100vh; */ /* === LIGNE SUPPRIMÉE === */
+                      /* Cause probable des problèmes sur Safari / mobile / faible hauteur */
+
+  min-height: 650px;   /* Hauteur minimale pour assurer un espace suffisant */
+                      /* Ajustez cette valeur si besoin */
+
+  display: flex;
+  /* align-items: center; */ /* Remplacé par du padding vertical */
+  padding-top: 4rem;      /* Espace en haut à l'intérieur de la section Hero */
+                          /* Ajustez cette valeur pour le rendu visuel souhaité */
+  padding-bottom: 4rem;   /* Espace en bas à l'intérieur de la section Hero */
+                          /* Ajustez cette valeur pour le rendu visuel souhaité */
+  justify-content: center;
+
+  background-image: url('/src/assets/images/concert-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  /* background-attachment: fixed; */ /* Dé-commentez pour remettre, mais attention */
+                                     /* aux performances/bugs potentiels sur mobile. */
+                                     /* À tester APRES avoir vérifié si 100vh était le problème */
+  overflow: hidden;
+  color: var(--color-text);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(10,10,10,0.6), rgba(10,10,10,0.9)), radial-gradient(ellipse at center bottom, rgba(229, 9, 20, 0.15) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Contenu aligné à gauche */
+  gap: 2.5rem;
+  padding-top: 0; /* IMPORTANT : Doit rester 0 car géré par le padding du body */
+  padding-bottom: 2rem;
+  width: 100%;
+  max-width: none; /* Supprime la limite de largeur */
+  padding-left: 5rem; /* Augmente encore les paddings pour plus d'espace */
+  padding-right: 5rem;
+  margin: 0;
+}
+
+.hero-content {
+  max-width: 800px;
+  width: 100%;
+  text-align: left;
+  margin: 0;
+}
+
+.hero-slogan {
+  font-family: var(--font-title);
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary);
+}
+
+.red-text {
+  color: #E50914 !important;
+}
+
+.hero-content h1 {
+  margin-bottom: 0.5rem;
+}
+
+.hero-content p:not(.hero-slogan) {
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 2.5rem;
+}
+
+.hero-description {
+  color: #9e9e9e !important;
+}
+
+.cta-container {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--color-border);
+  padding-top: 2.5rem;
+  width: 100%;
+  max-width: none;
+  margin-top: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  min-width: 180px;
+}
+
+.stat-number {
+  font-family: var(--font-title);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #E50914 !important;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 500px; /* Hauteur minimale ajustée pour mobile si besoin */
+    padding-top: 3rem;     /* Padding haut ajusté pour mobile */
+    padding-bottom: 3rem;  /* Padding bas ajusté pour mobile */
+  }
+
+  .hero-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .hero-slogan {
+    font-size: 2.5rem;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-stats {
+    justify-content: center; /* Stats centrées sur mobile */
+    gap: 1.5rem; /* Augmente l'espacement pour éviter chevauchement */
+    flex-direction: row; /* Force l'affichage en ligne */
+    flex-wrap: wrap; /* Permet le passage à la ligne si nécessaire */
+  }
+  
+  .stat-item {
+    min-width: 160px; /* Largeur minimum augmentée pour plus d'espace */
+    flex: 0 1 calc(50% - 0.75rem); /* 2 colonnes sur mobile */
+    margin-bottom: 1rem; /* Espace vertical entre lignes */
+  }
+  
+  .stat-number {
+    font-size: 2rem; /* Taille réduite sur mobile */
+  }
+  
+  .stat-label {
+    font-size: 0.75rem; /* Plus petit sur mobile */
+    white-space: normal; /* Permet le retour à la ligne sur mobile */
+    line-height: 1.3; /* Améliore l'espacement des lignes */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats {
+    gap: 1rem; /* Espace suffisant même sur petits écrans */
+    flex-direction: column; /* Affichage vertical sur très petits écrans */
+    align-items: center; /* Centre les éléments */
+  }
+  
+  .stat-item {
+    min-width: 120px; /* Largeur minimum pour éviter le chevauchement */
+    flex: none; /* Supprime la contrainte flex sur petits écrans */
+    width: 100%; /* Prend toute la largeur disponible */
+    max-width: 200px; /* Limite la largeur maximum */
+    margin-bottom: 1.5rem; /* Plus d'espace vertical */
+  }
+  
+  .stat-number {
+    font-size: 1.8rem; /* Légèrement plus grand pour lisibilité */
+  }
+  
+  .stat-label {
+    font-size: 0.7rem;
+    white-space: normal; /* Permet le retour à la ligne */
+    line-height: 1.4; /* Meilleur espacement des lignes */
+    text-align: center; /* Centre le texte */
+  }
+}

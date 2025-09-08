@@ -1,0 +1,45 @@
+# 🚀 Dockerfile Production - Frontend React
+# Build optimisé pour la production avec Nginx
+
+# Étape 1: Build de l'application React
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copier le code source
+COPY . .
+
+# Variables d'environnement pour le build
+ARG VITE_API_URL
+ARG VITE_SITE_URL
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_SITE_URL=$VITE_SITE_URL
+
+# Build de production
+RUN npm run build
+
+# Étape 2: Serveur Nginx pour servir l'application
+FROM nginx:alpine AS production
+
+# Copier la configuration Nginx optimisée
+COPY nginx.prod.conf /etc/nginx/nginx.conf
+
+# Copier les fichiers buildés depuis l'étape précédente
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Ajouter les headers de sécurité et cache
+COPY security-headers.conf /etc/nginx/conf.d/security-headers.conf
+
+# Exposer le port 80
+EXPOSE 80
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost/ || exit 1
+
+# Démarrer Nginx
+CMD ["nginx", "-g", "daemon off;"]
