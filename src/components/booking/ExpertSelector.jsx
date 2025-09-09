@@ -228,63 +228,23 @@ const ExpertSelector = ({ onExpertSelect, selectedExpert }) => {
               )}
             </AnimatePresence>
 
-            {/* Layout compact horizontal */}
-            <div className="expert-card-compact">
-              <div className="expert-left">
-                <div className="expert-avatar-wrapper">
-                  <img
-                    src={expert.avatar}
-                    alt={expert.name}
-                    className="expert-avatar-modern"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                  <div className="expert-avatar-fallback-modern">
-                    {expert.firstName.charAt(0)}{expert.name.split(' ')[1]?.charAt(0)}
-                  </div>
+            {/* Layout simple et efficace */}
+            <div className="expert-card-simple">
+              <div className="expert-info">
+                <h3>{expert.name}</h3>
+                <p className="expert-role-simple">{expert.role}</p>
+                <div className="expert-rating-simple">
+                  {renderStars(expert.stats.rating)} ({expert.stats.rating})
                 </div>
               </div>
-
-              <div className="expert-center">
-                <div className="expert-info-header">
-                  <h3>{expert.firstName} <span className="expert-role-inline">{expert.role}</span></h3>
-                  <div className="expert-meta">
-                    <div className="expert-rating">
-                      {renderStars(expert.stats.rating)}
-                      <span className="expert-rating-number">({expert.stats.rating})</span>
-                    </div>
-                    <span className="expert-experience">{expert.experience}</span>
-                  </div>
-                </div>
-
-                <div className="expert-specialties-compact">
-                  {expert.specialties.slice(0, 3).map((specialty, index) => (
-                    <span key={specialty} className="expert-specialty-badge">
-                      {specialty}
-                    </span>
-                  ))}
-                  {expert.specialties.length > 3 && (
-                    <span className="specialty-more">+{expert.specialties.length - 3}</span>
-                  )}
-                </div>
-
-                <div className="expert-stats-compact">
-                  <span className="stat-compact">{expert.stats.views || expert.stats.budget} • {expert.stats.campaigns || expert.stats.clients} clients</span>
-                </div>
-              </div>
-
-              <div className="expert-right">
-                <motion.button
-                  className="expert-select-button-compact"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => onExpertSelect(expert)}
-                >
-                  Choisir {expert.firstName}
-                </motion.button>
-              </div>
+              <motion.button
+                className="expert-select-button-simple"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onExpertSelect(expert)}
+              >
+                Choisir
+              </motion.button>
             </div>
 
             {/* Achievements en overlay au hover */}

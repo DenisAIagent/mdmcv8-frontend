@@ -2,6 +2,8 @@
 
 .expert-selector-modern {
   width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   color: var(--booking-text);
 }
 
@@ -45,8 +47,8 @@
   position: relative;
   background: var(--booking-card-bg);
   border: 2px solid var(--booking-border);
-  border-radius: var(--booking-radius-lg);
-  padding: var(--booking-space-6);
+  border-radius: var(--booking-radius-md);
+  padding: var(--booking-space-4);
   cursor: pointer;
   transition: var(--booking-transition);
   overflow: hidden;
@@ -586,8 +588,9 @@
 .expert-card-compact {
   display: flex;
   align-items: center;
-  gap: var(--booking-space-4);
+  gap: var(--booking-space-6);
   width: 100%;
+  padding: var(--booking-space-2);
 }
 
 .expert-left {
@@ -600,8 +603,8 @@
 
 .expert-left .expert-avatar-modern,
 .expert-left .expert-avatar-fallback-modern {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--expert-color, var(--booking-primary));
@@ -695,13 +698,14 @@
   background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
   color: white;
   border: none;
-  padding: var(--booking-space-3) var(--booking-space-6);
-  border-radius: var(--booking-radius-md);
-  font-size: var(--booking-font-base);
+  padding: var(--booking-space-4) var(--booking-space-8);
+  border-radius: var(--booking-radius-lg);
+  font-size: var(--booking-font-lg);
   font-weight: 600;
   cursor: pointer;
   transition: var(--booking-transition);
   white-space: nowrap;
+  min-width: 160px;
 }
 
 .expert-select-button-compact:hover {
@@ -742,6 +746,50 @@
   font-size: var(--booking-font-sm);
   color: var(--booking-text-alt);
   font-weight: 500;
+}
+
+/* ==== LAYOUT SIMPLE ==== */
+
+.expert-card-simple {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: var(--booking-space-2);
+}
+
+.expert-info h3 {
+  font-size: var(--booking-font-lg);
+  font-weight: 600;
+  color: var(--booking-text);
+  margin: 0 0 4px 0;
+}
+
+.expert-role-simple {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+  margin: 0 0 8px 0;
+}
+
+.expert-rating-simple {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+}
+
+.expert-select-button-simple {
+  background: var(--booking-primary);
+  color: white;
+  border: none;
+  padding: var(--booking-space-2) var(--booking-space-4);
+  border-radius: var(--booking-radius-sm);
+  font-size: var(--booking-font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--booking-transition);
+}
+
+.expert-select-button-simple:hover {
+  background: var(--booking-primary-light);
 }
 
 /* ==== RESPONSIVE ==== */
