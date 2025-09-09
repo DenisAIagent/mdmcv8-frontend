@@ -224,7 +224,7 @@ const InstagramLinkPage = () => {
             <span className="ilp-link-title">Prendre rendez-vous</span>
             <span className="ilp-link-description">Échangez avec nos experts en publicité musicale</span>
             <CalendlyExpertSelector 
-              displayType="modal"
+              displayType="inline"
               onScheduled={(data) => {
                 console.log('RDV programmé depuis Instagram Links:', data);
               }}

@@ -332,19 +332,33 @@
 
 /* Section Calendly */
 .ilp-calendly-section {
-  padding: 24px !important;
-  background: linear-gradient(135deg, rgba(229, 9, 20, 0.05) 0%, rgba(229, 9, 20, 0.02) 100%) !important;
-  border: 2px solid rgba(229, 9, 20, 0.1) !important;
+  padding: 16px !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: default !important;
 }
 
 .ilp-calendly-section:hover {
-  background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(229, 9, 20, 0.03) 100%) !important;
-  border-color: rgba(229, 9, 20, 0.2) !important;
+  background: transparent !important;
+  border: none !important;
+  transform: none !important;
+}
+
+.ilp-calendly-section .expert-selector-collapsed {
+  margin-top: 8px;
 }
 
 .ilp-calendly-section .expert-selector {
   margin-top: 16px;
   padding: 0;
+  max-width: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.ilp-calendly-section .expand-button {
+  border-radius: 8px;
 }
 
 .ilp-calendly-section .expert-cards {

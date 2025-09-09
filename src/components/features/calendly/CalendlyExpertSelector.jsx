@@ -64,12 +64,12 @@ const CalendlyExpertSelector = ({
           className="expand-button"
           onClick={() => setIsExpanded(true)}
         >
-          <span className="expand-icon">👥</span>
+          <span className="expand-icon">RDV</span>
           <div className="expand-text">
             <span className="expand-title">Prendre rendez-vous</span>
             <span className="expand-subtitle">Choisissez votre expert</span>
           </div>
-          <span className="expand-arrow">↓</span>
+          <span className="expand-arrow"></span>
         </button>
       </div>
     );
@@ -126,7 +126,7 @@ const CalendlyExpertSelector = ({
                 aria-label={`Prendre RDV avec ${expert.name}`}
               >
                 Planifier avec {expert.name}
-                <span className="btn-arrow">→</span>
+                <span className="btn-arrow"></span>
               </button>
             </div>
           ))}
@@ -148,7 +148,7 @@ const CalendlyExpertSelector = ({
         </button>
         
         <div className="selected-expert-info">
-          <span className="expert-icon-small">{selectedExpert.icon}</span>
+          <span className="expert-icon-small"></span>
           <span>
             RDV avec <strong>{selectedExpert.name}</strong> - {selectedExpert.specialty}
           </span>
