@@ -1,30 +1,118 @@
 /* CalendlyExpertSelector.css - Sélecteur d'expert MDMC */
 
+/* Bouton dépliant principal */
+.expert-selector-collapsed {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.expand-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #E50914 0%, #d40813 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(229, 9, 20, 0.2);
+}
+
+.expand-button:hover {
+  background: linear-gradient(135deg, #d40813 0%, #b8070f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229, 9, 20, 0.3);
+}
+
+.expand-icon {
+  font-size: 24px;
+  opacity: 0.9;
+}
+
+.expand-text {
+  flex: 1;
+  text-align: left;
+  margin-left: 16px;
+}
+
+.expand-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.expand-subtitle {
+  display: block;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.expand-arrow {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.expand-button:hover .expand-arrow {
+  transform: translateY(2px);
+}
+
+/* Section dépliée */
 .expert-selector {
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 24px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: expandIn 0.3s ease-out;
 }
 
 /* Header */
 .expert-selector-header {
-  text-align: center;
-  margin-bottom: 40px;
+  padding: 24px;
+  background: linear-gradient(135deg, #E50914 0%, #d40813 100%);
+  color: white;
+  position: relative;
 }
 
-.expert-selector-header h2 {
-  font-size: 32px;
-  font-weight: 700;
-  color: #212529;
-  margin: 0 0 12px 0;
+.collapse-button {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.collapse-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.expert-selector-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  text-align: center;
 }
 
 .expert-selector-header p {
-  font-size: 18px;
-  color: #6c757d;
+  font-size: 14px;
+  opacity: 0.9;
   margin: 0;
+  text-align: center;
 }
 
 /* Cartes experts */
@@ -239,21 +327,38 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .expert-selector-collapsed {
+    padding: 0 16px;
+  }
+
+  .expand-button {
+    padding: 16px 20px;
+  }
+
+  .expand-title {
+    font-size: 16px;
+  }
+
+  .expand-subtitle {
+    font-size: 13px;
+  }
+
   .expert-selector {
     padding: 16px;
   }
   
-  .expert-selector-header h2 {
-    font-size: 24px;
+  .expert-selector-header h3 {
+    font-size: 18px;
   }
   
   .expert-selector-header p {
-    font-size: 16px;
+    font-size: 14px;
   }
   
   .expert-cards {
     grid-template-columns: 1fr;
     gap: 16px;
+    margin-top: 24px;
   }
   
   .expert-card {
@@ -277,18 +382,48 @@
 }
 
 @media (max-width: 480px) {
+  .expand-button {
+    padding: 14px 18px;
+  }
+
+  .expand-icon {
+    font-size: 20px;
+  }
+
+  .expand-title {
+    font-size: 15px;
+  }
+
+  .expand-subtitle {
+    font-size: 12px;
+  }
+
   .expert-selector-header {
-    margin-bottom: 24px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .expert-selector-header h3 {
+    font-size: 16px;
+  }
+
+  .expert-selector-header p {
+    font-size: 13px;
+  }
+
+  .collapse-button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
   
-  .expert-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
+  .expert-avatar-container {
+    width: 48px;
+    height: 48px;
+    border-width: 2px;
   }
   
   .expert-info h3 {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .expert-calendly-header {
@@ -302,7 +437,24 @@
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .expert-selector-header h2 {
+  .expert-selector-collapsed {
+    background: #1a202c;
+  }
+
+  .expand-button {
+    background: linear-gradient(135deg, #E50914 0%, #d40813 100%);
+  }
+
+  .expand-button:hover {
+    background: linear-gradient(135deg, #d40813 0%, #b8070f 100%);
+  }
+
+  .expert-selector {
+    background: #1a202c;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .expert-selector-header h3 {
     color: #f8f9fa;
   }
   
@@ -389,4 +541,18 @@
 
 .expert-calendly-container {
   animation: slideIn 0.3s ease-out;
+}
+
+/* Animation pour l'expansion */
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.95);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    max-height: 1000px;
+  }
 }

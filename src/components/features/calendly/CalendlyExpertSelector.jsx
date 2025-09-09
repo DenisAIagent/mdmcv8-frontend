@@ -26,12 +26,13 @@ const experts = [
 ];
 
 const CalendlyExpertSelector = ({ 
-  displayType = 'modal', // 'modal', 'inline', 'popup'
+  displayType = 'inline', // 'modal', 'inline', 'popup'
   className = '',
   onScheduled = () => {}
 }) => {
   const [selectedExpert, setSelectedExpert] = useState(null);
   const [showCalendly, setShowCalendly] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleExpertSelect = (expert) => {
     setSelectedExpert(expert);
@@ -41,6 +42,7 @@ const CalendlyExpertSelector = ({
   const handleBack = () => {
     setShowCalendly(false);
     setSelectedExpert(null);
+    setIsExpanded(true); // Retour à la sélection d'expert
   };
 
   const handleScheduled = (payload) => {
@@ -54,13 +56,38 @@ const CalendlyExpertSelector = ({
     }, 2000);
   };
 
-  // Vue sélection d'expert
-  if (!showCalendly) {
+  // Bouton dépliant principal
+  if (!isExpanded && !showCalendly) {
+    return (
+      <div className={`expert-selector-collapsed ${className}`}>
+        <button 
+          className="expand-button"
+          onClick={() => setIsExpanded(true)}
+        >
+          <span className="expand-icon">👥</span>
+          <div className="expand-text">
+            <span className="expand-title">Prendre rendez-vous</span>
+            <span className="expand-subtitle">Choisissez votre expert</span>
+          </div>
+          <span className="expand-arrow">↓</span>
+        </button>
+      </div>
+    );
+  }
+
+  // Vue sélection d'expert (dépliée)
+  if (isExpanded && !showCalendly) {
     return (
       <div className={`expert-selector ${className}`}>
         <div className="expert-selector-header">
-          <h2>Choisissez votre expert</h2>
-          <p>Sélectionnez le spécialiste adapté à vos besoins publicitaires</p>
+          <button 
+            className="collapse-button"
+            onClick={() => setIsExpanded(false)}
+          >
+            ← Fermer
+          </button>
+          <h3>Choisissez votre expert</h3>
+          <p>Sélectionnez le spécialiste adapté à vos besoins</p>
         </div>
         
         <div className="expert-cards">
@@ -98,7 +125,7 @@ const CalendlyExpertSelector = ({
                 className="expert-select-btn"
                 aria-label={`Prendre RDV avec ${expert.name}`}
               >
-                Prendre rendez-vous
+                Planifier avec {expert.name}
                 <span className="btn-arrow">→</span>
               </button>
             </div>
