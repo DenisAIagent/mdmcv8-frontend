@@ -330,6 +330,81 @@
   font-size: 24px;
 }
 
+/* Section Calendly */
+.ilp-calendly-section {
+  padding: 24px !important;
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.05) 0%, rgba(229, 9, 20, 0.02) 100%) !important;
+  border: 2px solid rgba(229, 9, 20, 0.1) !important;
+}
+
+.ilp-calendly-section:hover {
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(229, 9, 20, 0.03) 100%) !important;
+  border-color: rgba(229, 9, 20, 0.2) !important;
+}
+
+.ilp-calendly-section .expert-selector {
+  margin-top: 16px;
+  padding: 0;
+}
+
+.ilp-calendly-section .expert-cards {
+  gap: 12px;
+}
+
+.ilp-calendly-section .expert-card {
+  padding: 16px;
+  font-size: 14px;
+}
+
+.ilp-calendly-section .expert-card-header {
+  margin-bottom: 12px;
+}
+
+.ilp-calendly-section .expert-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+}
+
+.ilp-calendly-section .expert-info h3 {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.ilp-calendly-section .expert-specialty {
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.ilp-calendly-section .expert-description {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.ilp-calendly-section .expert-select-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Responsive pour section Calendly */
+@media (max-width: 768px) {
+  .ilp-calendly-section .expert-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .ilp-calendly-section .expert-selector-header {
+    margin-bottom: 20px;
+  }
+  
+  .ilp-calendly-section .expert-selector-header h2 {
+    font-size: 20px;
+  }
+  
+  .ilp-calendly-section .expert-selector-header p {
+    font-size: 14px;
+  }
+}
+
 /* Footer */
 .ilp-footer {
   text-align: center;

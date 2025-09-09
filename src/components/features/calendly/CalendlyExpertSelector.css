@@ -1,0 +1,404 @@
+/* CalendlyExpertSelector.css - Sélecteur d'expert MDMC */
+
+.expert-selector {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Header */
+.expert-selector-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.expert-selector-header h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 12px 0;
+}
+
+.expert-selector-header p {
+  font-size: 18px;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Cartes experts */
+.expert-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.expert-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.expert-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--expert-color, #E50914);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.expert-card:hover {
+  border-color: var(--expert-color, #E50914);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.expert-card:hover::before {
+  transform: scaleX(1);
+}
+
+.expert-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Avatar des experts */
+.expert-avatar-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 3px solid var(--expert-color, #E50914);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.expert-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.expert-avatar-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--expert-color, #E50914);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.expert-icon {
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(var(--expert-color-rgb, 229, 9, 20), 0.1);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.expert-info {
+  flex: 1;
+}
+
+.expert-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.expert-specialty {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--expert-color, #6c757d);
+  background: rgba(229, 9, 20, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.expert-description {
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.expert-select-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: var(--expert-color, #E50914);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.expert-select-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  filter: brightness(0.9);
+}
+
+.btn-arrow {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.expert-select-btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Container Calendly avec expert sélectionné */
+.expert-calendly-container {
+  width: 100%;
+  position: relative;
+}
+
+.expert-calendly-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  margin-bottom: 24px;
+  border-radius: 12px 12px 0 0;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+  color: #212529;
+}
+
+.selected-expert-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: #495057;
+}
+
+.expert-icon-small {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 8px;
+}
+
+.selected-expert-info strong {
+  color: #212529;
+  font-weight: 600;
+}
+
+.expert-calendly-widget {
+  padding: 0 24px 24px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .expert-selector {
+    padding: 16px;
+  }
+  
+  .expert-selector-header h2 {
+    font-size: 24px;
+  }
+  
+  .expert-selector-header p {
+    font-size: 16px;
+  }
+  
+  .expert-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .expert-card {
+    padding: 20px;
+  }
+  
+  .expert-calendly-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .back-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .selected-expert-info {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .expert-selector-header {
+    margin-bottom: 24px;
+  }
+  
+  .expert-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+  
+  .expert-info h3 {
+    font-size: 18px;
+  }
+  
+  .expert-calendly-header {
+    padding: 12px 16px;
+  }
+  
+  .expert-calendly-widget {
+    padding: 0 16px 16px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .expert-selector-header h2 {
+    color: #f8f9fa;
+  }
+  
+  .expert-selector-header p {
+    color: #adb5bd;
+  }
+  
+  .expert-card {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+  
+  .expert-card:hover {
+    border-color: var(--expert-color, #E50914);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+  
+  .expert-icon {
+    background: #1a202c;
+  }
+  
+  .expert-info h3 {
+    color: #f8f9fa;
+  }
+  
+  .expert-description {
+    color: #cbd5e0;
+  }
+  
+  .expert-calendly-header {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+  
+  .back-button {
+    background: #1a202c;
+    border-color: #4a5568;
+    color: #cbd5e0;
+  }
+  
+  .back-button:hover {
+    background: #2d3748;
+    border-color: #718096;
+    color: #f8f9fa;
+  }
+  
+  .selected-expert-info {
+    color: #cbd5e0;
+  }
+  
+  .selected-expert-info strong {
+    color: #f8f9fa;
+  }
+  
+  .expert-icon-small {
+    background: #1a202c;
+  }
+}
+
+/* Animation entrée */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expert-card {
+  animation: slideIn 0.3s ease-out;
+  animation-fill-mode: both;
+}
+
+.expert-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.expert-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.expert-calendly-container {
+  animation: slideIn 0.3s ease-out;
+}

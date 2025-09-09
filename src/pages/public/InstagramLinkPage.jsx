@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import wordpressService from '../../services/wordpress.service';
 import newsletterService from '../../services/newsletter.service';
+import CalendlyExpertSelector from '../../components/features/calendly/CalendlyExpertSelector';
 import './InstagramLinkPage.css';
 
 // Composant Newsletter Form avec API Brevo
@@ -214,6 +215,20 @@ const InstagramLinkPage = () => {
             <span className="ilp-link-title">{t('instagramLinks.newsletter.title')}</span>
             <span className="ilp-link-description">{t('instagramLinks.newsletter.subtitle')}</span>
             <NewsletterForm />
+          </div>
+        </section>
+
+        {/* Section Calendly - Prise de rendez-vous avec choix d'expert */}
+        <section className="ilp-main-links">
+          <div className="ilp-link-button ilp-calendly-section">
+            <span className="ilp-link-title">Prendre rendez-vous</span>
+            <span className="ilp-link-description">Échangez avec nos experts en publicité musicale</span>
+            <CalendlyExpertSelector 
+              displayType="modal"
+              onScheduled={(data) => {
+                console.log('RDV programmé depuis Instagram Links:', data);
+              }}
+            />
           </div>
         </section>
 
