@@ -9,9 +9,8 @@ const experts = [
     specialty: 'YouTube Ads',
     description: 'Expert en publicité YouTube et stratégies vidéo',
     calendlyUrl: 'https://calendly.com/denis-mdmcmusicads/30min',
-    avatar: '/assets/images/experts/denis.jpg',
+    avatar: '/assets/images/experts/petit portrait denis.jpg',
     color: '#FF0000',
-    icon: '▶️',
     initials: 'DA'
   },
   {
@@ -20,9 +19,8 @@ const experts = [
     specialty: 'Meta Ads',
     description: 'Spécialiste Facebook & Instagram Ads',
     calendlyUrl: 'https://calendly.com/mhl-agency/decouverte',
-    avatar: '/assets/images/experts/marine.jpg',
+    avatar: '/assets/images/experts/petit portrait marine.jpeg',
     color: '#1877F2',
-    icon: '📘',
     initials: 'MH'
   }
 ];
@@ -92,7 +90,6 @@ const CalendlyExpertSelector = ({
                   <h3>{expert.name}</h3>
                   <span className="expert-specialty">{expert.specialty}</span>
                 </div>
-                <span className="expert-icon">{expert.icon}</span>
               </div>
               
               <p className="expert-description">{expert.description}</p>
