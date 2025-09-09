@@ -193,8 +193,8 @@ const ExpertSelector = ({ onExpertSelect, selectedExpert }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2>Choisissez votre expert</h2>
-        <p>Nos spécialistes vous accompagnent vers le succès</p>
+        <h2>Nos Experts Marketing Musical</h2>
+        <p>Choisissez votre spécialiste pour une consultation personnalisée</p>
       </motion.div>
 
       <motion.div
@@ -228,116 +228,64 @@ const ExpertSelector = ({ onExpertSelect, selectedExpert }) => {
               )}
             </AnimatePresence>
 
-            {/* Header avec avatar et infos principales */}
-            <div className="expert-card-header">
-              <div className="expert-avatar-wrapper">
-                <div className="expert-avatar-glow" />
-                <img
-                  src={expert.avatar}
-                  alt={expert.name}
-                  className="expert-avatar-modern"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="expert-avatar-fallback-modern">
-                  {expert.firstName.charAt(0)}{expert.name.split(' ')[1]?.charAt(0)}
+            {/* Layout compact horizontal */}
+            <div className="expert-card-compact">
+              <div className="expert-left">
+                <div className="expert-avatar-wrapper">
+                  <img
+                    src={expert.avatar}
+                    alt={expert.name}
+                    className="expert-avatar-modern"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="expert-avatar-fallback-modern">
+                    {expert.firstName.charAt(0)}{expert.name.split(' ')[1]?.charAt(0)}
+                  </div>
                 </div>
-                
-                {/* Status en ligne */}
-                <motion.div
-                  className="expert-status-indicator"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.5, type: "spring" }}
-                >
-                  <span className="status-dot"></span>
-                </motion.div>
               </div>
 
-              <div className="expert-info-header">
-                <h3>{expert.firstName}</h3>
-                <span className="expert-role">{expert.role}</span>
-                <div className="expert-rating">
-                  {renderStars(expert.stats.rating)}
-                  <span className="expert-rating-number">({expert.stats.rating})</span>
+              <div className="expert-center">
+                <div className="expert-info-header">
+                  <h3>{expert.firstName} <span className="expert-role-inline">{expert.role}</span></h3>
+                  <div className="expert-meta">
+                    <div className="expert-rating">
+                      {renderStars(expert.stats.rating)}
+                      <span className="expert-rating-number">({expert.stats.rating})</span>
+                    </div>
+                    <span className="expert-experience">{expert.experience}</span>
+                  </div>
                 </div>
-                <div className="expert-experience">{expert.experience} d'expérience</div>
+
+                <div className="expert-specialties-compact">
+                  {expert.specialties.slice(0, 3).map((specialty, index) => (
+                    <span key={specialty} className="expert-specialty-badge">
+                      {specialty}
+                    </span>
+                  ))}
+                  {expert.specialties.length > 3 && (
+                    <span className="specialty-more">+{expert.specialties.length - 3}</span>
+                  )}
+                </div>
+
+                <div className="expert-stats-compact">
+                  <span className="stat-compact">{expert.stats.views || expert.stats.budget} • {expert.stats.campaigns || expert.stats.clients} clients</span>
+                </div>
               </div>
 
-              <div className="expert-quick-action">
+              <div className="expert-right">
                 <motion.button
-                  className="expert-quick-book"
+                  className="expert-select-button-compact"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => onExpertSelect(expert)}
                 >
-                  Réserver
+                  Choisir {expert.firstName}
                 </motion.button>
               </div>
             </div>
-
-            {/* Spécialités avec badges animés */}
-            <div className="expert-specialties">
-              {expert.specialties.map((specialty, index) => (
-                <motion.span
-                  key={specialty}
-                  className="expert-specialty-badge"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 + index * 0.1 }}
-                >
-                  {specialty}
-                </motion.span>
-              ))}
-            </div>
-
-            {/* Bio concise */}
-            <p className="expert-bio-short">{expert.bio}</p>
-
-            {/* Statistiques en grille */}
-            <div className="expert-stats-grid">
-              {renderStats(expert.stats, expert.color)}
-            </div>
-
-            {/* Disponibilité */}
-            <div className="expert-availability">
-              <div className="availability-indicator">
-                <span className="availability-dot"></span>
-                <span>Disponible {expert.availability}</span>
-              </div>
-              <div className="expert-languages">
-                {expert.languages.map(lang => (
-                  <span key={lang} className="language-badge">{lang}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* Témoignage featured */}
-            <div className="expert-featured-testimonial">
-              <blockquote>"{expert.testimonials[0].text}"</blockquote>
-              <cite>— {expert.testimonials[0].artist}</cite>
-            </div>
-
-            {/* CTA principal avec animation */}
-            <motion.button
-              className="expert-select-button-modern"
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: `0 8px 25px ${expert.color}40`
-              }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => onExpertSelect(expert)}
-            >
-              <span className="expert-select-icon">📅</span>
-              <span>Planifier avec {expert.firstName}</span>
-              <motion.span
-                className="expert-select-arrow"
-                animate={hoveredExpert === expert.id ? { x: 4 } : { x: 0 }}
-              >
-                →
-              </motion.span>
-            </motion.button>
 
             {/* Achievements en overlay au hover */}
             <AnimatePresence>
@@ -370,35 +318,25 @@ const ExpertSelector = ({ onExpertSelect, selectedExpert }) => {
         ))}
       </motion.div>
 
-      {/* Section de comparaison rapide */}
+      {/* Section de comparaison simplifiée */}
       <motion.div
-        className="expert-comparison"
-        initial={{ opacity: 0, y: 30 }}
+        className="expert-comparison-compact"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
+        transition={{ delay: 0.3 }}
       >
-        <h3>Pourquoi choisir MDMC Music Ads ?</h3>
-        <div className="comparison-grid">
-          <div className="comparison-item">
-            <div className="comparison-icon">🎯</div>
-            <div className="comparison-content">
-              <h4>Expertise Musicale</h4>
-              <p>Spécialisés uniquement dans l'industrie musicale</p>
-            </div>
+        <div className="comparison-stats">
+          <div className="comparison-stat">
+            <span className="stat-number">500+</span>
+            <span className="stat-label">Artistes accompagnés</span>
           </div>
-          <div className="comparison-item">
-            <div className="comparison-icon">📈</div>
-            <div className="comparison-content">
-              <h4>Résultats Garantis</h4>
-              <p>ROI moyen de 4x sur toutes nos campagnes</p>
-            </div>
+          <div className="comparison-stat">
+            <span className="stat-number">4.2x</span>
+            <span className="stat-label">ROI moyen</span>
           </div>
-          <div className="comparison-item">
-            <div className="comparison-icon">⚡</div>
-            <div className="comparison-content">
-              <h4>Réactivité</h4>
-              <p>Support 7j/7 et optimisations en temps réel</p>
-            </div>
+          <div className="comparison-stat">
+            <span className="stat-number">50M+</span>
+            <span className="stat-label">Vues générées</span>
           </div>
         </div>
       </motion.div>
