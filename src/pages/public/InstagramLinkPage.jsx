@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import wordpressService from '../../services/wordpress.service';
 import newsletterService from '../../services/newsletter.service';
-import CalendlyExpertSelector from '../../components/features/calendly/CalendlyExpertSelector';
+import BookingSystem from '../../components/booking/BookingSystem';
 import './InstagramLinkPage.css';
 
 // Composant Newsletter Form avec API Brevo
@@ -218,17 +218,31 @@ const InstagramLinkPage = () => {
           </div>
         </section>
 
-        {/* Section Calendly - Prise de rendez-vous avec choix d'expert */}
+        {/* Section Réservation Ultra-Moderne */}
         <section className="ilp-main-links">
-          <div className="ilp-link-button ilp-calendly-section">
-            <span className="ilp-link-title">Prendre rendez-vous</span>
-            <span className="ilp-link-description">Échangez avec nos experts en publicité musicale</span>
-            <CalendlyExpertSelector 
-              displayType="inline"
-              onScheduled={(data) => {
-                console.log('RDV programmé depuis Instagram Links:', data);
-              }}
-            />
+          <div className="ilp-link-button ilp-booking-section">
+            <span className="ilp-link-title">Consultation Gratuite</span>
+            <span className="ilp-link-description">Réservez 30 min avec nos experts marketing musical</span>
+            <div className="modern-booking-container">
+              <BookingSystem 
+                displayMode="inline"
+                onScheduled={(data) => {
+                  console.log('✅ RDV programmé depuis Instagram Links:', data);
+                  // Analytics tracking
+                  if (window.gtag) {
+                    window.gtag('event', 'consultation_booked', {
+                      event_category: 'booking',
+                      event_label: 'instagram_links_page',
+                      expert_name: data.expert?.name,
+                      value: 1
+                    });
+                  }
+                }}
+                onClose={() => {
+                  console.log('🔒 Système de réservation fermé');
+                }}
+              />
+            </div>
           </div>
         </section>
 

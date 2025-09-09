@@ -158,6 +158,7 @@ const CalendlyExpertSelector = ({
       <CalendlyWidget
         url={selectedExpert.calendlyUrl}
         type={displayType}
+        lazyLoad={true}
         prefill={{
           name: '',
           email: '',

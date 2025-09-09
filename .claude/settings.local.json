@@ -43,7 +43,8 @@
       "Bash(pkill:*)",
       "Bash(git cherry-pick:*)",
       "WebFetch(domain:developers.facebook.com)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cd:*)"
     ],
     "deny": []
   }

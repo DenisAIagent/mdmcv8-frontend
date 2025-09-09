@@ -50,6 +50,7 @@ import SmartLinkPageNew from './pages/public/SmartLinkPageNew';
 import SmartLinkPageClean from './pages/public/SmartLinkPageClean';
 import InstagramLinkPage from './pages/public/InstagramLinkPage';
 import SmartLinkPageDoubleTracking from './pages/public/SmartLinkPageDoubleTracking';
+import BookingDemo from './components/booking/BookingDemo';
 
 // Pages de ressources légales
 import FAQ from './pages/public/resources/FAQ';
@@ -234,6 +235,7 @@ function App() {
         <Route path="/smartlinks/:artistSlug/:trackSlug" element={<SmartLinkPageClean />} />
         <Route path="/smartlinks-old/:artistSlug/:trackSlug" element={<SmartLinkPageNew />} />
         <Route path="/smartlink-test/:slug" element={<SmartLinkPageDoubleTracking />} />
+        <Route path="/booking-demo" element={<BookingDemo />} />
         
         {/* Routes services SEO-optimisées */}
         <Route path="/services/youtube-ads-musique" element={<YouTubeAdsMusique />} />
