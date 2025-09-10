@@ -27,8 +27,9 @@ const CalendlyBooking = ({
     const detectBlocked = setTimeout(() => {
       if (!hasLoaded) {
         setIsBlocked(true);
+        console.log('❌ Calendly widget failed to load after 3 seconds');
       }
-    }, 5000); // 5 secondes pour charger
+    }, 3000); // 3 secondes pour charger
 
     // Écouter les événements Calendly
     const handleCalendlyEvent = (e) => {
@@ -60,13 +61,40 @@ const CalendlyBooking = ({
             onEventScheduled(e.data.payload);
           }
         }
+
+        // Calendly widget prêt
+        if (e.data.event === 'calendly.profile_page_viewed' || 
+            e.data.event === 'calendly.event_type_viewed') {
+          setHasLoaded(true);
+          setIsBlocked(false);
+        }
       }
     };
+
+    // Détecter les iframes Calendly chargées
+    const checkIframes = () => {
+      const iframes = document.querySelectorAll('iframe[src*="calendly.com"]');
+      if (iframes.length > 0) {
+        console.log('✅ Calendly iframe detected');
+        setHasLoaded(true);
+        setIsBlocked(false);
+      }
+    };
+
+    // Vérifier les iframes périodiquement
+    const iframeCheck = setInterval(checkIframes, 1000);
+
+    // Nettoyer après 10 secondes
+    const cleanup = setTimeout(() => {
+      clearInterval(iframeCheck);
+    }, 10000);
 
     window.addEventListener('message', handleCalendlyEvent);
     return () => {
       window.removeEventListener('message', handleCalendlyEvent);
       clearTimeout(detectBlocked);
+      clearInterval(iframeCheck);
+      clearTimeout(cleanup);
     };
   }, [url, expertName, onEventScheduled, hasLoaded]);
 
@@ -87,21 +115,23 @@ const CalendlyBooking = ({
           <div className="calendly-blocked-icon">🚫</div>
           <h3>Calendrier bloqué</h3>
           <p>
-            Votre navigateur ou un bloqueur de publicité empêche l'affichage du calendrier.
+            Le calendier de réservation ne peut pas s'afficher. Cela peut être dû à votre navigateur, un bloqueur de publicité, ou des paramètres de sécurité.
           </p>
           <div className="calendly-blocked-solutions">
             <h4>Solutions :</h4>
             <ul>
+              <li>Actualisez la page et réessayez</li>
               <li>Désactivez temporairement votre bloqueur de publicité</li>
               <li>Ajoutez calendly.com à vos sites de confiance</li>
+              <li>Essayez avec un autre navigateur (Chrome, Firefox, Safari)</li>
               <li>Ou contactez-nous directement :</li>
             </ul>
             <div className="calendly-contact-alternatives">
               <a 
-                href="mailto:contact@mdmc-music-ads.com"
+                href="mailto:hello@mdmc-music-ads.com"
                 className="calendly-alt-btn calendly-email-btn"
               >
-                📧 contact@mdmc-music-ads.com
+                📧 hello@mdmc-music-ads.com
               </a>
               <a 
                 href={url}
