@@ -65,18 +65,14 @@
 }
 
 .ilp-booking-section:hover::before {
-  opacity: 0.3;
+  opacity: 0.1;
 }
 
 .ilp-booking-section .ilp-link-title {
   color: #ffffff !important;
-  background: linear-gradient(135deg, #E50914, #ff1a28);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   font-weight: 700 !important;
   font-size: 22px !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   margin-bottom: 12px !important;
 }
 
@@ -86,7 +82,7 @@
   font-size: 16px !important;
   line-height: 1.5 !important;
   margin-bottom: 24px !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 
 .modern-booking-container {

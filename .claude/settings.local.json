@@ -50,7 +50,8 @@
       "Bash(git commit:*)",
       "Bash(git merge:*)",
       "WebFetch(domain:share.google)",
-      "WebFetch(domain:www.google.com)"
+      "WebFetch(domain:www.google.com)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
