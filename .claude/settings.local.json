@@ -43,7 +43,10 @@
       "Bash(pkill:*)",
       "Bash(git cherry-pick:*)",
       "WebFetch(domain:developers.facebook.com)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git merge:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
