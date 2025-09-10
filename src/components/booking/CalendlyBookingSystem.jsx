@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ExpertSelector from './ExpertSelector';
 import CalendlyBooking from './CalendlyBooking';
+import GoogleCalendarBooking from './GoogleCalendarBooking';
 
 const CalendlyBookingSystem = ({ 
   displayMode = 'modal',
   triggerElement,
   onClose = () => {},
-  onScheduled = () => {}
+  onScheduled = () => {},
+  useGoogleCalendar = true // Nouveau paramètre pour choisir le système
 }) => {
   const [isOpen, setIsOpen] = useState(displayMode === 'inline');
   const [selectedExpert, setSelectedExpert] = useState(null);
@@ -69,43 +71,51 @@ const CalendlyBookingSystem = ({
             />
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Réserver avec {selectedExpert.name}
-                </h3>
-                <p className="text-gray-600">{selectedExpert.role}</p>
-              </div>
-              <button
-                onClick={handleBackToExperts}
-                className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-              >
-                Changer d'expert
-              </button>
-            </div>
-            
-            <div className="calendly-booking-wrapper">
-              <div className="expert-header-compact">
-                <div className="expert-info-line">
-                  <h3>Réservation avec {selectedExpert.name}</h3>
-                  <button
-                    onClick={handleBackToExperts}
-                    className="change-expert-btn"
-                  >
-                    Changer d'expert
-                  </button>
+          useGoogleCalendar ? (
+            <GoogleCalendarBooking
+              expert={selectedExpert}
+              onScheduled={handleScheduled}
+              onBack={handleBackToExperts}
+            />
+          ) : (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Réserver avec {selectedExpert.name}
+                  </h3>
+                  <p className="text-gray-600">{selectedExpert.role}</p>
                 </div>
-                <p className="expert-subtitle">{selectedExpert.role} • {selectedExpert.specialties?.[0]}</p>
+                <button
+                  onClick={handleBackToExperts}
+                  className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                >
+                  Changer d'expert
+                </button>
               </div>
               
-              <CalendlyBooking
-                url={selectedExpert.calendlyUrl}
-                expertName={selectedExpert.name}
-                onEventScheduled={handleScheduled}
-              />
+              <div className="calendly-booking-wrapper">
+                <div className="expert-header-compact">
+                  <div className="expert-info-line">
+                    <h3>Réservation avec {selectedExpert.name}</h3>
+                    <button
+                      onClick={handleBackToExperts}
+                      className="change-expert-btn"
+                    >
+                      Changer d'expert
+                    </button>
+                  </div>
+                  <p className="expert-subtitle">{selectedExpert.role} • {selectedExpert.specialties?.[0]}</p>
+                </div>
+                
+                <CalendlyBooking
+                  url={selectedExpert.calendlyUrl}
+                  expertName={selectedExpert.name}
+                  onEventScheduled={handleScheduled}
+                />
+              </div>
             </div>
-          </div>
+          )
         )}
       </div>
     );
@@ -171,43 +181,51 @@ const CalendlyBookingSystem = ({
                     selectedExpert={selectedExpert}
                   />
                 ) : (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <img
-                          src={selectedExpert.avatar}
-                          alt={selectedExpert.name}
-                          className="w-12 h-12 rounded-full object-cover"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {selectedExpert.name}
-                          </h3>
-                          <p className="text-gray-600">{selectedExpert.role}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleBackToExperts}
-                        className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-                      >
-                        Changer d'expert
-                      </button>
-                    </div>
-                    
-                    <CalendlyBooking
-                      url={selectedExpert.calendlyUrl}
-                      locale="fr"
-                      utm={{
-                        utmSource: 'mdmc_website',
-                        utmCampaign: 'expert_booking',
-                        utmMedium: 'modal_widget'
-                      }}
+                  useGoogleCalendar ? (
+                    <GoogleCalendarBooking
+                      expert={selectedExpert}
                       onScheduled={handleScheduled}
+                      onBack={handleBackToExperts}
                     />
-                  </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={selectedExpert.avatar}
+                            alt={selectedExpert.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {selectedExpert.name}
+                            </h3>
+                            <p className="text-gray-600">{selectedExpert.role}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={handleBackToExperts}
+                          className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                        >
+                          Changer d'expert
+                        </button>
+                      </div>
+                      
+                      <CalendlyBooking
+                        url={selectedExpert.calendlyUrl}
+                        locale="fr"
+                        utm={{
+                          utmSource: 'mdmc_website',
+                          utmCampaign: 'expert_booking',
+                          utmMedium: 'modal_widget'
+                        }}
+                        onScheduled={handleScheduled}
+                      />
+                    </div>
+                  )
                 )}
               </div>
             </motion.div>
