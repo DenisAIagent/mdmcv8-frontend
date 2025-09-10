@@ -159,6 +159,17 @@ export default {
       "mhl_description": "Colaboração em campanhas internacionais",
       "algorythme": "Algorythme",
       "algorythme_description": "Parceiro tecnológico para análise de dados"
+    },
+    "consultation": {
+      "title": "Consulta Gratuita",
+      "subtitle": "Depois de ver nossos resultados e parceiros, agende sua consulta personalizada com nossos especialistas",
+      "cta": "Agendar minha consulta gratuita",
+      "cta_subtitle": "30 min com nossos especialistas em marketing musical"
+    },
+    "google_rating": {
+      "title": "Avaliado 5/5 no Google",
+      "stars": "5 estrelas",
+      "description": "Excelência reconhecida pelos nossos clientes"
     }
   },
   "reviews": {

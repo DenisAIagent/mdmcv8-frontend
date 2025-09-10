@@ -1,0 +1,906 @@
+/* ExpertSelector.css - Ultra Modern Expert Cards */
+
+.expert-selector-modern {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--booking-text);
+}
+
+/* ==== HEADER ==== */
+
+.expert-selector-header {
+  text-align: center;
+  margin-bottom: var(--booking-space-8);
+}
+
+.expert-selector-header h2 {
+  font-size: var(--booking-font-3xl);
+  font-weight: 700;
+  color: var(--booking-text);
+  margin: 0 0 var(--booking-space-3) 0;
+  background: linear-gradient(135deg, var(--booking-primary), var(--booking-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.expert-selector-header p {
+  font-size: var(--booking-font-lg);
+  color: var(--booking-text-alt);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* ==== CONTAINER CARTES ==== */
+
+.expert-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--booking-space-4);
+  margin-bottom: var(--booking-space-8);
+}
+
+/* ==== CARTE EXPERT ==== */
+
+.expert-card-modern {
+  position: relative;
+  background: var(--booking-card-bg);
+  border: 2px solid var(--booking-border);
+  border-radius: var(--booking-radius-md);
+  padding: var(--booking-space-4);
+  cursor: pointer;
+  transition: var(--booking-transition);
+  overflow: hidden;
+  box-shadow: var(--booking-shadow-sm);
+}
+
+.expert-card-modern::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
+  border-radius: var(--booking-radius-xl);
+  opacity: 0;
+  z-index: -1;
+  transition: var(--booking-transition);
+}
+
+.expert-card-modern:hover::before {
+  opacity: 1;
+}
+
+.expert-card-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--booking-shadow-md);
+  border-color: var(--expert-color, var(--booking-primary));
+}
+
+.expert-card-modern.selected {
+  border-color: var(--expert-color, var(--booking-primary));
+  box-shadow: var(--booking-shadow-lg), 0 0 0 4px var(--expert-color, var(--booking-primary))20;
+}
+
+/* Glow effect */
+.expert-card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.3;
+}
+
+/* ==== HEADER CARTE ==== */
+
+.expert-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--booking-space-6);
+  margin-bottom: var(--booking-space-6);
+  position: relative;
+}
+
+/* Avatar */
+.expert-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.expert-avatar-glow {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
+  border-radius: 50%;
+  opacity: 0;
+  transition: var(--booking-transition);
+  filter: blur(8px);
+  z-index: -1;
+}
+
+.expert-card-modern:hover .expert-avatar-glow {
+  opacity: 0.6;
+}
+
+.expert-avatar-modern {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--expert-color, var(--booking-primary));
+  position: relative;
+  z-index: 1;
+}
+
+.expert-avatar-fallback-modern {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
+  color: white;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--booking-font-xl);
+  font-weight: 700;
+  letter-spacing: 1px;
+  border: 4px solid var(--expert-color, var(--booking-primary));
+}
+
+/* Status en ligne */
+.expert-status-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--booking-shadow-sm);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--booking-success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+/* Info expert */
+.expert-info-header {
+  flex: 1;
+}
+
+.expert-info-header h3 {
+  font-size: var(--booking-font-2xl);
+  font-weight: 700;
+  color: var(--booking-text);
+  margin: 0 0 var(--booking-space-2) 0;
+}
+
+.expert-role {
+  font-size: var(--booking-font-base);
+  font-weight: 600;
+  color: var(--expert-color, var(--booking-primary));
+  background: var(--expert-color, var(--booking-primary))10;
+  padding: var(--booking-space-1) var(--booking-space-3);
+  border-radius: var(--booking-radius-sm);
+  display: inline-block;
+  margin-bottom: var(--booking-space-3);
+}
+
+.expert-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--booking-space-2);
+  margin-bottom: var(--booking-space-2);
+}
+
+.expert-star {
+  color: #FFC107;
+  font-size: 16px;
+}
+
+.expert-star.filled {
+  opacity: 1;
+}
+
+.expert-star:not(.filled) {
+  opacity: 0.3;
+}
+
+.expert-rating-number {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+  font-weight: 600;
+}
+
+.expert-experience {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* Action rapide */
+.expert-quick-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.expert-quick-book {
+  background: var(--expert-color, var(--booking-primary));
+  color: white;
+  border: none;
+  padding: var(--booking-space-2) var(--booking-space-4);
+  border-radius: var(--booking-radius-sm);
+  font-size: var(--booking-font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--booking-transition);
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.expert-card-modern:hover .expert-quick-book {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.expert-quick-book:hover {
+  background: var(--expert-accent, var(--booking-primary-light));
+  transform: scale(1.05);
+}
+
+/* ==== SPÉCIALITÉS ==== */
+
+.expert-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--booking-space-2);
+  margin-bottom: var(--booking-space-6);
+}
+
+.expert-specialty-badge {
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary))15, var(--expert-accent, var(--booking-primary-light))15);
+  color: var(--expert-color, var(--booking-primary));
+  padding: var(--booking-space-2) var(--booking-space-3);
+  border-radius: var(--booking-radius-sm);
+  font-size: var(--booking-font-sm);
+  font-weight: 600;
+  border: 1px solid var(--expert-color, var(--booking-primary))20;
+  transition: var(--booking-transition);
+}
+
+.expert-card-modern:hover .expert-specialty-badge {
+  background: var(--expert-color, var(--booking-primary));
+  color: white;
+  border-color: var(--expert-color, var(--booking-primary));
+  transform: scale(1.05);
+}
+
+/* ==== BIO ==== */
+
+.expert-bio-short {
+  font-size: var(--booking-font-base);
+  color: var(--booking-text-alt);
+  line-height: 1.6;
+  margin: 0 0 var(--booking-space-6) 0;
+  opacity: 0.9;
+}
+
+/* ==== STATISTIQUES ==== */
+
+.expert-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--booking-space-4);
+  margin-bottom: var(--booking-space-6);
+  padding: var(--booking-space-4);
+  background: var(--booking-bg);
+  border-radius: var(--booking-radius-md);
+  border: 1px solid var(--booking-border);
+}
+
+.expert-stat {
+  text-align: center;
+  transition: var(--booking-transition);
+}
+
+.expert-stat-value {
+  display: block;
+  font-size: var(--booking-font-xl);
+  font-weight: 700;
+  color: var(--stat-color, var(--booking-primary));
+  margin-bottom: var(--booking-space-1);
+}
+
+.expert-stat-label {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.expert-card-modern:hover .expert-stat {
+  transform: scale(1.1);
+}
+
+/* ==== DISPONIBILITÉ ==== */
+
+.expert-availability {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--booking-space-6);
+  padding: var(--booking-space-3) var(--booking-space-4);
+  background: var(--booking-success)10;
+  border-radius: var(--booking-radius-sm);
+  border: 1px solid var(--booking-success)20;
+}
+
+.availability-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--booking-space-2);
+  font-size: var(--booking-font-sm);
+  font-weight: 500;
+  color: var(--booking-success);
+}
+
+.availability-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--booking-success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.expert-languages {
+  display: flex;
+  gap: var(--booking-space-1);
+}
+
+.language-badge {
+  background: var(--booking-text-alt);
+  color: white;
+  padding: 2px var(--booking-space-2);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==== TÉMOIGNAGE ==== */
+
+.expert-featured-testimonial {
+  background: var(--expert-color, var(--booking-primary))05;
+  border-left: 4px solid var(--expert-color, var(--booking-primary));
+  padding: var(--booking-space-4);
+  border-radius: 0 var(--booking-radius-sm) var(--booking-radius-sm) 0;
+  margin-bottom: var(--booking-space-6);
+}
+
+.expert-featured-testimonial blockquote {
+  font-style: italic;
+  color: var(--booking-text-alt);
+  margin: 0 0 var(--booking-space-2) 0;
+  font-size: var(--booking-font-sm);
+  line-height: 1.5;
+}
+
+.expert-featured-testimonial cite {
+  color: var(--expert-color, var(--booking-primary));
+  font-weight: 600;
+  font-size: var(--booking-font-sm);
+  font-style: normal;
+}
+
+/* ==== BOUTON PRINCIPAL ==== */
+
+.expert-select-button-modern {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--booking-space-3);
+  padding: var(--booking-space-4) var(--booking-space-6);
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
+  color: white;
+  border: none;
+  border-radius: var(--booking-radius-lg);
+  font-size: var(--booking-font-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--booking-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.expert-select-button-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.expert-select-button-modern:hover::before {
+  left: 100%;
+}
+
+.expert-select-button-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--booking-shadow-lg), 0 0 20px var(--expert-color, var(--booking-primary))50;
+}
+
+.expert-select-icon {
+  font-size: 20px;
+}
+
+.expert-select-arrow {
+  font-size: 18px;
+  transition: transform 0.3s var(--booking-transition-spring);
+}
+
+/* ==== ACCOMPLISSEMENTS OVERLAY ==== */
+
+.expert-achievements-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary))95, var(--expert-accent, var(--booking-primary-light))95);
+  color: white;
+  padding: var(--booking-space-6);
+  border-radius: var(--booking-radius-xl);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.expert-achievements-overlay h4 {
+  font-size: var(--booking-font-xl);
+  font-weight: 700;
+  margin: 0 0 var(--booking-space-4) 0;
+  text-align: center;
+}
+
+.expert-achievements-overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--booking-space-3);
+}
+
+.expert-achievements-overlay li {
+  display: flex;
+  align-items: center;
+  gap: var(--booking-space-3);
+  font-weight: 500;
+}
+
+.achievement-icon {
+  width: 24px;
+  height: 24px;
+  background: white;
+  color: var(--expert-color, var(--booking-primary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* ==== SECTION COMPARAISON ==== */
+
+.expert-comparison {
+  background: var(--booking-card-bg);
+  border-radius: var(--booking-radius-lg);
+  padding: var(--booking-space-8);
+  margin-top: var(--booking-space-8);
+  border: 1px solid var(--booking-border);
+}
+
+.expert-comparison h3 {
+  text-align: center;
+  font-size: var(--booking-font-2xl);
+  font-weight: 700;
+  color: var(--booking-text);
+  margin: 0 0 var(--booking-space-8) 0;
+  background: linear-gradient(135deg, var(--booking-primary), var(--booking-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--booking-space-6);
+}
+
+.comparison-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--booking-space-4);
+  text-align: left;
+}
+
+.comparison-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--booking-primary)15, var(--booking-primary-light)15);
+  border-radius: var(--booking-radius-md);
+  border: 2px solid var(--booking-primary)20;
+}
+
+.comparison-content h4 {
+  font-size: var(--booking-font-lg);
+  font-weight: 600;
+  color: var(--booking-text);
+  margin: 0 0 var(--booking-space-2) 0;
+}
+
+.comparison-content p {
+  font-size: var(--booking-font-base);
+  color: var(--booking-text-alt);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==== LAYOUT COMPACT ==== */
+
+.expert-card-compact {
+  display: flex;
+  align-items: center;
+  gap: var(--booking-space-6);
+  width: 100%;
+  padding: var(--booking-space-2);
+}
+
+.expert-left {
+  flex-shrink: 0;
+}
+
+.expert-left .expert-avatar-wrapper {
+  position: relative;
+}
+
+.expert-left .expert-avatar-modern,
+.expert-left .expert-avatar-fallback-modern {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--expert-color, var(--booking-primary));
+}
+
+.expert-left .expert-avatar-fallback-modern {
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
+  color: white;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--booking-font-lg);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.expert-center {
+  flex: 1;
+  min-width: 0;
+}
+
+.expert-center .expert-info-header h3 {
+  font-size: var(--booking-font-xl);
+  font-weight: 700;
+  color: var(--booking-text);
+  margin: 0 0 var(--booking-space-2) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--booking-space-3);
+  flex-wrap: wrap;
+}
+
+.expert-role-inline {
+  font-size: var(--booking-font-sm);
+  font-weight: 500;
+  color: var(--expert-color, var(--booking-primary));
+  background: var(--expert-color, var(--booking-primary))10;
+  padding: var(--booking-space-1) var(--booking-space-2);
+  border-radius: var(--booking-radius-sm);
+}
+
+.expert-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--booking-space-3);
+  margin-bottom: var(--booking-space-3);
+  flex-wrap: wrap;
+}
+
+.expert-specialties-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--booking-space-1);
+  margin-bottom: var(--booking-space-2);
+}
+
+.expert-specialties-compact .expert-specialty-badge {
+  background: var(--expert-color, var(--booking-primary))10;
+  color: var(--expert-color, var(--booking-primary));
+  padding: 2px var(--booking-space-2);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.specialty-more {
+  background: var(--booking-text-muted);
+  color: white;
+  padding: 2px var(--booking-space-2);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.expert-stats-compact {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+}
+
+.stat-compact {
+  font-weight: 500;
+}
+
+.expert-right {
+  flex-shrink: 0;
+}
+
+.expert-select-button-compact {
+  background: linear-gradient(135deg, var(--expert-color, var(--booking-primary)), var(--expert-accent, var(--booking-primary-light)));
+  color: white;
+  border: none;
+  padding: var(--booking-space-4) var(--booking-space-8);
+  border-radius: var(--booking-radius-lg);
+  font-size: var(--booking-font-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--booking-transition);
+  white-space: nowrap;
+  min-width: 160px;
+}
+
+.expert-select-button-compact:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--booking-shadow-md);
+}
+
+/* ==== SECTION COMPARAISON COMPACTE ==== */
+
+.expert-comparison-compact {
+  background: var(--booking-card-bg);
+  border-radius: var(--booking-radius-lg);
+  padding: var(--booking-space-6);
+  margin-top: var(--booking-space-6);
+  border: 1px solid var(--booking-border);
+}
+
+.comparison-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--booking-space-4);
+  text-align: center;
+}
+
+.comparison-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--booking-space-1);
+}
+
+.comparison-stat .stat-number {
+  font-size: var(--booking-font-2xl);
+  font-weight: 700;
+  color: var(--booking-primary);
+}
+
+.comparison-stat .stat-label {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+  font-weight: 500;
+}
+
+/* ==== LAYOUT SIMPLE ==== */
+
+.expert-card-simple {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: var(--booking-space-2);
+}
+
+.expert-info h3 {
+  font-size: var(--booking-font-lg);
+  font-weight: 600;
+  color: var(--booking-text);
+  margin: 0 0 4px 0;
+}
+
+.expert-role-simple {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+  margin: 0 0 8px 0;
+}
+
+.expert-rating-simple {
+  font-size: var(--booking-font-sm);
+  color: var(--booking-text-alt);
+}
+
+.expert-select-button-simple {
+  background: var(--booking-primary);
+  color: white;
+  border: none;
+  padding: var(--booking-space-2) var(--booking-space-4);
+  border-radius: var(--booking-radius-sm);
+  font-size: var(--booking-font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--booking-transition);
+}
+
+.expert-select-button-simple:hover {
+  background: var(--booking-primary-light);
+}
+
+/* ==== RESPONSIVE ==== */
+
+@media (max-width: 768px) {
+  .expert-cards-container {
+    gap: var(--booking-space-3);
+  }
+  
+  .expert-card-compact {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--booking-space-3);
+  }
+  
+  .expert-center .expert-info-header h3 {
+    flex-direction: column;
+    gap: var(--booking-space-1);
+    text-align: center;
+  }
+  
+  .expert-meta {
+    justify-content: center;
+  }
+  
+  .expert-specialties-compact {
+    justify-content: center;
+  }
+  
+  .comparison-stats {
+    grid-template-columns: 1fr;
+    gap: var(--booking-space-3);
+  }
+  
+  .expert-card-modern {
+    padding: var(--booking-space-6);
+  }
+  
+  .expert-card-header {
+    gap: var(--booking-space-4);
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .expert-avatar-modern,
+  .expert-avatar-fallback-modern {
+    width: 64px;
+    height: 64px;
+    align-self: center;
+  }
+  
+  .expert-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--booking-space-3);
+  }
+  
+  .expert-availability {
+    flex-direction: column;
+    gap: var(--booking-space-2);
+    text-align: center;
+  }
+  
+  .comparison-grid {
+    grid-template-columns: 1fr;
+    gap: var(--booking-space-4);
+  }
+  
+  .expert-selector-header h2 {
+    font-size: var(--booking-font-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .expert-card-modern {
+    padding: var(--booking-space-4);
+  }
+  
+  .expert-selector-header {
+    margin-bottom: var(--booking-space-6);
+  }
+  
+  .expert-selector-header h2 {
+    font-size: var(--booking-font-xl);
+  }
+  
+  .expert-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--booking-space-3);
+    gap: var(--booking-space-2);
+  }
+  
+  .expert-stat-value {
+    font-size: var(--booking-font-lg);
+  }
+  
+  .expert-specialties {
+    justify-content: center;
+  }
+  
+  .expert-comparison {
+    padding: var(--booking-space-6);
+    margin-top: var(--booking-space-6);
+  }
+  
+  .comparison-item {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--booking-space-3);
+  }
+  
+  .comparison-icon {
+    align-self: center;
+  }
+}

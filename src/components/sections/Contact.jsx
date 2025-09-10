@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 // Version choisie : Imports simples sans les commentaires redondants
 import emailjs from '@emailjs/browser';
 import '../../assets/styles/contact.css';
+import CalendlyBookingSystem from '../booking/CalendlyBookingSystem';
 
 // Liens Calendly (était hors conflit)
 const CALENDLY_LINKS = {
@@ -154,6 +155,33 @@ const Contact = () => {
             <div className="social-links">
               {/* Vos liens/icônes ici */}
             </div>
+          </div>
+
+          {/* === SECTION CONSULTATION GRATUITE === */}
+          <div className="consultation-section">
+            <div className="consultation-header">
+              <h3>{t('contact.consultation.title')}</h3>
+              <p>{t('contact.consultation.subtitle')}</p>
+            </div>
+            <CalendlyBookingSystem 
+              displayMode="modal"
+              triggerElement={
+                <button className="btn btn-primary consultation-cta-contact">
+                  <span>{t('contact.consultation.cta')}</span>
+                  <small>{t('contact.consultation.cta_subtitle')}</small>
+                </button>
+              }
+              onScheduled={(data) => {
+                console.log('✅ Consultation programmée depuis Contact:', data);
+                if (window.gtag) {
+                  window.gtag('event', 'consultation_scheduled_contact', {
+                    event_category: 'conversion',
+                    event_label: 'contact_after_social_proof',
+                    value: 100
+                  });
+                }
+              }}
+            />
           </div>
 
           {/* === FORMULAIRE DE CONTACT === */}

@@ -217,6 +217,20 @@
     min-height: 300px;
   }
   
+  .calendly-lazy-load {
+    min-height: 300px;
+    padding: 30px 15px;
+  }
+  
+  .calendly-load-button {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+  
+  .calendly-load-description {
+    font-size: 13px;
+  }
+  
   .calendly-button {
     padding: 16px 24px;
     font-size: 16px;
@@ -281,6 +295,95 @@
 .calendly-modal-close:focus-visible {
   outline: 2px solid #E50914;
   outline-offset: 2px;
+}
+
+/* Lazy Loading */
+.calendly-lazy-load {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+.calendly-load-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #E50914 0%, #d40813 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(229, 9, 20, 0.2);
+  margin-bottom: 12px;
+}
+
+.calendly-load-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d40813 0%, #b8070f 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229, 9, 20, 0.3);
+}
+
+.calendly-load-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.calendly-load-icon {
+  font-size: 16px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.calendly-load-description {
+  margin: 0;
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.calendly-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 20px;
+  text-align: center;
+  background: #fff5f5;
+  border: 2px solid #feb2b2;
+  border-radius: 12px;
+  color: #c53030;
+}
+
+.calendly-retry-button {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #E50914;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendly-retry-button:hover {
+  background: #d40813;
+  transform: translateY(-1px);
 }
 
 /* Transitions fluides pour tous les éléments interactifs */

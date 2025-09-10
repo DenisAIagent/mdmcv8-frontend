@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef } from 'react';
 import '../../assets/styles/hero.css';
+import CalendlyBookingSystem from '../booking/CalendlyBookingSystem';
 
 const Hero = ({ openSimulator }) => {
   const { t } = useTranslation();
@@ -84,11 +85,33 @@ const Hero = ({ openSimulator }) => {
       <div className="hero-container">
         <div className="hero-content">
           <h1>{t('hero.title')}</h1>
-          <p className="hero-slogan red-text">{t('hero.slogan')}</p>
+          <p className="hero-slogan red-text">
+            {t('hero.slogan')}
+            <span style={{ marginLeft: '15px', fontSize: '24px', color: '#FFC107' }}>★★★★★</span>
+          </p>
           <p className="hero-description">{t('hero.description')}</p>
+          
           <div className="cta-container">
             <button onClick={openSimulator} className="btn btn-primary" id="simulator-trigger">{t('simulator.title')}</button>
-            <a href="#contact" className="btn btn-secondary">{t('nav.contact')}</a>
+            <CalendlyBookingSystem 
+              displayMode="modal"
+              triggerElement={
+                <button className="btn btn-secondary consultation-btn">
+                  <span>Consultation Gratuite</span>
+                  <small>Réservez 30 min avec nos experts</small>
+                </button>
+              }
+              onScheduled={(data) => {
+                console.log('✅ Consultation programmée depuis Hero:', data);
+                if (window.gtag) {
+                  window.gtag('event', 'consultation_scheduled_hero', {
+                    event_category: 'conversion',
+                    event_label: 'hero_secondary_cta',
+                    value: 100
+                  });
+                }
+              }}
+            />
           </div>
         </div>
         
