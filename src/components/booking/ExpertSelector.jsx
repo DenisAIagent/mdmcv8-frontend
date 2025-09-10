@@ -14,18 +14,18 @@ const expertsConfig = {
     color: '#FF0000',
     accentColor: '#FF4444',
     stats: {
-      views: '50M+',
-      campaigns: '500+',
-      roi: '4.2x',
+      views: '25M+',
+      campaigns: '350+',
+      roi: '3.8x',
       rating: 4.9,
-      clients: '150+'
+      clients: '120+'
     },
     specialties: ['YouTube Ads', 'Video Marketing', 'Audience Growth', 'ROI Optimization'],
-    bio: 'Ex-Google Partner. Architecte de campagnes YouTube virales avec une obsession pour les métriques qui transforment les artistes en stars.',
-    fullBio: 'Denis Adam, ex-Google Partner certifié, révolutionne la promotion musicale sur YouTube depuis plus de 8 ans. Il a orchestré des campagnes générant plus de 50 millions de vues pour des artistes de tous niveaux, du talent émergent aux superstars établies.',
+    bio: 'Expert en campagnes YouTube Ads pour artistes avec un focus sur le ROI et la croissance organique.',
+    fullBio: 'Denis Adam, spécialiste du marketing musical sur YouTube avec plus de 25M de vues générées. Expert reconnu pour ses stratégies ROI-focused et sa connaissance approfondie de l\'écosystème YouTube Music.',
     availability: 'Lun-Ven 9h-18h CET',
     languages: ['FR', 'EN'],
-    experience: '8+ ans',
+    experience: 'Expert certifié',
     testimonials: [
       { 
         artist: 'JUL', 
@@ -39,16 +39,17 @@ const expertsConfig = {
       }
     ],
     achievements: [
-      'Google Partner Certifié',
-      '+500 campagnes réussies',
-      'ROI moyen de 4.2x',
-      '+50M vues générées'
+      'Google Partner',
+      'Spécialiste YouTube Music Ads',
+      '25M+ vues YouTube générées',
+      'Campagnes pour 100+ artistes',
+      'ROI moyen de 3.8x'
     ]
   },
   
   marine: {
     id: 'expert_002',
-    name: 'Marine Hébert',
+    name: 'Marine Harel',
     firstName: 'Marine',
     role: 'Meta Ads Specialist',
     calendlyUrl: 'https://calendly.com/mhl-agency/decouverte',
@@ -63,8 +64,8 @@ const expertsConfig = {
       conversions: '25K+'
     },
     specialties: ['Facebook Ads', 'Instagram Growth', 'Influencer Marketing', 'Community Building'],
-    bio: 'Meta Certified Professional. Je transforme les algorithmes sociaux en machines à engagement pour propulser votre musique.',
-    fullBio: 'Marine Hébert, Meta Business Partner certifiée, maîtrise l\'art de faire vibrer les réseaux sociaux. Avec plus de 3M€ de budgets publicitaires gérés et 200+ artistes accompagnés, elle excelle dans la création de communautés engagées.',
+    bio: 'Spécialiste Meta Ads expérimentée. Je transforme les algorithmes sociaux en machines à engagement pour propulser votre musique.',
+    fullBio: 'Marine Harel, spécialiste Meta Ads expérimentée, maîtrise l\'art de faire vibrer les réseaux sociaux. Avec plus de 3M€ de budgets publicitaires gérés et 200+ artistes accompagnés, elle excelle dans la création de communautés engagées.',
     availability: 'Lun-Ven 10h-19h CET',
     languages: ['FR', 'EN', 'ES'],
     experience: '6+ ans',
@@ -81,7 +82,7 @@ const expertsConfig = {
       }
     ],
     achievements: [
-      'Meta Business Partner',
+      '6+ ans d\'expérience Meta Ads',
       '3M€ budgets gérés',
       'CTR moyen de 12%',
       '+25K conversions générées'
@@ -291,11 +292,11 @@ const ExpertSelector = ({ onExpertSelect, selectedExpert }) => {
             <span className="stat-label">Artistes accompagnés</span>
           </div>
           <div className="comparison-stat">
-            <span className="stat-number">4.2x</span>
+            <span className="stat-number">3.5x</span>
             <span className="stat-label">ROI moyen</span>
           </div>
           <div className="comparison-stat">
-            <span className="stat-number">50M+</span>
+            <span className="stat-number">40M+</span>
             <span className="stat-label">Vues générées</span>
           </div>
         </div>

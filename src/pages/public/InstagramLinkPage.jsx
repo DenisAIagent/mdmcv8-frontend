@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import wordpressService from '../../services/wordpress.service';
 import newsletterService from '../../services/newsletter.service';
-import BookingSystem from '../../components/booking/BookingSystem';
+import CalendlyBookingSystem from '../../components/booking/CalendlyBookingSystem';
 import './InstagramLinkPage.css';
 
 // Composant Newsletter Form avec API Brevo
@@ -209,22 +209,13 @@ const InstagramLinkPage = () => {
           ))}
         </section>
 
-        {/* Section Newsletter - Formulaire custom avec API Brevo */}
-        <section className="ilp-main-links">
-          <div className="ilp-link-button ilp-newsletter-link">
-            <span className="ilp-link-title">{t('instagramLinks.newsletter.title')}</span>
-            <span className="ilp-link-description">{t('instagramLinks.newsletter.subtitle')}</span>
-            <NewsletterForm />
-          </div>
-        </section>
-
         {/* Section Réservation Ultra-Moderne */}
         <section className="ilp-main-links">
           <div className="ilp-link-button ilp-booking-section">
             <span className="ilp-link-title">Consultation Gratuite</span>
             <span className="ilp-link-description">Réservez 30 min avec nos experts marketing musical</span>
             <div className="modern-booking-container">
-              <BookingSystem 
+              <CalendlyBookingSystem 
                 displayMode="inline"
                 onScheduled={(data) => {
                   console.log('✅ RDV programmé depuis Instagram Links:', data);
@@ -243,6 +234,15 @@ const InstagramLinkPage = () => {
                 }}
               />
             </div>
+          </div>
+        </section>
+
+        {/* Section Newsletter - Formulaire custom avec API Brevo */}
+        <section className="ilp-main-links">
+          <div className="ilp-link-button ilp-newsletter-link">
+            <span className="ilp-link-title">{t('instagramLinks.newsletter.title')}</span>
+            <span className="ilp-link-description">{t('instagramLinks.newsletter.subtitle')}</span>
+            <NewsletterForm />
           </div>
         </section>
 

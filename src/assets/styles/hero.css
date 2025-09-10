@@ -34,7 +34,7 @@
 
 .hero-container {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Contenu aligné à gauche */
@@ -198,5 +198,193 @@
     white-space: normal; /* Permet le retour à la ligne */
     line-height: 1.4; /* Meilleur espacement des lignes */
     text-align: center; /* Centre le texte */
+  }
+}
+
+/* Styles pour le bouton Consultation Gratuite (secondary) */
+.consultation-btn {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 2rem !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid #E50914 !important;
+  border-radius: 12px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  min-width: 200px !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.consultation-btn:hover {
+  background: linear-gradient(135deg, #E50914, #ff1a28) !important;
+  border-color: #ff1a28 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 24px rgba(229, 9, 20, 0.3) !important;
+}
+
+.consultation-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 4px 16px rgba(229, 9, 20, 0.3) !important;
+}
+
+.consultation-btn span {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  margin-bottom: 2px !important;
+  color: white !important;
+}
+
+.consultation-btn small {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  opacity: 0.9 !important;
+  color: white !important;
+  text-align: center !important;
+}
+
+/* Animation shimmer au hover */
+.consultation-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.consultation-btn:hover::before {
+  left: 100%;
+}
+
+/* Responsive pour le bouton consultation */
+@media (max-width: 768px) {
+  .consultation-btn {
+    min-width: 180px !important;
+    padding: 0.875rem 1.5rem !important;
+  }
+  
+  .consultation-btn span {
+    font-size: 15px !important;
+  }
+  
+  .consultation-btn small {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .consultation-btn {
+    min-width: 160px !important;
+    padding: 0.75rem 1.25rem !important;
+  }
+  
+  .consultation-btn span {
+    font-size: 14px !important;
+  }
+  
+  .consultation-btn small {
+    font-size: 10px !important;
+  }
+}
+
+/* === NOTE GOOGLE 5 ÉTOILES DANS HERO === */
+.hero-google-rating {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  padding: 0.875rem 1.25rem;
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 2px solid #FFC107 !important;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  max-width: fit-content;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-google-rating:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.hero-rating-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.hero-star {
+  font-size: 1.1rem;
+  color: #ddd;
+  transition: all 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.hero-star.filled {
+  color: #FFC107 !important;
+  text-shadow: 0 1px 3px rgba(255, 193, 7, 0.4);
+  font-size: 1.3rem !important;
+}
+
+.hero-rating-text {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+/* Animation au survol des étoiles */
+.hero-google-rating:hover .hero-star.filled {
+  color: #FFD54F;
+  transform: scale(1.05);
+}
+
+/* Responsive pour note Google Hero */
+@media (max-width: 768px) {
+  .hero-google-rating {
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin: 1.25rem 0;
+  }
+  
+  .hero-star {
+    font-size: 1rem;
+  }
+  
+  .hero-rating-text {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-google-rating {
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+    margin: 1rem 0;
+    text-align: center;
+  }
+  
+  .hero-star {
+    font-size: 0.95rem;
+  }
+  
+  .hero-rating-text {
+    font-size: 0.8rem;
+    white-space: normal;
+    line-height: 1.3;
   }
 }

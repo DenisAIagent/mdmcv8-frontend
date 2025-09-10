@@ -287,3 +287,148 @@
      max-width: 95%; /* Permet au bloc d'être un peu plus large sur mobile */
   }
 }
+
+/* === SECTION CONSULTATION GRATUITE DANS CONTACT === */
+.consultation-section {
+  grid-column: 1 / -1; /* Prend toute la largeur sur 2 colonnes */
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(229, 9, 20, 0.1);
+  border-radius: 16px;
+  padding: 2.5rem;
+  margin: 2rem 0;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.consultation-header h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 0.5rem 0;
+}
+
+.consultation-header p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0 0 1.5rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.consultation-cta-contact {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.25rem 2.5rem !important;
+  background: linear-gradient(135deg, #E50914, #ff1a28) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+  box-shadow: 0 6px 24px rgba(229, 9, 20, 0.3) !important;
+  min-width: 300px !important;
+  position: relative !important;
+}
+
+.consultation-cta-contact:hover {
+  background: linear-gradient(135deg, #ff1a28, #E50914) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 40px rgba(229, 9, 20, 0.4) !important;
+}
+
+.consultation-cta-contact:active {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 24px rgba(229, 9, 20, 0.3) !important;
+}
+
+.consultation-cta-contact span {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin-bottom: 4px !important;
+  color: white !important;
+}
+
+.consultation-cta-contact small {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  opacity: 0.9 !important;
+  color: white !important;
+}
+
+/* Animation shimmer */
+.consultation-cta-contact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.consultation-cta-contact:hover::before {
+  left: 100%;
+}
+
+/* Responsive pour section consultation */
+@media (max-width: 768px) {
+  .consultation-section {
+    padding: 2rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .consultation-header h3 {
+    font-size: 1.6rem;
+  }
+  
+  .consultation-header p {
+    font-size: 1rem;
+  }
+  
+  .consultation-cta-contact {
+    min-width: 280px !important;
+    padding: 1.125rem 2rem !important;
+  }
+  
+  .consultation-cta-contact span {
+    font-size: 17px !important;
+  }
+  
+  .consultation-cta-contact small {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .consultation-section {
+    padding: 1.5rem 1rem;
+  }
+  
+  .consultation-header h3 {
+    font-size: 1.4rem;
+  }
+  
+  .consultation-header p {
+    font-size: 0.95rem;
+  }
+  
+  .consultation-cta-contact {
+    min-width: 260px !important;
+    padding: 1rem 1.75rem !important;
+  }
+  
+  .consultation-cta-contact span {
+    font-size: 16px !important;
+  }
+  
+  .consultation-cta-contact small {
+    font-size: 12px !important;
+  }
+}

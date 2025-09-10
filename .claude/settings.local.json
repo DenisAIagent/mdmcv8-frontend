@@ -44,7 +44,12 @@
       "Bash(git cherry-pick:*)",
       "WebFetch(domain:developers.facebook.com)",
       "Bash(node:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(git push origin fix-smartlink-404)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:share.google)",
+      "WebFetch(domain:www.google.com)"
     ],
     "deny": []
   }

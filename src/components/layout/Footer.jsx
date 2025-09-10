@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import '../../assets/styles/footer.css';
 
 const Footer = ({ openSimulator }) => {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+  const [newsletter, setNewsletter] = useState({ email: '', status: null });
   
   const handleSimulatorClick = () => {
     if (openSimulator && typeof openSimulator === 'function') {
@@ -24,6 +26,27 @@ const Footer = ({ openSimulator }) => {
   const handleBadgeError = (e) => {
     e.target.style.display = 'none';
     e.target.nextElementSibling.style.display = 'inline-block';
+  };
+
+  // Gestion newsletter
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setNewsletter(prev => ({ ...prev, status: 'loading' }));
+    
+    // Analytics tracking
+    if (window.gtag) {
+      window.gtag('event', 'newsletter_signup', {
+        event_category: 'engagement',
+        event_label: 'footer_newsletter',
+        value: 10
+      });
+    }
+
+    // Simulation d'envoi (remplacer par vraie API)
+    setTimeout(() => {
+      setNewsletter({ email: '', status: 'success' });
+      setTimeout(() => setNewsletter(prev => ({ ...prev, status: null })), 3000);
+    }, 1000);
   };
 
 
@@ -72,6 +95,21 @@ const Footer = ({ openSimulator }) => {
                 </span>
               </a>
             </div>
+            
+            {/* Note Google 5 étoiles */}
+            <div className="google-rating">
+              <div className="rating-stars">
+                <span className="star filled">★</span>
+                <span className="star filled">★</span>
+                <span className="star filled">★</span>
+                <span className="star filled">★</span>
+                <span className="star filled">★</span>
+              </div>
+              <p className="rating-text">
+                <strong>5.0/5</strong> sur Google
+              </p>
+              <p className="rating-subtitle">{t('contact.google_rating.description')}</p>
+            </div>
           </div>
           
           <div className="footer-links">
@@ -113,6 +151,36 @@ const Footer = ({ openSimulator }) => {
                 <li><a href="/cookies.html" target="_blank">{t('footer.legal_cookies')}</a></li>
               </ul>
             </div>
+          </div>
+        </div>
+
+        {/* Section Newsletter */}
+        <div className="footer-newsletter">
+          <div className="newsletter-content">
+            <h4>Newsletter Marketing Musical</h4>
+            <p>Recevez nos conseils exclusifs, études de cas et nouvelles stratégies</p>
+            <form onSubmit={handleNewsletterSubmit} className="newsletter-form">
+              <input
+                type="email"
+                placeholder="votre-email@exemple.com"
+                value={newsletter.email}
+                onChange={(e) => setNewsletter(prev => ({ ...prev, email: e.target.value }))}
+                required
+                disabled={newsletter.status === 'loading'}
+              />
+              <button 
+                type="submit" 
+                disabled={newsletter.status === 'loading'}
+                className={newsletter.status === 'loading' ? 'loading' : ''}
+              >
+                {newsletter.status === 'loading' ? 'Inscription...' : 'S\'abonner'}
+              </button>
+            </form>
+            {newsletter.status === 'success' && (
+              <div className="newsletter-success">
+                Inscription réussie ! Vérifiez votre boîte mail.
+              </div>
+            )}
           </div>
         </div>
         

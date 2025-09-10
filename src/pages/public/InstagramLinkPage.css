@@ -43,10 +43,11 @@
 
 /* Intégration du système de réservation moderne */
 .ilp-booking-section {
-  background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(229, 9, 20, 0.05) 100%) !important;
-  border: 2px solid rgba(229, 9, 20, 0.3) !important;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 20, 0.75) 100%) !important;
+  border: 2px solid rgba(229, 9, 20, 0.5) !important;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
 }
 
 .ilp-booking-section::before {
@@ -68,23 +69,70 @@
 }
 
 .ilp-booking-section .ilp-link-title {
-  background: linear-gradient(135deg, #E50914, #ff4757);
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #E50914, #ff1a28);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 700 !important;
-  font-size: 20px !important;
+  font-size: 22px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 12px !important;
 }
 
 .ilp-booking-section .ilp-link-description {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
   font-weight: 500 !important;
-  margin-bottom: 20px !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  margin-bottom: 24px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .modern-booking-container {
-  margin-top: 20px;
+  margin-top: 24px;
   width: 100%;
+}
+
+/* Widget Calendly intégré */
+.ilp-booking-section .calendly-inline-widget {
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border: 2px solid rgba(229, 9, 20, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Headers du sélecteur d'expert */
+.ilp-booking-section .expert-selector-header h2 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 8px !important;
+}
+
+.ilp-booking-section .expert-selector-header p {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Section de comparaison */
+.ilp-booking-section .expert-comparison-compact {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 2px solid rgba(229, 9, 20, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.ilp-booking-section .comparison-stat .stat-number {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.ilp-booking-section .comparison-stat .stat-label {
+  color: rgba(255, 255, 255, 0.85) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Adaptation du système de réservation pour Instagram Links */
@@ -111,8 +159,8 @@
 }
 
 .ilp-booking-section .booking-step-container {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(229, 9, 20, 0.2) !important;
   border-radius: 16px !important;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
@@ -120,31 +168,55 @@
   margin-top: 15px;
 }
 
-/* Cards d'experts adaptées */
+/* Cards d'experts adaptées - Meilleure lisibilité */
 .ilp-booking-section .expert-cards-container {
-  gap: 20px !important;
+  gap: 16px !important;
 }
 
 .ilp-booking-section .expert-card-modern {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.6) !important;
+  border: 2px solid rgba(229, 9, 20, 0.3) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
 }
 
 .ilp-booking-section .expert-card-modern:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(229, 9, 20, 0.6) !important;
+  background: rgba(0, 0, 0, 0.75) !important;
+  border-color: rgba(229, 9, 20, 0.8) !important;
+  box-shadow: 0 6px 24px rgba(229, 9, 20, 0.25) !important;
 }
 
-.ilp-booking-section .expert-card-modern .expert-info-header h3,
+/* Textes plus lisibles */
+.ilp-booking-section .expert-card-modern .expert-info h3,
 .ilp-booking-section .expert-card-modern .expert-bio-short {
-  color: rgba(255, 255, 255, 0.95) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 600 !important;
 }
 
+.ilp-booking-section .expert-card-modern .expert-role-simple,
 .ilp-booking-section .expert-card-modern .expert-experience,
-.ilp-booking-section .expert-card-modern .expert-rating-number {
-  color: rgba(255, 255, 255, 0.7) !important;
+.ilp-booking-section .expert-card-modern .expert-rating-number,
+.ilp-booking-section .expert-card-modern .expert-rating-simple {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Boutons d'expert plus visibles */
+.ilp-booking-section .expert-select-button-simple {
+  background: linear-gradient(135deg, #E50914, #ff1a28) !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  box-shadow: 0 3px 12px rgba(229, 9, 20, 0.3) !important;
+}
+
+.ilp-booking-section .expert-select-button-simple:hover {
+  background: linear-gradient(135deg, #ff1a28, #E50914) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4) !important;
 }
 
 /* Calendrier adapté */
@@ -200,8 +272,23 @@
 
 /* Responsive pour le système de réservation */
 @media (max-width: 768px) {
+  .ilp-link-button.ilp-booking-section {
+    width: 95%;
+    max-width: none;
+    padding: 20px 20px;
+  }
+  
   .modern-booking-container {
-    margin-top: 15px;
+    margin-top: 16px;
+  }
+  
+  .ilp-booking-section .ilp-link-title {
+    font-size: 20px !important;
+  }
+  
+  .ilp-booking-section .ilp-link-description {
+    font-size: 15px !important;
+    margin-bottom: 20px !important;
   }
   
   .ilp-booking-section .booking-step-container {
@@ -209,13 +296,31 @@
   }
   
   .ilp-booking-section .expert-cards-container {
-    gap: 15px !important;
+    gap: 12px !important;
   }
 }
 
 @media (max-width: 480px) {
+  .ilp-link-button.ilp-booking-section {
+    width: 98%;
+    padding: 16px 16px;
+  }
+  
+  .ilp-booking-section .ilp-link-title {
+    font-size: 18px !important;
+  }
+  
+  .ilp-booking-section .ilp-link-description {
+    font-size: 14px !important;
+    margin-bottom: 16px !important;
+  }
+  
   .ilp-booking-section .booking-step-container {
-    padding: 15px !important;
+    padding: 16px !important;
+  }
+  
+  .ilp-booking-section .expert-card-modern {
+    padding: 12px !important;
   }
 }
 
@@ -276,6 +381,13 @@
   text-decoration: none;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+}
+
+/* Section booking plus large avec meilleure lisibilité */
+.ilp-link-button.ilp-booking-section {
+  width: 95%;
+  max-width: 700px;
+  padding: 24px 30px;
 }
 
 .ilp-link-button:hover {
@@ -636,12 +748,13 @@
 /* === NEWSLETTER FORM STYLE === */
 .ilp-newsletter-link {
   flex-direction: column;
-  padding: 15px;
+  padding: 18px 24px; /* Même padding que les autres boutons */
   background: rgba(0, 0, 0, 0.4) !important;
   cursor: default !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-height: 180px;
+  border: 2px solid rgba(255, 255, 255, 0.15); /* Même bordure que les autres */
+  max-height: 200px;
   overflow: hidden;
+  /* Hérite de la largeur de .ilp-link-button : 85% width, max-width: 400px */
 }
 
 .ilp-newsletter-link .ilp-link-title {
