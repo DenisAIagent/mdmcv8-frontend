@@ -20,9 +20,9 @@ const expertsConfig = {
       rating: 4.9,
       clients: '120+'
     },
-    specialties: ['YouTube Ads', 'Video Marketing', 'Audience Growth', 'ROI Optimization'],
-    bio: 'Expert en campagnes YouTube Ads pour artistes avec un focus sur le ROI et la croissance organique.',
-    fullBio: 'Denis Adam, spécialiste du marketing musical sur YouTube avec plus de 25M de vues générées. Expert reconnu pour ses stratégies ROI-focused et sa connaissance approfondie de l\'écosystème YouTube Music.',
+    specialties: ['YouTube Ads', 'Video Marketing', 'Audience Growth', 'Optimisation Campagnes'],
+    bio: 'Expert en campagnes YouTube Ads pour artistes avec un focus sur la performance et la croissance organique.',
+    fullBio: 'Denis Adam, spécialiste du marketing musical sur YouTube avec plus de 25M de vues générées. Expert reconnu pour ses stratégies performance-driven et sa connaissance approfondie de l\'écosystème YouTube Music.',
     availability: 'Lun-Ven 9h-18h CET',
     languages: ['FR', 'EN'],
     experience: 'Expert certifié',
@@ -34,7 +34,7 @@ const expertsConfig = {
       },
       { 
         artist: 'Alonzo', 
-        text: 'ROI exceptionnel sur mes campagnes. Un vrai expert!',
+        text: 'Résultats exceptionnels sur mes campagnes. Un vrai expert!',
         rating: 5
       }
     ],
@@ -43,7 +43,7 @@ const expertsConfig = {
       'Spécialiste YouTube Music Ads',
       '25M+ vues YouTube générées',
       'Campagnes pour 100+ artistes',
-      'ROI moyen de 3.8x'
+      'Expertise depuis 2019'
     ]
   },
   
@@ -292,8 +292,8 @@ const ExpertSelector = ({ onExpertSelect, selectedExpert }) => {
             <span className="stat-label">Artistes accompagnés</span>
           </div>
           <div className="comparison-stat">
-            <span className="stat-number">3.5x</span>
-            <span className="stat-label">ROI moyen</span>
+            <span className="stat-number">25+</span>
+            <span className="stat-label">Pays couverts</span>
           </div>
           <div className="comparison-stat">
             <span className="stat-number">40M+</span>
