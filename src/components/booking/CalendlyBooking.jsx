@@ -240,7 +240,7 @@ const CalendlyBooking = ({
               marginBottom: '12px',
               fontWeight: '600'
             }}>
-              Bénéfices de la consultation
+              Rendez-vous de découverte
             </p>
             <div style={{ 
               textAlign: 'left',
@@ -249,10 +249,10 @@ const CalendlyBooking = ({
               lineHeight: '1.6',
               padding: '0 5px'
             }}>
-              <div style={{ marginBottom: '6px' }}>• Analyse de votre présence actuelle</div>
-              <div style={{ marginBottom: '6px' }}>• Stratégie personnalisée</div>
-              <div style={{ marginBottom: '6px' }}>• Conseils pratiques actionnables</div>
-              <div>• Réponses à vos questions</div>
+              <div style={{ marginBottom: '6px' }}>• Découverte de vos besoins</div>
+              <div style={{ marginBottom: '6px' }}>• Analyse de votre projet musical</div>
+              <div style={{ marginBottom: '6px' }}>• Identification des opportunités</div>
+              <div>• Présentation de nos solutions</div>
             </div>
           </div>
         </div>
