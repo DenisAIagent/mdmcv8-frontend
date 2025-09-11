@@ -217,7 +217,7 @@ const InstagramLinkPage = () => {
             <div className="modern-booking-container">
               <CalendlyBookingSystem 
                 displayMode="inline"
-                useGoogleCalendar={true}
+                useGoogleCalendar={false}
                 onScheduled={(data) => {
                   console.log('✅ RDV programmé depuis Instagram Links:', data);
                   // Analytics tracking
