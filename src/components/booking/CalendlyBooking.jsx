@@ -12,6 +12,7 @@ const CalendlyBooking = ({
 }) => {
   const [isBlocked, setIsBlocked] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [forceDirectLink, setForceDirectLink] = useState(false);
   
   useEffect(() => {
     // Analytics tracking quand le widget est chargé
@@ -23,13 +24,14 @@ const CalendlyBooking = ({
       });
     }
 
-    // Détecter si le contenu est bloqué
+    // Détecter si le contenu est bloqué - réduit à 2 secondes
     const detectBlocked = setTimeout(() => {
       if (!hasLoaded) {
         setIsBlocked(true);
-        console.log('❌ Calendly widget failed to load after 3 seconds');
+        setForceDirectLink(true);
+        console.log('❌ Calendly widget failed to load after 2 seconds - switching to direct link');
       }
-    }, 3000); // 3 secondes pour charger
+    }, 2000); // 2 secondes pour charger
 
     // Écouter les événements Calendly
     const handleCalendlyEvent = (e) => {
@@ -107,39 +109,65 @@ const CalendlyBooking = ({
     );
   }
 
-  // Affichage si Calendly est bloqué
-  if (isBlocked) {
+  // Affichage si Calendly est bloqué ou si on force le lien direct
+  if (isBlocked || forceDirectLink) {
     return (
       <div className="calendly-blocked">
         <div className="calendly-blocked-content">
-          <div className="calendly-blocked-icon">🚫</div>
-          <h3>Calendrier bloqué</h3>
+          <div className="calendly-blocked-icon">🗓️</div>
+          <h3>Réservez votre consultation avec {expertName}</h3>
           <p>
-            Le calendier de réservation ne peut pas s'afficher. Cela peut être dû à votre navigateur, un bloqueur de publicité, ou des paramètres de sécurité.
+            Pour une meilleure expérience, nous allons vous rediriger vers notre calendrier de réservation.
           </p>
-          <div className="calendly-blocked-solutions">
-            <h4>Solutions :</h4>
-            <ul>
-              <li>Actualisez la page et réessayez</li>
-              <li>Désactivez temporairement votre bloqueur de publicité</li>
-              <li>Ajoutez calendly.com à vos sites de confiance</li>
-              <li>Essayez avec un autre navigateur (Chrome, Firefox, Safari)</li>
-              <li>Ou contactez-nous directement :</li>
-            </ul>
-            <div className="calendly-contact-alternatives">
+          <div className="calendly-contact-alternatives">
+            <a 
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="calendly-alt-btn calendly-direct-btn"
+              style={{
+                backgroundColor: '#E50914',
+                color: 'white',
+                padding: '15px 30px',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                display: 'inline-block',
+                margin: '20px auto',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = '#C00810';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 12px rgba(0,0,0,0.15)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = '#E50914';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+              }}
+            >
+              📅 Réserver maintenant avec {expertName}
+            </a>
+            <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+              Vous serez redirigé vers Calendly pour choisir votre créneau
+            </p>
+            <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+              <p style={{ fontSize: '13px', color: '#888', marginBottom: '10px' }}>
+                Problème technique ? Contactez-nous directement :
+              </p>
               <a 
                 href="mailto:hello@mdmc-music-ads.com"
                 className="calendly-alt-btn calendly-email-btn"
+                style={{
+                  color: '#E50914',
+                  textDecoration: 'none',
+                  fontSize: '14px'
+                }}
               >
                 📧 hello@mdmc-music-ads.com
-              </a>
-              <a 
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="calendly-alt-btn calendly-direct-btn"
-              >
-                🗓️ Ouvrir Calendly directement
               </a>
             </div>
           </div>
