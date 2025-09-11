@@ -268,14 +268,21 @@
 
 /* Responsive pour le système de réservation */
 @media (max-width: 768px) {
+  .ilp-container {
+    padding: 0 8px;
+    max-width: 100%;
+  }
+  
   .ilp-link-button.ilp-booking-section {
-    width: 95%;
+    width: 100%;
     max-width: none;
-    padding: 20px 20px;
+    padding: 20px 16px;
+    margin: 0 0 16px 0;
   }
   
   .modern-booking-container {
     margin-top: 16px;
+    width: 100%;
   }
   
   .ilp-booking-section .ilp-link-title {
@@ -288,18 +295,35 @@
   }
   
   .ilp-booking-section .booking-step-container {
-    padding: 20px !important;
+    padding: 16px !important;
   }
   
   .ilp-booking-section .expert-cards-container {
     gap: 12px !important;
   }
+  
+  /* Élargir toutes les sections sur mobile */
+  .ilp-link-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 16px 0 !important;
+  }
+  
+  .ilp-main-links {
+    padding: 20px 0 !important;
+  }
 }
 
 @media (max-width: 480px) {
+  .ilp-container {
+    padding: 0 4px;
+    max-width: 100%;
+  }
+  
   .ilp-link-button.ilp-booking-section {
-    width: 98%;
-    padding: 16px 16px;
+    width: 100%;
+    padding: 12px 12px;
+    margin: 0 0 12px 0;
   }
   
   .ilp-booking-section .ilp-link-title {
@@ -312,11 +336,23 @@
   }
   
   .ilp-booking-section .booking-step-container {
-    padding: 16px !important;
+    padding: 12px !important;
   }
   
   .ilp-booking-section .expert-card-modern {
     padding: 12px !important;
+  }
+  
+  /* Élargir toutes les sections sur très petit mobile */
+  .ilp-link-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 12px 0 !important;
+    padding: 12px !important;
+  }
+  
+  .ilp-main-links {
+    padding: 16px 0 !important;
   }
 }
 
@@ -367,8 +403,8 @@
 
 .ilp-link-button {
   display: block;
-  width: 85%;
-  max-width: 400px;
+  width: 90%;
+  max-width: 500px;
   margin: 0 auto;
   padding: 18px 24px;
   background: rgba(255, 255, 255, 0.08);
@@ -381,9 +417,9 @@
 
 /* Section booking plus large avec meilleure lisibilité */
 .ilp-link-button.ilp-booking-section {
-  width: 95%;
-  max-width: 700px;
-  padding: 24px 30px;
+  width: 100%;
+  max-width: 100%;
+  padding: 24px 20px;
 }
 
 .ilp-link-button:hover {
