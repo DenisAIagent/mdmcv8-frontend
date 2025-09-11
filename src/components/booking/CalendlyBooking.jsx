@@ -124,22 +124,25 @@ const CalendlyBooking = ({
       }}>
         <div className="calendly-blocked-content" style={{ width: '100%' }}>
           <h3 style={{ 
-            fontSize: '18px', 
+            fontSize: '16px', 
             fontWeight: '700', 
             color: '#1a1a1a',
-            marginBottom: '8px',
-            lineHeight: '1.3',
-            margin: '0 0 8px 0'
+            marginBottom: '6px',
+            lineHeight: '1.2',
+            margin: '0 0 6px 0',
+            wordWrap: 'break-word',
+            overflow: 'hidden'
           }}>
-            Rendez-vous avec {expertName}
+            RDV avec {expertName}
           </h3>
           
           <p style={{ 
-            fontSize: '13px', 
+            fontSize: '12px', 
             color: '#666',
-            marginBottom: '16px',
-            lineHeight: '1.4',
-            margin: '0 0 16px 0'
+            marginBottom: '12px',
+            lineHeight: '1.3',
+            margin: '0 0 12px 0',
+            wordWrap: 'break-word'
           }}>
             30 min • Gratuit • En ligne
           </p>
@@ -151,19 +154,24 @@ const CalendlyBooking = ({
             style={{
               backgroundColor: '#E50914',
               color: 'white',
-              padding: '14px 24px',
-              fontSize: '15px',
+              padding: '12px 16px',
+              fontSize: '14px',
               fontWeight: '600',
-              borderRadius: '8px',
+              borderRadius: '6px',
               textDecoration: 'none',
               display: 'block',
               width: '100%',
-              margin: '0 0 16px 0',
+              margin: '0 0 12px 0',
               boxShadow: '0 2px 4px rgba(229, 9, 20, 0.2)',
               transition: 'all 0.2s ease',
               cursor: 'pointer',
               border: 'none',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              textAlign: 'center',
+              wordWrap: 'break-word',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = '#C00810';
@@ -174,24 +182,26 @@ const CalendlyBooking = ({
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            Choisir un créneau
+            Réserver
           </a>
 
           <div style={{ 
-            padding: '12px', 
+            padding: '10px', 
             background: '#f8f9fa',
             borderRadius: '6px',
             textAlign: 'left',
-            fontSize: '12px',
+            fontSize: '11px',
             color: '#555',
-            lineHeight: '1.5'
+            lineHeight: '1.4',
+            wordWrap: 'break-word',
+            overflow: 'hidden'
           }}>
-            <div style={{ fontWeight: '600', marginBottom: '6px', color: '#333' }}>
-              Objectifs du rendez-vous :
+            <div style={{ fontWeight: '600', marginBottom: '4px', color: '#333', fontSize: '11px' }}>
+              Objectifs :
             </div>
-            <div style={{ marginBottom: '3px' }}>• Comprendre vos besoins</div>
-            <div style={{ marginBottom: '3px' }}>• Analyser votre projet</div>
-            <div>• Présenter nos solutions</div>
+            <div style={{ marginBottom: '2px', wordWrap: 'break-word' }}>• Vos besoins</div>
+            <div style={{ marginBottom: '2px', wordWrap: 'break-word' }}>• Votre projet</div>
+            <div style={{ wordWrap: 'break-word' }}>• Nos solutions</div>
           </div>
         </div>
       </div>
