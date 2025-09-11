@@ -113,74 +113,36 @@ const CalendlyBooking = ({
   if (isBlocked || forceDirectLink) {
     return (
       <div className="calendly-blocked" style={{ 
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%)',
-        padding: '20px 15px',
-        borderRadius: '12px',
+        background: '#ffffff',
+        padding: '16px',
+        borderRadius: '8px',
         textAlign: 'center',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
         width: '100%',
-        maxWidth: '100%'
+        maxWidth: '100%',
+        margin: '0'
       }}>
         <div className="calendly-blocked-content" style={{ width: '100%' }}>
           <h3 style={{ 
-            fontSize: '22px', 
-            fontWeight: 'bold', 
+            fontSize: '18px', 
+            fontWeight: '700', 
             color: '#1a1a1a',
-            marginBottom: '12px',
-            lineHeight: '1.3'
+            marginBottom: '8px',
+            lineHeight: '1.3',
+            margin: '0 0 8px 0'
           }}>
-            Consultation Gratuite<br/>avec {expertName}
+            Rendez-vous avec {expertName}
           </h3>
-          <p style={{ 
-            fontSize: '14px', 
-            color: '#666',
-            marginBottom: '20px',
-            lineHeight: '1.5',
-            padding: '0 10px'
-          }}>
-            30 minutes pour discuter de votre stratégie marketing musical
-          </p>
           
-          <div style={{ 
-            marginBottom: '20px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '12px',
-            padding: '0 10px'
+          <p style={{ 
+            fontSize: '13px', 
+            color: '#666',
+            marginBottom: '16px',
+            lineHeight: '1.4',
+            margin: '0 0 16px 0'
           }}>
-            <div style={{ 
-              padding: '10px',
-              background: 'rgba(229, 9, 20, 0.05)',
-              borderRadius: '8px'
-            }}>
-              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Durée</div>
-              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>30 minutes</div>
-            </div>
-            <div style={{ 
-              padding: '10px',
-              background: 'rgba(229, 9, 20, 0.05)',
-              borderRadius: '8px'
-            }}>
-              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Type</div>
-              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>1-to-1</div>
-            </div>
-            <div style={{ 
-              padding: '10px',
-              background: 'rgba(229, 9, 20, 0.05)',
-              borderRadius: '8px'
-            }}>
-              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Format</div>
-              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>Personnalisé</div>
-            </div>
-            <div style={{ 
-              padding: '10px',
-              background: 'rgba(229, 9, 20, 0.05)',
-              borderRadius: '8px'
-            }}>
-              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Prix</div>
-              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>Gratuit</div>
-            </div>
-          </div>
+            30 min • Gratuit • En ligne
+          </p>
 
           <a 
             href={url}
@@ -189,71 +151,47 @@ const CalendlyBooking = ({
             style={{
               backgroundColor: '#E50914',
               color: 'white',
-              padding: '16px 30px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              borderRadius: '30px',
+              padding: '14px 24px',
+              fontSize: '15px',
+              fontWeight: '600',
+              borderRadius: '8px',
               textDecoration: 'none',
               display: 'block',
-              width: 'calc(100% - 20px)',
-              maxWidth: '320px',
-              margin: '0 auto',
-              boxShadow: '0 4px 15px rgba(229, 9, 20, 0.3)',
-              transition: 'all 0.3s ease',
+              width: '100%',
+              margin: '0 0 16px 0',
+              boxShadow: '0 2px 4px rgba(229, 9, 20, 0.2)',
+              transition: 'all 0.2s ease',
               cursor: 'pointer',
-              position: 'relative'
+              border: 'none',
+              boxSizing: 'border-box'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = '#C00810';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(229, 9, 20, 0.4)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = '#E50914';
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(229, 9, 20, 0.3)';
             }}
           >
-            Réserver ma consultation
+            Choisir un créneau
           </a>
-          
-          <p style={{ 
-            marginTop: '15px', 
-            fontSize: '12px', 
-            color: '#999',
-            fontStyle: 'italic',
-            padding: '0 10px'
-          }}>
-            Accéder au calendrier pour choisir votre créneau
-          </p>
 
           <div style={{ 
-            marginTop: '25px', 
-            padding: '15px', 
-            background: 'rgba(229, 9, 20, 0.03)',
-            borderRadius: '10px',
-            border: '1px solid rgba(229, 9, 20, 0.08)'
+            padding: '12px', 
+            background: '#f8f9fa',
+            borderRadius: '6px',
+            textAlign: 'left',
+            fontSize: '12px',
+            color: '#555',
+            lineHeight: '1.5'
           }}>
-            <p style={{ 
-              fontSize: '13px', 
-              color: '#333', 
-              marginBottom: '12px',
-              fontWeight: '600'
-            }}>
-              Rendez-vous de découverte
-            </p>
-            <div style={{ 
-              textAlign: 'left',
-              fontSize: '12px',
-              color: '#555',
-              lineHeight: '1.6',
-              padding: '0 5px'
-            }}>
-              <div style={{ marginBottom: '6px' }}>• Découverte de vos besoins</div>
-              <div style={{ marginBottom: '6px' }}>• Analyse de votre projet musical</div>
-              <div style={{ marginBottom: '6px' }}>• Identification des opportunités</div>
-              <div>• Présentation de nos solutions</div>
+            <div style={{ fontWeight: '600', marginBottom: '6px', color: '#333' }}>
+              Objectifs du rendez-vous :
             </div>
+            <div style={{ marginBottom: '3px' }}>• Comprendre vos besoins</div>
+            <div style={{ marginBottom: '3px' }}>• Analyser votre projet</div>
+            <div>• Présenter nos solutions</div>
           </div>
         </div>
       </div>
