@@ -5,7 +5,7 @@ import './ExpertSelector.css';
 // Configuration des experts avec données enrichies
 const expertsConfig = {
   denis: {
-    id: 'expert_001',
+    id: 'denis',
     name: 'Denis Adam',
     firstName: 'Denis',
     role: 'Head of YouTube Ads',
@@ -48,7 +48,7 @@ const expertsConfig = {
   },
   
   marine: {
-    id: 'expert_002',
+    id: 'marine',
     name: 'Marine Harel',
     firstName: 'Marine',
     role: 'Meta Ads Specialist',

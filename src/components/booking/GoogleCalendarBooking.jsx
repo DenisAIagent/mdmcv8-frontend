@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import calendlyService from '../../services/calendly.service';
 import './GoogleCalendarBooking.css';
 
 const GoogleCalendarBooking = ({
@@ -12,6 +13,7 @@ const GoogleCalendarBooking = ({
   const [selectedTime, setSelectedTime] = useState(null);
   const [availableSlots, setAvailableSlots] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -21,36 +23,34 @@ const GoogleCalendarBooking = ({
     message: ''
   });
 
-  // Mock data pour les créneaux disponibles (sera remplacé par l'API Google Calendar)
-  const generateMockSlots = () => {
-    const slots = {};
-    const today = new Date();
-    
-    for (let i = 1; i <= 14; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      
-      // Skip weekends pour la démo
-      if (date.getDay() !== 0 && date.getDay() !== 6) {
-        const dateStr = date.toISOString().split('T')[0];
-        slots[dateStr] = [
-          '09:00', '09:30', '10:00', '10:30', 
-          '11:00', '11:30', '14:00', '14:30', 
-          '15:00', '15:30', '16:00', '16:30', '17:00'
-        ].filter(() => Math.random() > 0.3); // Simule la disponibilité aléatoire
-      }
-    }
-    
-    return slots;
-  };
-
+  // Charger les créneaux disponibles via Calendly
   useEffect(() => {
-    // Charger les créneaux disponibles
-    setIsLoading(true);
-    setTimeout(() => {
-      setAvailableSlots(generateMockSlots());
-      setIsLoading(false);
-    }, 1000);
+    const loadAvailableSlots = async () => {
+      if (!expert || !expert.id) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Récupérer les créneaux pour les 2 prochaines semaines
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() + 1); // Commence demain
+        
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 14); // 2 semaines
+        
+        const slots = await calendlyService.getAvailableSlots(expert.id, startDate, endDate);
+        setAvailableSlots(slots);
+        
+      } catch (err) {
+        console.error('Erreur chargement créneaux:', err);
+        setError('Impossible de charger les créneaux disponibles');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAvailableSlots();
   }, [expert]);
 
   // Génère les dates pour les 2 prochaines semaines
@@ -92,29 +92,49 @@ const GoogleCalendarBooking = ({
 
   const handleSubmitBooking = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    
+    try {
+      setIsLoading(true);
+      setError(null);
 
-    // Simulation de l'appel API
-    setTimeout(() => {
-      setIsLoading(false);
-      setCurrentStep('confirmation');
-      
-      // Analytics
-      if (window.gtag) {
-        window.gtag('event', 'google_calendar_booking_completed', {
-          event_category: 'conversion',
-          event_label: expert.name,
-          value: 100
-        });
-      }
-
-      onScheduled({
+      // Valider les données
+      const bookingData = {
         expert,
         date: selectedDate,
         time: selectedTime,
         formData
-      });
-    }, 2000);
+      };
+
+      if (!calendlyService.validateBookingData(bookingData)) {
+        throw new Error('Données de réservation invalides');
+      }
+
+      // Créer la réservation via Calendly
+      const result = await calendlyService.createBooking(bookingData);
+      
+      if (result.success) {
+        setCurrentStep('confirmation');
+        
+        // Callback avec les données de confirmation
+        onScheduled({
+          ...bookingData,
+          booking_id: result.booking_id,
+          calendly_url: result.calendly_url,
+          confirmationSent: result.confirmationSent,
+          meetingDetails: result.scheduled_event
+        });
+        
+        console.log('✅ Réservation Calendly créée:', result);
+      } else {
+        throw new Error('Échec de la création du rendez-vous');
+      }
+
+    } catch (err) {
+      console.error('Erreur création réservation:', err);
+      setError(err.message || 'Impossible de créer le rendez-vous');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFormChange = (field, value) => {
@@ -128,7 +148,29 @@ const GoogleCalendarBooking = ({
     return (
       <div className="gcb-loading">
         <div className="gcb-loading-spinner"></div>
-        <p>Chargement des disponibilités...</p>
+        <p>Chargement des disponibilités Calendly...</p>
+      </div>
+    );
+  }
+
+  if (error && currentStep === 'calendar') {
+    return (
+      <div className="gcb-error">
+        <div className="gcb-error-icon">⚠️</div>
+        <h3>Erreur de chargement</h3>
+        <p>{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="gcb-retry-btn"
+        >
+          Réessayer
+        </button>
+        <button 
+          onClick={onBack}
+          className="gcb-back-btn"
+        >
+          ← Retour aux experts
+        </button>
       </div>
     );
   }
@@ -254,6 +296,13 @@ const GoogleCalendarBooking = ({
             </div>
 
             <form onSubmit={handleSubmitBooking} className="gcb-booking-form">
+              {error && (
+                <div className="gcb-form-error">
+                  <span className="gcb-error-icon">⚠️</span>
+                  {error}
+                </div>
+              )}
+              
               <div className="gcb-form-row">
                 <div className="gcb-form-field">
                   <label>Prénom *</label>

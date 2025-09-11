@@ -1,0 +1,491 @@
+{
+  "name": "MDMC Calendly Booking Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mdmc-booking",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://your-domain.com,http://localhost:3000"
+        }
+      },
+      "id": "webhook-receive",
+      "name": "Webhook - Receive Booking",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.expert.id }}",
+              "rightValue": "denis",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-expert",
+      "name": "Check Expert",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://calendly.com/api/booking_requests",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "calendlyApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_CALENDLY_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "={{ $node['Check Expert'].json.expert.id === 'denis' ? 'https://calendly.com/denis-mdmcmusicads/30min' : 'https://calendly.com/mhl-agency/decouverte' }}"
+            },
+            {
+              "name": "start_time",
+              "value": "={{ $json.selectedDateTime }}"
+            },
+            {
+              "name": "invitee",
+              "value": "={{ { 'name': $json.formData.firstName + ' ' + $json.formData.lastName, 'email': $json.formData.email, 'phone': $json.formData.phone } }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "denis-calendly",
+      "name": "Create Denis Booking",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://calendly.com/api/booking_requests",
+        "authentication": "predefinedCredentialType", 
+        "nodeCredentialType": "calendlyApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization", 
+              "value": "Bearer YOUR_CALENDLY_TOKEN_MARINE"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "https://calendly.com/mhl-agency/decouverte"
+            },
+            {
+              "name": "start_time", 
+              "value": "={{ $json.selectedDateTime }}"
+            },
+            {
+              "name": "invitee",
+              "value": "={{ { 'name': $json.formData.firstName + ' ' + $json.formData.lastName, 'email': $json.formData.email, 'phone': $json.formData.phone } }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "marine-calendly",
+      "name": "Create Marine Booking",
+      "type": "n8n-nodes-base.httpRequest", 
+      "typeVersion": 4.1,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "smallerEqual"
+              }
+            },
+            {
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 299,
+              "operator": {
+                "type": "number", 
+                "operation": "largerEqual"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-booking-success",
+      "name": "Check Booking Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "message",
+        "operation": "send",
+        "userId": "me",
+        "toList": "={{ $node['Webhook - Receive Booking'].json.formData.email }}",
+        "subject": "🎵 Confirmation de votre consultation MDMC - {{ $node['Webhook - Receive Booking'].json.expert.name }}",
+        "bodyType": "html",
+        "htmlBody": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <title>Confirmation Consultation MDMC</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;\">\n    <div style=\"background: linear-gradient(135deg, #E50914, #ff1a28); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;\">\n        <h1 style=\"color: white; margin: 0; font-size: 24px;\">✅ Consultation Confirmée</h1>\n        <p style=\"color: white; margin: 10px 0 0 0; font-size: 16px;\">MDMC Music Ads</p>\n    </div>\n    \n    <h2 style=\"color: #E50914; border-bottom: 2px solid #E50914; padding-bottom: 10px;\">📅 Détails de votre rendez-vous</h2>\n    \n    <div style=\"background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n        <p><strong>🎯 Expert :</strong> {{ $node['Webhook - Receive Booking'].json.expert.name }}</p>\n        <p><strong>📋 Rôle :</strong> {{ $node['Webhook - Receive Booking'].json.expert.role }}</p>\n        <p><strong>📅 Date :</strong> {{ $node['Webhook - Receive Booking'].json.selectedDate }}</p>\n        <p><strong>⏰ Heure :</strong> {{ $node['Webhook - Receive Booking'].json.selectedTime }}</p>\n        <p><strong>🌍 Fuseau :</strong> Europe/Paris (CET)</p>\n        <p><strong>💼 Durée :</strong> 30 minutes</p>\n    </div>\n    \n    <h3 style=\"color: #E50914;\">🔗 Lien de connexion</h3>\n    <p>Le lien Google Meet vous sera envoyé <strong>24h avant</strong> votre consultation.</p>\n    \n    <h3 style=\"color: #E50914;\">📋 Préparez votre consultation</h3>\n    <ul style=\"background: #f8f9fa; padding: 20px; border-radius: 8px;\">\n        <li>✅ Définissez vos objectifs marketing</li>\n        <li>✅ Préparez vos questions prioritaires</li>\n        <li>✅ Rassemblez vos données actuelles (vues, abonnés, etc.)</li>\n        <li>✅ Pensez à votre budget approximatif</li>\n    </ul>\n    \n    <div style=\"background: linear-gradient(135deg, rgba(229, 9, 20, 0.1), rgba(255, 26, 40, 0.05)); padding: 20px; border-radius: 8px; border-left: 4px solid #E50914; margin: 20px 0;\">\n        <h4 style=\"color: #E50914; margin: 0 0 10px 0;\">💡 Conseil de {{ $node['Webhook - Receive Booking'].json.expert.name }}</h4>\n        <p style=\"margin: 0; font-style: italic;\">\"Venez avec vos objectifs clairs et vos questions précises. Plus vous serez préparé(e), plus notre consultation sera productive !\"</p>\n    </div>\n    \n    <h3 style=\"color: #E50914;\">📞 Besoin de modifier ?</h3>\n    <p>Pour modifier ou annuler votre rendez-vous, contactez-nous :</p>\n    <ul>\n        <li>📧 <a href=\"mailto:hello@mdmc-music-ads.com\" style=\"color: #E50914;\">hello@mdmc-music-ads.com</a></li>\n        <li>🌐 <a href=\"https://mdmc-music-ads.com\" style=\"color: #E50914;\">Site web</a></li>\n    </ul>\n    \n    <div style=\"text-align: center; margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;\">\n        <p style=\"margin: 0; color: #666; font-size: 14px;\">Merci de faire confiance à MDMC Music Ads</p>\n        <p style=\"margin: 5px 0 0 0; color: #E50914; font-weight: bold;\">🎵 Ensemble, faisons décoller votre musique !</p>\n    </div>\n    \n    <hr style=\"border: none; height: 1px; background: #eee; margin: 30px 0;\">\n    \n    <p style=\"text-align: center; color: #666; font-size: 12px; margin: 0;\">\n        MDMC Music Ads - Experts en Marketing Musical<br>\n        📧 hello@mdmc-music-ads.com | 🌐 mdmc-music-ads.com\n    </p>\n</body>\n</html>"
+      },
+      "id": "send-confirmation-email",
+      "name": "Send Confirmation Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "boolean": [
+            {
+              "name": "success",
+              "value": true
+            }
+          ],
+          "string": [
+            {
+              "name": "message",
+              "value": "Réservation créée avec succès"
+            },
+            {
+              "name": "booking_id",
+              "value": "={{ 'mdmc_' + $now.toUnixTimestamp() }}"
+            },
+            {
+              "name": "expert_name", 
+              "value": "={{ $node['Webhook - Receive Booking'].json.expert.name }}"
+            },
+            {
+              "name": "scheduled_date",
+              "value": "={{ $node['Webhook - Receive Booking'].json.selectedDate }}"
+            },
+            {
+              "name": "scheduled_time",
+              "value": "={{ $node['Webhook - Receive Booking'].json.selectedTime }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "success-response",
+      "name": "Success Response", 
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "boolean": [
+            {
+              "name": "success",
+              "value": false
+            }
+          ],
+          "string": [
+            {
+              "name": "error",
+              "value": "Échec de la création du rendez-vous Calendly"
+            },
+            {
+              "name": "details",
+              "value": "={{ $json.body ? JSON.stringify($json.body) : 'Erreur inconnue' }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "statusCode",
+              "value": "={{ $json.statusCode || 500 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.set", 
+      "typeVersion": 3.2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "message",
+        "operation": "send", 
+        "userId": "me",
+        "toList": "hello@mdmc-music-ads.com",
+        "subject": "🚨 Erreur Réservation MDMC - {{ $node['Webhook - Receive Booking'].json.expert.name }}",
+        "bodyType": "html",
+        "htmlBody": "<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <title>Erreur Réservation</title>\n</head>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;\">\n    <div style=\"background: #dc3545; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;\">\n        <h1 style=\"color: white; margin: 0; font-size: 24px;\">🚨 Erreur de Réservation</h1>\n        <p style=\"color: white; margin: 10px 0 0 0;\">Une réservation a échoué</p>\n    </div>\n    \n    <h2 style=\"color: #dc3545;\">📋 Détails de la tentative</h2>\n    <div style=\"background: #f8f9fa; padding: 20px; border-radius: 8px;\">\n        <p><strong>Client :</strong> {{ $node['Webhook - Receive Booking'].json.formData.firstName }} {{ $node['Webhook - Receive Booking'].json.formData.lastName }}</p>\n        <p><strong>Email :</strong> {{ $node['Webhook - Receive Booking'].json.formData.email }}</p>\n        <p><strong>Téléphone :</strong> {{ $node['Webhook - Receive Booking'].json.formData.phone }}</p>\n        <p><strong>Expert demandé :</strong> {{ $node['Webhook - Receive Booking'].json.expert.name }}</p>\n        <p><strong>Date souhaitée :</strong> {{ $node['Webhook - Receive Booking'].json.selectedDate }}</p>\n        <p><strong>Heure souhaitée :</strong> {{ $node['Webhook - Receive Booking'].json.selectedTime }}</p>\n    </div>\n    \n    <h2 style=\"color: #dc3545;\">⚠️ Erreur technique</h2>\n    <div style=\"background: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;\">\n        <p><strong>Code d'erreur :</strong> {{ $node['Error Response'].json.statusCode }}</p>\n        <p><strong>Message :</strong> {{ $node['Error Response'].json.error }}</p>\n        <p><strong>Détails :</strong> {{ $node['Error Response'].json.details }}</p>\n    </div>\n    \n    <h2 style=\"color: #dc3545;\">✅ Action requise</h2>\n    <p>Veuillez contacter le client rapidement pour reprogrammer manuellement :</p>\n    <ul>\n        <li>📧 <a href=\"mailto:{{ $node['Webhook - Receive Booking'].json.formData.email }}\">Envoyer un email au client</a></li>\n        <li>📞 Appeler au {{ $node['Webhook - Receive Booking'].json.formData.phone }}</li>\n        <li>🗓️ Proposer des créneaux alternatifs</li>\n    </ul>\n</body>\n</html>"
+      },
+      "id": "notify-admin-error",
+      "name": "Notify Admin Error",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🎵 Nouvelle réservation MDMC!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"✅ Nouvelle Consultation Programmée\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Client:* {{ $node['Webhook - Receive Booking'].json.formData.firstName }} {{ $node['Webhook - Receive Booking'].json.formData.lastName }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Email:* {{ $node['Webhook - Receive Booking'].json.formData.email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Expert:* {{ $node['Webhook - Receive Booking'].json.expert.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Date:* {{ $node['Webhook - Receive Booking'].json.selectedDate }} à {{ $node['Webhook - Receive Booking'].json.selectedTime }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Message du client:*\\n{{ $node['Webhook - Receive Booking'].json.formData.message || 'Aucun message' }}\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "slack-notification",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 100]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "selectedDateTime",
+              "value": "={{ $json.selectedDate + 'T' + $json.selectedTime + ':00.000Z' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "format-datetime",
+      "name": "Format DateTime",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [340, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Receive Booking": {
+      "main": [
+        [
+          {
+            "node": "Format DateTime",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format DateTime": {
+      "main": [
+        [
+          {
+            "node": "Check Expert", 
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Expert": {
+      "main": [
+        [
+          {
+            "node": "Create Denis Booking",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Marine Booking",
+            "type": "main", 
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Denis Booking": {
+      "main": [
+        [
+          {
+            "node": "Check Booking Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Marine Booking": {
+      "main": [
+        [
+          {
+            "node": "Check Booking Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Booking Success": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Response": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Response": {
+      "main": [
+        [
+          {
+            "node": "Notify Admin Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Admin Error": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response", 
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Notification": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z", 
+      "id": "mdmc",
+      "name": "MDMC"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

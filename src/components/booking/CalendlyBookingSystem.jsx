@@ -9,7 +9,7 @@ const CalendlyBookingSystem = ({
   triggerElement,
   onClose = () => {},
   onScheduled = () => {},
-  useGoogleCalendar = true // Nouveau paramètre pour choisir le système
+  useGoogleCalendar = false // Utilise le widget Calendly par défaut
 }) => {
   const [isOpen, setIsOpen] = useState(displayMode === 'inline');
   const [selectedExpert, setSelectedExpert] = useState(null);
