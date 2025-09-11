@@ -10,9 +10,9 @@ const CalendlyBooking = ({
   // Callbacks
   onEventScheduled
 }) => {
-  const [isBlocked, setIsBlocked] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(true); // Forcer le mode direct par défaut
   const [hasLoaded, setHasLoaded] = useState(false);
-  const [forceDirectLink, setForceDirectLink] = useState(false);
+  const [forceDirectLink, setForceDirectLink] = useState(true); // Forcer le lien direct
   
   useEffect(() => {
     // Analytics tracking quand le widget est chargé
@@ -109,69 +109,157 @@ const CalendlyBooking = ({
     );
   }
 
-  // Affichage si Calendly est bloqué ou si on force le lien direct
+  // Toujours afficher le lien direct pour éviter les problèmes de blocage
   if (isBlocked || forceDirectLink) {
     return (
-      <div className="calendly-blocked">
+      <div className="calendly-blocked" style={{ 
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%)',
+        padding: '40px 20px',
+        borderRadius: '16px',
+        textAlign: 'center',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+      }}>
         <div className="calendly-blocked-content">
-          <div className="calendly-blocked-icon">🗓️</div>
-          <h3>Réservez votre consultation avec {expertName}</h3>
-          <p>
-            Pour une meilleure expérience, nous allons vous rediriger vers notre calendrier de réservation.
+          <div style={{ 
+            fontSize: '64px', 
+            marginBottom: '20px',
+            animation: 'pulse 2s infinite'
+          }}>
+            📅
+          </div>
+          <h3 style={{ 
+            fontSize: '28px', 
+            fontWeight: 'bold', 
+            color: '#1a1a1a',
+            marginBottom: '15px'
+          }}>
+            Consultation Gratuite avec {expertName}
+          </h3>
+          <p style={{ 
+            fontSize: '16px', 
+            color: '#666',
+            marginBottom: '30px',
+            maxWidth: '500px',
+            margin: '0 auto 30px'
+          }}>
+            30 minutes pour discuter de votre stratégie marketing musical et obtenir des conseils personnalisés
           </p>
-          <div className="calendly-contact-alternatives">
-            <a 
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="calendly-alt-btn calendly-direct-btn"
-              style={{
-                backgroundColor: '#E50914',
-                color: 'white',
-                padding: '15px 30px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                display: 'inline-block',
-                margin: '20px auto',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = '#C00810';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 12px rgba(0,0,0,0.15)';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = '#E50914';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-              }}
-            >
-              📅 Réserver maintenant avec {expertName}
-            </a>
-            <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
-              Vous serez redirigé vers Calendly pour choisir votre créneau
+          
+          <div style={{ marginBottom: '25px' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: '30px',
+              marginBottom: '20px',
+              flexWrap: 'wrap'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', marginBottom: '5px' }}>⏰</div>
+                <div style={{ fontSize: '14px', color: '#666' }}>30 min</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', marginBottom: '5px' }}>💬</div>
+                <div style={{ fontSize: '14px', color: '#666' }}>1-to-1</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', marginBottom: '5px' }}>🎯</div>
+                <div style={{ fontSize: '14px', color: '#666' }}>Personnalisé</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', marginBottom: '5px' }}>💰</div>
+                <div style={{ fontSize: '14px', color: '#666' }}>Gratuit</div>
+              </div>
+            </div>
+          </div>
+
+          <a 
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              backgroundColor: '#E50914',
+              color: 'white',
+              padding: '18px 40px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              borderRadius: '50px',
+              textDecoration: 'none',
+              display: 'inline-block',
+              margin: '10px auto',
+              boxShadow: '0 8px 20px rgba(229, 9, 20, 0.3)',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#C00810';
+              e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 12px 30px rgba(229, 9, 20, 0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = '#E50914';
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 8px 20px rgba(229, 9, 20, 0.3)';
+            }}
+          >
+            🚀 Réserver ma consultation gratuite
+          </a>
+          
+          <p style={{ 
+            marginTop: '20px', 
+            fontSize: '14px', 
+            color: '#999',
+            fontStyle: 'italic'
+          }}>
+            Cliquez pour accéder au calendrier et choisir votre créneau
+          </p>
+
+          <div style={{ 
+            marginTop: '40px', 
+            padding: '20px', 
+            background: 'rgba(229, 9, 20, 0.05)',
+            borderRadius: '12px',
+            border: '1px solid rgba(229, 9, 20, 0.1)'
+          }}>
+            <p style={{ 
+              fontSize: '14px', 
+              color: '#666', 
+              marginBottom: '15px',
+              fontWeight: '600'
+            }}>
+              ✨ Ce que vous allez obtenir :
             </p>
-            <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
-              <p style={{ fontSize: '13px', color: '#888', marginBottom: '10px' }}>
-                Problème technique ? Contactez-nous directement :
-              </p>
-              <a 
-                href="mailto:hello@mdmc-music-ads.com"
-                className="calendly-alt-btn calendly-email-btn"
-                style={{
-                  color: '#E50914',
-                  textDecoration: 'none',
-                  fontSize: '14px'
-                }}
-              >
-                📧 hello@mdmc-music-ads.com
-              </a>
+            <div style={{ 
+              display: 'grid', 
+              gap: '10px',
+              textAlign: 'left',
+              maxWidth: '400px',
+              margin: '0 auto'
+            }}>
+              <div style={{ fontSize: '14px', color: '#555' }}>
+                ✓ Analyse de votre présence actuelle
+              </div>
+              <div style={{ fontSize: '14px', color: '#555' }}>
+                ✓ Stratégie personnalisée pour votre musique
+              </div>
+              <div style={{ fontSize: '14px', color: '#555' }}>
+                ✓ Conseils pratiques et actionnables
+              </div>
+              <div style={{ fontSize: '14px', color: '#555' }}>
+                ✓ Réponses à toutes vos questions
+              </div>
             </div>
           </div>
         </div>
+        
+        <style jsx>{`
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+          }
+        `}</style>
       </div>
     );
   }
