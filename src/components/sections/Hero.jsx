@@ -86,7 +86,6 @@ const Hero = ({ openSimulator }) => {
           <h1>{t('hero.title')}</h1>
           <p className="hero-slogan red-text">
             {t('hero.slogan')}
-            <span style={{ marginLeft: '15px', fontSize: '24px', color: '#FFC107' }}>★★★★★</span>
           </p>
           <p className="hero-description">{t('hero.description')}</p>
           
