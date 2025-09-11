@@ -189,7 +189,8 @@ const InstagramLinkPage = () => {
           <p className="ilp-bio">
             {t('instagramLinks.bio.line1')}<br />
             {t('instagramLinks.bio.line2')}<br />
-            {t('instagramLinks.bio.line3')}
+            {t('instagramLinks.bio.line3')}<br />
+            <small style={{ fontSize: '0.85em', opacity: 0.8 }}>{t('instagramLinks.bio.line4')}</small>
           </p>
         </header>
 

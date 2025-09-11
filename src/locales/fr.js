@@ -635,7 +635,8 @@ export default {
     "bio": {
       "line1": "Marketing Musical Digital",
       "line2": "YouTube, Meta & TikTok Ads",
-      "line3": "Faites décoller votre musique"
+      "line3": "Faites décoller votre musique",
+      "line4": "5 étoiles (avis Google)"
     },
     "simulatorButton": {
       "title": "Simulateur de Campagne",
