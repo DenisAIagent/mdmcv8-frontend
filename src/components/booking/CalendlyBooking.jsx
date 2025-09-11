@@ -114,61 +114,71 @@ const CalendlyBooking = ({
     return (
       <div className="calendly-blocked" style={{ 
         background: 'linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%)',
-        padding: '40px 20px',
-        borderRadius: '16px',
+        padding: '20px 15px',
+        borderRadius: '12px',
         textAlign: 'center',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+        boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+        width: '100%',
+        maxWidth: '100%'
       }}>
-        <div className="calendly-blocked-content">
-          <div style={{ 
-            fontSize: '64px', 
-            marginBottom: '20px',
-            animation: 'pulse 2s infinite'
-          }}>
-            📅
-          </div>
+        <div className="calendly-blocked-content" style={{ width: '100%' }}>
           <h3 style={{ 
-            fontSize: '28px', 
+            fontSize: '22px', 
             fontWeight: 'bold', 
             color: '#1a1a1a',
-            marginBottom: '15px'
+            marginBottom: '12px',
+            lineHeight: '1.3'
           }}>
-            Consultation Gratuite avec {expertName}
+            Consultation Gratuite<br/>avec {expertName}
           </h3>
           <p style={{ 
-            fontSize: '16px', 
+            fontSize: '14px', 
             color: '#666',
-            marginBottom: '30px',
-            maxWidth: '500px',
-            margin: '0 auto 30px'
+            marginBottom: '20px',
+            lineHeight: '1.5',
+            padding: '0 10px'
           }}>
-            30 minutes pour discuter de votre stratégie marketing musical et obtenir des conseils personnalisés
+            30 minutes pour discuter de votre stratégie marketing musical
           </p>
           
-          <div style={{ marginBottom: '25px' }}>
+          <div style={{ 
+            marginBottom: '20px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '12px',
+            padding: '0 10px'
+          }}>
             <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              gap: '30px',
-              marginBottom: '20px',
-              flexWrap: 'wrap'
+              padding: '10px',
+              background: 'rgba(229, 9, 20, 0.05)',
+              borderRadius: '8px'
             }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '5px' }}>⏰</div>
-                <div style={{ fontSize: '14px', color: '#666' }}>30 min</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '5px' }}>💬</div>
-                <div style={{ fontSize: '14px', color: '#666' }}>1-to-1</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '5px' }}>🎯</div>
-                <div style={{ fontSize: '14px', color: '#666' }}>Personnalisé</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', marginBottom: '5px' }}>💰</div>
-                <div style={{ fontSize: '14px', color: '#666' }}>Gratuit</div>
-              </div>
+              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Durée</div>
+              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>30 minutes</div>
+            </div>
+            <div style={{ 
+              padding: '10px',
+              background: 'rgba(229, 9, 20, 0.05)',
+              borderRadius: '8px'
+            }}>
+              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Type</div>
+              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>1-to-1</div>
+            </div>
+            <div style={{ 
+              padding: '10px',
+              background: 'rgba(229, 9, 20, 0.05)',
+              borderRadius: '8px'
+            }}>
+              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Format</div>
+              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>Personnalisé</div>
+            </div>
+            <div style={{ 
+              padding: '10px',
+              background: 'rgba(229, 9, 20, 0.05)',
+              borderRadius: '8px'
+            }}>
+              <div style={{ fontSize: '12px', color: '#333', fontWeight: '600' }}>Prix</div>
+              <div style={{ fontSize: '14px', color: '#666', marginTop: '2px' }}>Gratuit</div>
             </div>
           </div>
 
@@ -179,87 +189,73 @@ const CalendlyBooking = ({
             style={{
               backgroundColor: '#E50914',
               color: 'white',
-              padding: '18px 40px',
-              fontSize: '20px',
+              padding: '16px 30px',
+              fontSize: '16px',
               fontWeight: 'bold',
-              borderRadius: '50px',
+              borderRadius: '30px',
               textDecoration: 'none',
-              display: 'inline-block',
-              margin: '10px auto',
-              boxShadow: '0 8px 20px rgba(229, 9, 20, 0.3)',
+              display: 'block',
+              width: 'calc(100% - 20px)',
+              maxWidth: '320px',
+              margin: '0 auto',
+              boxShadow: '0 4px 15px rgba(229, 9, 20, 0.3)',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
-              position: 'relative',
-              overflow: 'hidden'
+              position: 'relative'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = '#C00810';
-              e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(229, 9, 20, 0.4)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(229, 9, 20, 0.4)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = '#E50914';
-              e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(229, 9, 20, 0.3)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(229, 9, 20, 0.3)';
             }}
           >
-            🚀 Réserver ma consultation gratuite
+            Réserver ma consultation
           </a>
           
           <p style={{ 
-            marginTop: '20px', 
-            fontSize: '14px', 
+            marginTop: '15px', 
+            fontSize: '12px', 
             color: '#999',
-            fontStyle: 'italic'
+            fontStyle: 'italic',
+            padding: '0 10px'
           }}>
-            Cliquez pour accéder au calendrier et choisir votre créneau
+            Accéder au calendrier pour choisir votre créneau
           </p>
 
           <div style={{ 
-            marginTop: '40px', 
-            padding: '20px', 
-            background: 'rgba(229, 9, 20, 0.05)',
-            borderRadius: '12px',
-            border: '1px solid rgba(229, 9, 20, 0.1)'
+            marginTop: '25px', 
+            padding: '15px', 
+            background: 'rgba(229, 9, 20, 0.03)',
+            borderRadius: '10px',
+            border: '1px solid rgba(229, 9, 20, 0.08)'
           }}>
             <p style={{ 
-              fontSize: '14px', 
-              color: '#666', 
-              marginBottom: '15px',
+              fontSize: '13px', 
+              color: '#333', 
+              marginBottom: '12px',
               fontWeight: '600'
             }}>
-              ✨ Ce que vous allez obtenir :
+              Bénéfices de la consultation
             </p>
             <div style={{ 
-              display: 'grid', 
-              gap: '10px',
               textAlign: 'left',
-              maxWidth: '400px',
-              margin: '0 auto'
+              fontSize: '12px',
+              color: '#555',
+              lineHeight: '1.6',
+              padding: '0 5px'
             }}>
-              <div style={{ fontSize: '14px', color: '#555' }}>
-                ✓ Analyse de votre présence actuelle
-              </div>
-              <div style={{ fontSize: '14px', color: '#555' }}>
-                ✓ Stratégie personnalisée pour votre musique
-              </div>
-              <div style={{ fontSize: '14px', color: '#555' }}>
-                ✓ Conseils pratiques et actionnables
-              </div>
-              <div style={{ fontSize: '14px', color: '#555' }}>
-                ✓ Réponses à toutes vos questions
-              </div>
+              <div style={{ marginBottom: '6px' }}>• Analyse de votre présence actuelle</div>
+              <div style={{ marginBottom: '6px' }}>• Stratégie personnalisée</div>
+              <div style={{ marginBottom: '6px' }}>• Conseils pratiques actionnables</div>
+              <div>• Réponses à vos questions</div>
             </div>
           </div>
         </div>
-        
-        <style jsx>{`
-          @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-          }
-        `}</style>
       </div>
     );
   }
