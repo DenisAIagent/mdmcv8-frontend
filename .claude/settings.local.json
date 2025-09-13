@@ -51,7 +51,11 @@
       "Bash(git merge:*)",
       "WebFetch(domain:share.google)",
       "WebFetch(domain:www.google.com)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm init:*)",
+      "Bash(npm create:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(open http://localhost:5173/)"
     ],
     "deny": []
   }

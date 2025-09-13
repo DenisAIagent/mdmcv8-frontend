@@ -291,34 +291,51 @@
 /* === SECTION CONSULTATION GRATUITE DANS CONTACT === */
 .consultation-section {
   grid-column: 1 / -1; /* Prend toute la largeur sur 2 colonnes */
-  background: linear-gradient(135deg, rgba(229, 9, 20, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(229, 9, 20, 0.1);
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(229, 9, 20, 0.03) 100%);
+  border: 2px solid rgba(229, 9, 20, 0.3);
   border-radius: 16px;
-  padding: 2.5rem;
-  margin: 2rem 0;
+  padding: 3rem;
+  margin: 3rem 0;
   text-align: center;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 32px rgba(229, 9, 20, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.consultation-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(229, 9, 20, 0.05) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .consultation-header h3 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #222;
-  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+  margin: 0 0 0.75rem 0;
+  position: relative;
+  z-index: 1;
 }
 
 .consultation-header p {
   font-size: 1.1rem;
-  color: #666;
-  margin: 0 0 1.5rem 0;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 2rem 0;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   line-height: 1.6;
+  position: relative;
+  z-index: 1;
 }
 
 .consultation-cta-contact {
-  display: flex !important;
+  display: inline-flex !important;
   flex-direction: column;
   align-items: center;
   padding: 1.25rem 2.5rem !important;
@@ -334,6 +351,8 @@
   box-shadow: 0 6px 24px rgba(229, 9, 20, 0.3) !important;
   min-width: 300px !important;
   position: relative !important;
+  z-index: 2;
+  margin: 0 auto;
 }
 
 .consultation-cta-contact:hover {
@@ -381,26 +400,27 @@
 @media (max-width: 768px) {
   .consultation-section {
     padding: 2rem 1.5rem;
-    margin: 1.5rem 0;
+    margin: 2rem -1rem;
+    border-radius: 12px;
   }
-  
+
   .consultation-header h3 {
     font-size: 1.6rem;
   }
-  
+
   .consultation-header p {
     font-size: 1rem;
   }
-  
+
   .consultation-cta-contact {
-    min-width: 280px !important;
+    min-width: 260px !important;
     padding: 1.125rem 2rem !important;
   }
-  
+
   .consultation-cta-contact span {
     font-size: 17px !important;
   }
-  
+
   .consultation-cta-contact small {
     font-size: 13px !important;
   }
