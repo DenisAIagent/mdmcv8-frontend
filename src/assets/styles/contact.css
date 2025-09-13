@@ -290,12 +290,11 @@
 
 /* === SECTION CONSULTATION GRATUITE DANS CONTACT === */
 .consultation-section {
-  grid-column: 1 / -1; /* Prend toute la largeur sur 2 colonnes */
   background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(229, 9, 20, 0.03) 100%);
   border: 2px solid rgba(229, 9, 20, 0.3);
   border-radius: 16px;
-  padding: 3rem;
-  margin: 3rem 0;
+  padding: 2rem;
+  margin-top: 2rem;
   text-align: center;
   box-shadow: 0 8px 32px rgba(229, 9, 20, 0.15);
   position: relative;

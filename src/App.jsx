@@ -37,6 +37,8 @@ import Footer from './components/layout/Footer';
 import Simulator from './components/features/Simulator';
 import CookieBanner from './components/features/CookieBanner';
 import SEOHead from './components/common/SEOHead';
+import FloatingConsultationButton from './components/common/FloatingConsultationButton';
+import FloatingNewsletterButton from './components/common/FloatingNewsletterButton';
 
 import Hero from './components/sections/Hero';
 import Services from './components/sections/Services';
@@ -227,6 +229,8 @@ function App() {
   return (
     <Router>
       <Simulator ref={simulatorRef} />
+      <FloatingConsultationButton />
+      <FloatingNewsletterButton />
       <Routes>
         <Route path="/" element={<HomePage openSimulator={openSimulator} />} />
         <Route path="/all-reviews" element={<AllReviews />} />

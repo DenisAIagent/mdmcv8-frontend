@@ -1,0 +1,458 @@
+/* === BOUTON FLOTTANT NEWSLETTER === */
+
+/* Bouton principal - Positionné à gauche */
+.floating-newsletter-btn {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E50914, #ff1a28);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+  z-index: 9997;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+}
+
+.floating-newsletter-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(229, 9, 20, 0.5);
+  background: linear-gradient(135deg, #ff1a28, #E50914);
+}
+
+.floating-newsletter-btn:active {
+  transform: scale(0.95);
+}
+
+.floating-newsletter-btn.active {
+  background: linear-gradient(135deg, #ff1a28, #E50914);
+  transform: rotate(90deg);
+}
+
+/* Icône du bouton */
+.floating-newsletter-btn .btn-icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.floating-newsletter-btn.active .btn-icon {
+  transform: rotate(-90deg);
+}
+
+/* Tooltip au survol */
+.floating-newsletter-btn .btn-tooltip {
+  position: absolute;
+  left: 70px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateX(-10px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.floating-newsletter-btn:hover .btn-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.floating-newsletter-btn.active .btn-tooltip {
+  display: none;
+}
+
+/* Animation pulse */
+.floating-newsletter-btn.pulsing::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E50914, #ff1a28);
+  animation: pulseNewsletter 2s infinite;
+  z-index: -1;
+}
+
+@keyframes pulseNewsletter {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Modal wrapper */
+.floating-newsletter-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Backdrop */
+.floating-newsletter-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+/* Modal content */
+.floating-newsletter-content {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Header */
+.floating-newsletter-header {
+  padding: 2.5rem 2rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(229, 9, 20, 0.05) 100%);
+}
+
+.newsletter-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #E50914, #ff1a28);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(229, 9, 20, 0.3);
+}
+
+.newsletter-main-icon {
+  font-size: 36px;
+  color: white;
+}
+
+.floating-newsletter-header h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.floating-newsletter-header p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Bouton fermer */
+.floating-newsletter-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+  z-index: 1;
+}
+
+.floating-newsletter-close:hover {
+  background: rgba(229, 9, 20, 0.1);
+  color: #E50914;
+  transform: rotate(90deg);
+}
+
+/* Formulaire */
+.floating-newsletter-form {
+  padding: 0 2rem 2rem;
+}
+
+.floating-newsletter-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.newsletter-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: #E50914;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.1);
+}
+
+/* Bouton submit */
+.newsletter-submit-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #E50914, #ff1a28);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 16px rgba(229, 9, 20, 0.3);
+}
+
+.newsletter-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff1a28, #E50914);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+}
+
+.newsletter-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.newsletter-submit-btn .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Avantages */
+.newsletter-benefits {
+  background: rgba(229, 9, 20, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.newsletter-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.newsletter-benefits li {
+  padding: 0.5rem 0;
+  color: #4a4a4a;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Privacy */
+.newsletter-privacy {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #999;
+  margin: 1rem 0 0;
+}
+
+/* Success state */
+.floating-newsletter-success {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 64px;
+  color: #10B981;
+  margin-bottom: 1.5rem;
+  animation: checkBounce 0.6s ease;
+}
+
+@keyframes checkBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.floating-newsletter-success h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.floating-newsletter-success p {
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+.success-message {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-top: 1rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .floating-newsletter-btn {
+    bottom: 20px;
+    left: 20px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .floating-newsletter-btn .btn-icon {
+    font-size: 22px;
+  }
+
+  .floating-newsletter-btn .btn-tooltip {
+    left: 65px;
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .floating-newsletter-content {
+    margin: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .floating-newsletter-header {
+    padding: 2rem 1.5rem 1rem;
+  }
+
+  .newsletter-icon-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .newsletter-main-icon {
+    font-size: 32px;
+  }
+
+  .floating-newsletter-header h3 {
+    font-size: 1.5rem;
+  }
+
+  .floating-newsletter-form {
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .newsletter-submit-btn {
+    font-size: 1rem;
+    padding: 0.875rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-newsletter-btn {
+    bottom: 15px;
+    left: 15px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .floating-newsletter-btn .btn-icon {
+    font-size: 20px;
+  }
+
+  .floating-newsletter-content {
+    border-radius: 16px;
+  }
+
+  .floating-newsletter-header {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .newsletter-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-main-icon {
+    font-size: 28px;
+  }
+
+  .floating-newsletter-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .floating-newsletter-header p {
+    font-size: 0.9rem;
+  }
+
+  .floating-newsletter-form {
+    padding: 0 1rem 1rem;
+  }
+
+  .newsletter-benefits {
+    padding: 0.75rem;
+  }
+
+  .newsletter-benefits li {
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+  }
+}
