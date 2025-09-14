@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEnvelope, FaTimes, FaPaperPlane, FaCheckCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import newsletterService from '../../services/newsletter.service';
 import './FloatingNewsletterButton.css';
 
 const FloatingNewsletterButton = () => {
@@ -75,24 +76,12 @@ const FloatingNewsletterButton = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/newsletter/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          source: 'Floating Button',
-          attributes: {
-            NAME: formData.name || 'Non renseigné',
-            SOURCE_DETAIL: 'Bouton flottant newsletter'
-          }
-        }),
-      });
+      const result = await newsletterService.subscribe(
+        formData.email,
+        'Floating Button'
+      );
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (result.success) {
         setIsSuccess(true);
         toast.success('Inscription réussie ! Bienvenue dans notre communauté.');
 
@@ -112,11 +101,11 @@ const FloatingNewsletterButton = () => {
           setFormData({ email: '', name: '' });
         }, 3000);
 
-      } else if (data.message === 'Vous êtes déjà inscrit(e)') {
+      } else if (result.message === 'Vous êtes déjà inscrit(e) à notre newsletter') {
         toast.info('Vous êtes déjà inscrit(e) à notre newsletter !');
         setFormData({ email: '', name: '' });
       } else {
-        throw new Error(data.message || 'Erreur lors de l\'inscription');
+        throw new Error(result.message || 'Erreur lors de l\'inscription');
       }
     } catch (error) {
       console.error('Erreur newsletter:', error);

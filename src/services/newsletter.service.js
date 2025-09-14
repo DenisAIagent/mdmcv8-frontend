@@ -107,7 +107,7 @@ class NewsletterService {
         },
         body: JSON.stringify({
           email: email,
-          listIds: [2],
+          listIds: [7],
           attributes: {
             SOURCE: source,
             DATE_INSCRIPTION: new Date().toISOString()
